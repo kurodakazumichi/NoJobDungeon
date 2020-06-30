@@ -19,10 +19,8 @@ enum Tile
 	RoomCandidate = 1 << 11,
 }
 
-	public class Stage : MonoBehaviour
+public class Stage : MonoBehaviour
 {
-	public const int WIDTH = 60;
-	public const int HEIGHT = 40;
 
 	private Tile[,] tiles;
 	private int divCountV;
@@ -46,7 +44,7 @@ enum Tile
 
 	private void init()
 	{
-		this.tiles = new Tile[WIDTH, HEIGHT];
+		this.tiles = new Tile[Define.WIDTH, Define.HEIGHT];
 		this.divCountV = 3;
 		this.divCountH = 2;
 		this.vAislePoints = new List<int>();
@@ -78,22 +76,22 @@ enum Tile
 
 	private void devideSpace()
 	{
-		int divWidth = WIDTH / this.divCountV;
-		int divHeight = HEIGHT / this.divCountH;
+		int divWidth = Define.WIDTH / this.divCountV;
+		int divHeight = Define.HEIGHT / this.divCountH;
 
 		this.vAislePoints.Add(1);
 		for (int i = 1; i < divCountV; ++i)
 		{
 			this.vAislePoints.Add(divWidth * i);
 		}
-		this.vAislePoints.Add(WIDTH - 2);
+		this.vAislePoints.Add(Define.WIDTH - 2);
 
 		this.hAislePoints.Add(1);
 		for (int i = 1; i < divCountH; ++i)
 		{
 			this.hAislePoints.Add(divHeight * i);
 		}
-		this.hAislePoints.Add(HEIGHT - 2);
+		this.hAislePoints.Add(Define.HEIGHT - 2);
 
 		for (int h = 0; h < divCountH; ++h)
 		{
@@ -116,7 +114,7 @@ enum Tile
 
 		this.vAislePoints.ForEach((int x) =>
 		{
-			for (int y = 1; y < HEIGHT - 1; ++y)
+			for (int y = 1; y < Define.HEIGHT - 1; ++y)
 			{
 				this.tiles[x, y] |= Tile.AisleCandidate;
 			}
@@ -124,7 +122,7 @@ enum Tile
 
 		this.hAislePoints.ForEach((int y) =>
 		{
-			for (int x = 1; x < WIDTH - 1; ++x)
+			for (int x = 1; x < Define.WIDTH - 1; ++x)
 			{
 				this.tiles[x, y] |= Tile.AisleCandidate;
 			}
@@ -203,7 +201,7 @@ enum Tile
 
 				if ((tile & Tile.AisleCandidate) == Tile.AisleCandidate) break;
 				++x;
-				if (WIDTH - 1 <= x) break;
+				if (Define.WIDTH - 1 <= x) break;
 			}
 
 			count++;
@@ -249,7 +247,7 @@ enum Tile
 
 				if ((tile & Tile.AisleCandidate) == Tile.AisleCandidate) break;
 				++y;
-				if (HEIGHT - 1 <= y) break;
+				if (Define.HEIGHT - 1 <= y) break;
 			}
 
 			++count;
@@ -263,7 +261,7 @@ enum Tile
 		{
 			bool padding = false;
 
-			for (int y = 1; y < HEIGHT - 1; ++y)
+			for (int y = 1; y < Define.HEIGHT - 1; ++y)
 			{
 				Tile tile = this.tiles[x, y];
 
@@ -286,7 +284,7 @@ enum Tile
 		{
 			bool padding = false;
 
-			for (int x = 1; x < WIDTH - 1; ++x)
+			for (int x = 1; x < Define.WIDTH - 1; ++x)
 			{
 				Tile tile = this.tiles[x, y];
 
@@ -360,9 +358,9 @@ enum Tile
 
 	private void map(System.Action<int, int, Tile> cb)
 	{
-		for (int x = 0; x < WIDTH; x++)
+		for (int x = 0; x < Define.WIDTH; x++)
 		{
-			for (int y = 0; y < HEIGHT; y++)
+			for (int y = 0; y < Define.HEIGHT; y++)
 			{
 				cb(x, y, this.tiles[x, y]);
 			}
