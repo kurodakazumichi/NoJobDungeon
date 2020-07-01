@@ -37,11 +37,13 @@ public struct BitFlag
 
   public bool Contain(uint flag)
   {
+    if (flag == 0) return false;
     return (this.value & flag) == flag;
   }
 
   public bool ContainEither(uint flag)
   {
+    if (flag == 0) return false;
     return (this.value & flag) != 0;
   }
 
