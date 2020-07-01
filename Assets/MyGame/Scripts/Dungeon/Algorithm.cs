@@ -4,54 +4,82 @@ using UnityEngine;
 
 namespace Dungeon
 {
-
+	/// <summary>
+  /// ダンジョン自動生成アルゴリズム(均等分割法)
+  /// 配列を縦横に均等に分割する方法でダンジョンを生成する。
+  /// </summary>
 	public class Algorithm
 	{
 		private enum Flags : uint
 		{
-			Wall = 1 << 0,
-			Room = 1 << 1,
-			Aisle = 1 << 2,
+			Wall          = 1 << 0,
+			Room          = 1 << 1,
+			Aisle         = 1 << 2,
 			ReservedAisle = 1 << 3,
 		}
+
+		//----------------------------------------------------------------
+    // ダンジョン生成に影響を与えるパラメーター郡
+    #region 
+
+    /// <summary>
+    /// ダンジョンの空間分割数(X,Y)
+    /// </summary>
+    private Vector2Int size;
+
+		/// <summary>
+    /// 部屋作成率、数値が高いほど部屋が作られやすい。0~1の間で設定する。
+    /// </summary>
+		private float roomMakingRate = 0.7f;
+
+    #endregion
+		
+		//----------------------------------------------------------------
+    // ダンジョン生成中に利用するモノ
+		#region
 
 		/// <summary>
 		/// ダンジョンのマップチップ配列
 		/// </summary>
 		private BitFlag[,] chips;
 
-		/// <summary>
-		/// ダンジョンの空間分割数(X,Y)
-		/// </summary>
-		private Vector2Int size;
-
-		/// <summary>
-		/// ダンジョンの分割位置
-		/// </summary>
-		private List<int> splitPointsX;
+    /// <summary>
+    /// ダンジョンの分割位置
+    /// </summary>
+    private List<int> splitPointsX;
 		private List<int> splitPointsY;
 
 		/// <summary>
-		/// 部屋を構築できるエリア情報の配列
+		/// 部屋予定地のエリア情報
 		/// </summary>
-		private List<RectInt> roomAreas;
+		private List<RectInt> reservedRooms;
 
 		/// <summary>
+    /// 部屋のエリア情報
+    /// </summary>
+		private List<RectInt> rooms;
+
+    #endregion
+
+		//----------------------------------------------------------------
+    // Method
+
+    /// <summary>
     /// コンストラクタ
     /// </summary>
-		public Algorithm()
+    public Algorithm()
 		{
 			this.chips = new BitFlag[Dungeon.Define.WIDTH, Dungeon.Define.HEIGHT];
-			this.size         = new Vector2Int(0, 0);
-			this.splitPointsX = new List<int>();
-			this.splitPointsY = new List<int>();
-			this.roomAreas    = new List<RectInt>();
+			this.splitPointsX  = new List<int>();
+			this.splitPointsY  = new List<int>();
+			this.reservedRooms = new List<RectInt>();
+			this.rooms         = new List<RectInt>();
 		}
 
 		public void Make(Dungeon.Stage stage, int sizeX, int sizeY)
 		{
-			// 設定
-			this.size.Set(sizeX, sizeY);
+			// ダンジョンの分割数を設定、最低でも1x1になるようにフィルター
+			this.size.Set(Mathf.Max(1, sizeX), Mathf.Max(1, sizeY));
 
 			// 準備
 			this.prepare();
@@ -64,8 +92,16 @@ namespace Dungeon
 			this.fillReservedAisle();
 
 			// ルームスペース確保
+			this.decideReservedRoom();
+
 			// ルーム作成
+			this.makeRoom();
+			this.fillRoom();
+
 			// 通路作成(上下左右)
+			this.makeAisleLeft();
+			this.makeAisleRight();
+
 			// 通路を繋げる
 			// 整理
 
@@ -142,6 +178,130 @@ namespace Dungeon
     }
 
 		/// <summary>
+    /// ルーム予定地を決める
+    /// </summary>
+		private void decideReservedRoom()
+    {
+			for(int y = 0; y < this.size.y; ++y)
+      {
+				for(int x = 0; x < this.size.x; ++x)
+        {
+					int x1 = this.splitPointsX[x]   + 2;
+					int x2 = this.splitPointsX[x+1] - 2;
+					int y1 = this.splitPointsY[y]   + 2;
+					int y2 = this.splitPointsY[y+1] - 2;
+					int w  = x2 - x1 + 1;
+					int h  = y2 - y1 + 1;
+
+					// ルーム予定地のx,y座標、幅高さを決定
+					RectInt room = new RectInt(x1, y1, w, h);
+					this.reservedRooms.Add(room);
+        }
+      }
+    }
+
+		/// <summary>
+    /// 部屋予定地の中に部屋を作る。
+    /// 部屋は最低でも１部屋作られる。
+    /// </summary>
+		private void makeRoom()
+    {
+			int roomCount = 0;
+
+			// 部屋予定地に部屋を作成する
+			this.reservedRooms.ForEach((RectInt area) =>
+      {
+				// 部屋なしの場合はRectIntの中見が全て0
+				RectInt room = new RectInt(0, 0, 0, 0);
+
+				// 部屋が１個以下
+				if (roomCount < 1 || Random.Range(0f, 1f) < this.roomMakingRate)
+        {
+					// 部屋のサイズをランダムに決める(部屋予定地に収まるように)
+					room.width  = Random.Range(Define.MIN_ROOM_SIZE, area.width);
+					room.height = Random.Range(Define.MIN_ROOM_SIZE, area.height);
+
+					// 部屋の位置をランダムに決める。(部屋予定地に収まるように)
+					room.x      = Random.Range(area.xMin, area.xMax - room.width);
+					room.y      = Random.Range(area.yMin, area.yMax - room.height);
+					++roomCount;
+        }
+
+				this.rooms.Add(room);
+      });
+
+    }
+
+		/// <summary>
+    /// 部屋を埋める
+    /// </summary>
+		private void fillRoom()
+    {
+			this.rooms.ForEach((RectInt room) => {
+				this.fillByRect(room, (uint)Flags.Room);
+			});
+    }
+
+		/// <summary>
+    /// 部屋から左方向への通路を伸ばす
+    /// </summary>
+		private void makeAisleLeft()
+    {
+			this.mapForRoom((int sx, int sy, RectInt room) =>
+      {
+				int x = room.xMin - 1;
+				int y = Random.Range(room.yMin, room.yMax);
+
+        while (sx != 0)
+        {
+          var chip = this.chips[x, y];
+          this.chips[x, y].Set((uint)Flags.Aisle);
+          --x;
+
+          if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
+        }
+      });
+    }
+
+
+
+		private void makeAisleRight()
+    {
+			this.mapForRoom((int sx, int sy, RectInt room) =>
+      {
+				int x = room.xMax;
+				int y = Random.Range(room.yMin, room.yMax);
+
+				while (sx != this.size.x - 1)
+        {
+					var chip = this.chips[x, y];
+					this.chips[x, y].Set((uint)Flags.Aisle);
+					++x;
+
+					if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
+        }
+      });
+    }
+
+		private void mapForRoom(System.Action<int, int, RectInt> cb) {
+			this.mapForSize((int x, int y, int index) =>
+      {
+				var room = this.rooms[index];
+				if (this.isEnableAs(room) == false) return;
+				cb(x, y, room);
+      });
+		}
+
+		private bool satisfyConditionsToBreakTheAisleLoop(int x, int y, BitFlag chip)
+    {
+			if (chip.Contain((uint)Flags.ReservedAisle)) return true;
+			if (x <= 0) return true;
+			if (Define.WIDTH -1 <= x) return true;
+
+			return false;
+    }
+
+		/// <summary>
     /// 生成したデータをステージへ展開する。
     /// </summary>
 		private void deployToStage(Stage stage)
@@ -152,9 +312,17 @@ namespace Dungeon
 				{
 					stage.Set(x, y, Tile.Wall);
         }
+				if (flag.Contain((uint)Flags.Room))
+        {
+					stage.Set(x, y, Tile.Room);
+        }
 				if (flag.Contain((uint)Flags.ReservedAisle))
         {
 					stage.Set(x, y, Tile.AisleCandidate);
+        }
+				if (flag.Contain((uint)Flags.Aisle))
+        {
+					stage.Set(x, y, Tile.Aisle);
         }
 
 			});
@@ -170,5 +338,40 @@ namespace Dungeon
         }
       }
 		}
+
+		private void mapForSize(System.Action<int, int, int> cb)
+    {
+			for(int y = 0; y < this.size.y; ++y)
+      {
+				for (int x = 0; x < this.size.x; ++x)
+        {
+					cb(x, y, y * this.size.x + x);
+        }
+      }
+    }
+
+		private void fillByRect(RectInt rect, uint flag)
+		{
+			for (int x = rect.x; x < rect.x + rect.width; ++x)
+			{
+				for (int y = rect.y; y < rect.y + rect.height; ++y)
+				{
+					this.chips[x, y].Set(flag);
+				}
+			}
+		}
+
+		/// <summary>
+    /// 部屋として有効かどうか
+    /// </summary>
+		private bool isEnableAs(RectInt room)
+    {
+			if (room.x == 0) return false;
+			if (room.y == 0) return false;
+			if (room.width == 0) return false;
+			if (room.height == 0) return false;
+
+			return true;
+    }
 	}
 }
