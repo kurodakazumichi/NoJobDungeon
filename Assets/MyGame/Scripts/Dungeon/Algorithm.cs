@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Dungeon
 {
 	/// <summary>
-  /// ダンジョン自動生成アルゴリズム(均等分割法)
-  /// 配列を縦横に均等に分割する方法でダンジョンを生成する。
-  /// </summary>
+    /// ダンジョン自動生成アルゴリズム(均等分割法)
+    /// 配列を縦横に均等に分割する方法でダンジョンを生成する。
+    /// </summary>
 	public class Algorithm
 	{
 		private enum Flags : uint
@@ -20,7 +20,7 @@ namespace Dungeon
 			Confluence         = 1 << 5,
 		}
 
-		//----------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // ダンジョン生成に影響を与えるパラメーター郡
     #region 
 
@@ -29,14 +29,14 @@ namespace Dungeon
     /// </summary>
     private Vector2Int size;
 
-		/// <summary>
+	  /// <summary>
     /// 部屋作成率、数値が高いほど部屋が作られやすい。0~1の間で設定する。
     /// </summary>
-		private float roomMakingRate = 0.7f;
+	  private float roomMakingRate = 0.7f;
 
     #endregion
 		
-		//----------------------------------------------------------------
+		//-------------------------------------------------------------------------
     // ダンジョン生成中に利用するモノ
 		#region
 
@@ -63,7 +63,7 @@ namespace Dungeon
 
     #endregion
 
-		//----------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Method
 
     /// <summary>
@@ -78,7 +78,7 @@ namespace Dungeon
 			this.rooms         = new List<RectInt>();
 		}
 
-		//----------------------------------------------------------------
+		//-------------------------------------------------------------------------
     // ダンジョン生成 Methods
 
 		public void Make(Dungeon.Stage stage, int sizeX, int sizeY, float rate)
@@ -562,7 +562,7 @@ namespace Dungeon
 			});
     }
 
-		//----------------------------------------------------------------
+		//-------------------------------------------------------------------------
     // Private Utility Methods
 
 		private void map(System.Action<int, int, BitFlag> cb)
@@ -704,7 +704,7 @@ namespace Dungeon
 			return found;
     }
 
-		//----------------------------------------------------------------
+		//-------------------------------------------------------------------------
     // 部屋から通路を伸ばす際に使用する限定的な処理
 
 		private bool satisfyConditionsToBreakTheAisleLoop(int x, int y, BitFlag chip)
