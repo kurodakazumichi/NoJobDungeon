@@ -76,6 +76,9 @@ namespace Dungeon
 			this.rooms         = new List<RectInt>();
 		}
 
+		//----------------------------------------------------------------
+    // ダンジョン生成 Methods
+
 		public void Make(Dungeon.Stage stage, int sizeX, int sizeY)
 		{
 			// ダンジョンの分割数を設定、最低でも1x1になるようにフィルター
@@ -263,8 +266,9 @@ namespace Dungeon
       });
     }
 
-
-
+		/// <summary>
+    /// 部屋から右方向への通路を伸ばす
+    /// </summary>
 		private void makeAisleRight()
     {
 			this.mapForRoom((int sx, int sy, RectInt room) =>
@@ -283,23 +287,7 @@ namespace Dungeon
       });
     }
 
-		private void mapForRoom(System.Action<int, int, RectInt> cb) {
-			this.mapForSize((int x, int y, int index) =>
-      {
-				var room = this.rooms[index];
-				if (this.isEnableAs(room) == false) return;
-				cb(x, y, room);
-      });
-		}
 
-		private bool satisfyConditionsToBreakTheAisleLoop(int x, int y, BitFlag chip)
-    {
-			if (chip.Contain((uint)Flags.ReservedAisle)) return true;
-			if (x <= 0) return true;
-			if (Define.WIDTH -1 <= x) return true;
-
-			return false;
-    }
 
 		/// <summary>
     /// 生成したデータをステージへ展開する。
@@ -328,6 +316,9 @@ namespace Dungeon
 			});
     }
 
+		//----------------------------------------------------------------
+    // Private Utility Methods
+
 		private void map(System.Action<int, int, BitFlag> cb)
 		{
 			for (int x = 0; x < Define.WIDTH; ++x)
@@ -350,6 +341,16 @@ namespace Dungeon
       }
     }
 
+		private void mapForRoom(System.Action<int, int, RectInt> cb) {
+			this.mapForSize((int x, int y, int index) =>
+      {
+				var room = this.rooms[index];
+				if (this.isEnableAs(room) == false) return;
+				cb(x, y, room);
+      });
+		}
+
+
 		private void fillByRect(RectInt rect, uint flag)
 		{
 			for (int x = rect.x; x < rect.x + rect.width; ++x)
@@ -360,6 +361,15 @@ namespace Dungeon
 				}
 			}
 		}
+
+		private bool satisfyConditionsToBreakTheAisleLoop(int x, int y, BitFlag chip)
+    {
+			if (chip.Contain((uint)Flags.ReservedAisle)) return true;
+			if (x <= 0) return true;
+			if (Define.WIDTH -1 <= x) return true;
+
+			return false;
+    }
 
 		/// <summary>
     /// 部屋として有効かどうか
