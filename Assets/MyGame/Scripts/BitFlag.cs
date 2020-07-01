@@ -1,14 +1,9 @@
 ﻿/// <summary>
 /// ビットフラグを扱いやすくするためのクラス
 /// </summary>
-public class BitFlag
+public struct BitFlag
 {
   private uint value;
-
-  public BitFlag()
-  {
-    this.Clear();
-  }
 
   public void Clear()
   {
