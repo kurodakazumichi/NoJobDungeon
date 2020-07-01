@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Dungeon
 {
+	
 
 	public enum Tile
 	{
@@ -21,6 +22,8 @@ namespace Dungeon
 
 	public class Stage : MonoBehaviour
 	{
+		public Vector2Int SplitNum = new Vector2Int(3, 2);
+		public float RoomMakingRate = 0.5f;
 
 		private Tile[,] tiles;
 		private int divCountV;
@@ -39,8 +42,8 @@ namespace Dungeon
 		// Use this for initialization
 		void Start()
 		{
-			//create();
-			new Algorithm().Make(this, 3, 3);
+			create();
+			
 		}
 
 		public void Set(int x, int y, Tile tile)
@@ -61,15 +64,21 @@ namespace Dungeon
 
 		private void create()
 		{
-			this.fillWithWall();
-			this.devideSpace();
-			this.makeRoom();
-			this.makeAisleLeft();
-			this.makeAisleRight();
-			this.makeAisleUp();
-			this.makeAisleDown();
-			this.linkAisle();
-			this.organize();
+			//this.fillWithWall();
+			//this.devideSpace();
+			//this.makeRoom();
+			//this.makeAisleLeft();
+			//this.makeAisleRight();
+			//this.makeAisleUp();
+			//this.makeAisleDown();
+			//this.linkAisle();
+			//this.organize();
+
+			int x = Random.Range(2, 5);
+			int y = Random.Range(2, 5);
+			float r = Random.Range(0f, 1f);
+
+			new Algorithm().Make(this, x, y, r);
 		}
 
 		private void fillWithWall()
