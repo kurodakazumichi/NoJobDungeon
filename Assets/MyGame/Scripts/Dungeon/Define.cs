@@ -8,5 +8,6 @@ namespace Dungeon
 	{
 		public const int WIDTH = 60;
 		public const int HEIGHT = 40;
+		public const int MIN_ROOM_SIZE = 3;
 	}
 }
