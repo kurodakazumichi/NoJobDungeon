@@ -105,6 +105,7 @@ namespace Dungeon
 			this.makeAisleLeft();
 			this.makeAisleRight();
 			this.makeAisleUp();
+			this.makeAisleDown();
 
 			// 通路を繋げる
 			// 整理
@@ -259,7 +260,8 @@ namespace Dungeon
         while (sx != 0)
         {
           var chip = this.chips[x, y];
-          this.chips[x, y].Set((uint)Flags.Aisle);
+
+          this.chips[x, y].On((uint)Flags.Aisle);
           --x;
 
           if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
@@ -280,7 +282,8 @@ namespace Dungeon
 				while (sx != this.size.x - 1)
         {
 					var chip = this.chips[x, y];
-					this.chips[x, y].Set((uint)Flags.Aisle);
+
+					this.chips[x, y].On((uint)Flags.Aisle);
 					++x;
 
 					if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
@@ -288,10 +291,15 @@ namespace Dungeon
       });
     }
 
+		/// <summary>
+    /// 部屋から上方向に通路を伸ばす
+    /// </summary>
 		private void makeAisleUp()
     {
 			this.mapForRoom((int sx, int sy, RectInt room) =>
       {
+				if (Random.Range(0, 1f) < 0.5f) return;
+
 				int x = Random.Range(room.xMin,  room.xMax);
 				int y = room.yMin - 1;
 
@@ -299,7 +307,7 @@ namespace Dungeon
         {
 					var chip = this.chips[x, y];
 
-					this.chips[x, y].Set((uint)Flags.Aisle);
+					this.chips[x, y].On((uint)Flags.Aisle);
 					--y;
 
 					if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
@@ -307,6 +315,29 @@ namespace Dungeon
       });
     }
 
+		/// <summary>
+    /// 部屋から下方向に通路を伸ばす
+    /// </summary>
+		private void makeAisleDown()
+    {
+			this.mapForRoom((int sx, int sy, RectInt room) =>
+      {
+				if (Random.Range(0, 1f) < 0.5f) return;
+
+				int x = Random.Range(room.xMin, room.xMax);
+				int y = room.yMax;
+
+				while(sy != this.size.y - 1)
+        {
+					var chip = this.chips[x, y];
+
+					this.chips[x, y].On((uint)Flags.Aisle);
+					++y;
+
+					if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
+        }
+      });
+    }
 
 
 		/// <summary>
