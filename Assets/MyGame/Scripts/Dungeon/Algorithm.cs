@@ -104,6 +104,7 @@ namespace Dungeon
 			// 通路作成(上下左右)
 			this.makeAisleLeft();
 			this.makeAisleRight();
+			this.makeAisleUp();
 
 			// 通路を繋げる
 			// 整理
@@ -287,6 +288,25 @@ namespace Dungeon
       });
     }
 
+		private void makeAisleUp()
+    {
+			this.mapForRoom((int sx, int sy, RectInt room) =>
+      {
+				int x = Random.Range(room.xMin,  room.xMax);
+				int y = room.yMin - 1;
+
+				while(sy != 0)
+        {
+					var chip = this.chips[x, y];
+
+					this.chips[x, y].Set((uint)Flags.Aisle);
+					--y;
+
+					if (this.satisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
+        }
+      });
+    }
+
 
 
 		/// <summary>
@@ -367,6 +387,8 @@ namespace Dungeon
 			if (chip.Contain((uint)Flags.ReservedAisle)) return true;
 			if (x <= 0) return true;
 			if (Define.WIDTH -1 <= x) return true;
+			if (y <= 0) return true;
+			if (Define.HEIGHT  - 1 <= y) return true;
 
 			return false;
     }
