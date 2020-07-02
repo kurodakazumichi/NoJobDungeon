@@ -28,10 +28,10 @@ public static class Util
   /// <summary>
   /// ２次元ループ処理(Action版)
   /// </summary>
-  static public void Loop2D(int x, int y, System.Action<int, int> cb)
+  static public void Loop2D(int rx, int ry, System.Action<int, int> cb)
   {
-    for(int ry = 0; ry < y; ++y) {
-      for (int rx = 0; rx < x; ++x) {
+    for(int y = 0; y < ry; ++y) {
+      for (int x = 0; x < rx; ++x) {
         cb(x, y);
       }
     }
@@ -40,12 +40,12 @@ public static class Util
   /// <summary>
   /// ２次元ループ処理(Func版)
   /// </summary>
-  static public void Loop2D(int x, int y, System.Func<int, int, bool> cb)
+  static public void Loop2D(int rx, int ry, System.Func<int, int, bool> cb)
   {
     bool isBreak = false;
 
-    for(int ry = 0; ry < y; ++y) {
-      for (int rx = 0; rx < x; ++x) 
+    for(int y = 0; y < ry; ++y) {
+      for (int x = 0; x < rx; ++x) 
       {
         isBreak = cb(x, y);
 

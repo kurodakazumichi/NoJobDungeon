@@ -20,7 +20,9 @@ namespace Dungeon
     /// </summary>
 		private List<Room> rooms;
 
-    //-------------------------------------------------------------------------
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
     public Stage()
     {
       this.tiles = new Tile[Define.WIDTH, Define.HEIGHT];
@@ -32,6 +34,9 @@ namespace Dungeon
       this.Reset();
     }
 
+    /// <summary>
+    /// メンバ変数の中身をリセットする
+    /// </summary>
     public void Reset()
     {
 		  Map((int x, int y, Tile tile) => {
@@ -41,71 +46,64 @@ namespace Dungeon
 			this.rooms = new List<Room>();
     }
 
-    public void AddRoom(RectInt area)
-    {
-      this.rooms.Add(new Room(area));
-    }
+    //-------------------------------------------------------------------------
+    // タイル関連
 
-		public void Set(int x, int y, Tiles tile)
+		public void SetTileState(int x, int y, Tiles tile)
     {
 			this.tiles[x, y].Set(tile);
     }
 
+    public void AddTileState(int x, int y, params Tiles[] tiles)
+    {
+      this.tiles[x, y].On(tiles);
+    }
+
+    public void RemoveTileState(int x, int y, params Tiles[] tiles)
+    {
+      this.tiles[x, y].Off(tiles);
+    }
+
+    //-------------------------------------------------------------------------
+    // ルーム関連
+
+    /// <summary>
+    /// 部屋の数
+    /// </summary>
     public int RoomCount {
       get { return this.rooms.Count; }
     }
 
     /// <summary>
-    /// ダンジョン内の配置可能なランダムな座標を取得する 
+    /// 部屋を追加する
     /// </summary>
-    public Vector2Int GetPlaceableCoord()
+    public void AddRoom(RectInt area)
     {
-      while(true) 
-      {
-        var room = this.rooms.Rand();
-
-        var pos = room.RandomCoord;
-
-        if (!this.tiles[pos.x, pos.y].IsEmpty) {
-          continue;
-        }
-        
-        return pos;
-      }
+      this.rooms.Add(new Room(area));
     }
 
-    public Vector2Int MovesPlayer(Vector2Int from, Vector2Int to)
-    {
-      this.tiles[from.x, from.y].Off(Tiles.Player);
-      this.tiles[to.x, to.y].On(Tiles.Player);
-      return to;
-    }
+    //-------------------------------------------------------------------------
+    // 配置関連
 
     /// <summary>
-    /// プレイヤーを配置する
+    /// ダンジョン内の配置可能なランダムな座標
     /// </summary>
-    /// <returns>配置した座標</returns>
-    public Vector2Int PlacesPlayer()
+    public Vector2Int PlaceableCoord
     {
-      var pos = GetPlaceableCoord();
-      this.tiles[pos.x, pos.y].On(Tiles.Player);
-      return pos;
-    }
+      get {
+        while(true) 
+        {
+          var room = this.rooms.Rand();
 
-    // 部屋の領域内に空きがあるか判定する
-    private bool ChecksForRoomAvailability(Room room)
-    {
-      bool hasEmpty = false;
-      Util.MapByRect(room.Area, (int x, int y) => 
-      {
-        if (this.tiles[x, y].IsEmpty) {
-          hasEmpty = true;
-          return false;
+          var pos = room.RandomCoord;
+
+          if (!this.tiles[pos.x, pos.y].IsEmpty) {
+            continue;
+          }
+        
+          return pos;
         }
-
-        return true;
-      });
-      return hasEmpty;
+      }
     }
 
     //-------------------------------------------------------------------------
@@ -120,7 +118,6 @@ namespace Dungeon
     //-------------------------------------------------------------------------
     #if UNITY_EDITOR
     //-------------------------------------------------------------------------
-    private bool _toggleDetail = true;
 
     public void OnGUI()
     {
