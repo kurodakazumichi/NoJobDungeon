@@ -74,6 +74,13 @@ namespace Dungeon
       }
     }
 
+    public Vector2Int MovesPlayer(Vector2Int from, Vector2Int to)
+    {
+      this.tiles[from.x, from.y].Off(Tiles.Player);
+      this.tiles[to.x, to.y].On(Tiles.Player);
+      return to;
+    }
+
     /// <summary>
     /// プレイヤーを配置する
     /// </summary>
@@ -137,7 +144,10 @@ namespace Dungeon
 				if (tile.IsRoom)  style = sRoom;
         if (tile.IsPlayer) style = sPlayer;
 
-				GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
+        if (style != null) {
+				  GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
+        }
+
 			});
     }
 
