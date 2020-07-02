@@ -28,6 +28,23 @@ namespace Dungeon {
     /// </summary>
     private BitFlag state;
 
+    /// <summary>
+    /// デフォルトコンストラクタ
+    /// </summary>
+    public Tile()
+    {
+      this.state.Clear();
+    }
+
+    /// <summary>
+    /// コピーコンストラクタ
+    /// </summary>
+    /// <param name="tile"></param>
+    public Tile(Tile tile)
+    {
+      this.state = tile.state;
+    }
+
     //-------------------------------------------------------------------------
     // プロパティ
     //-------------------------------------------------------------------------
@@ -94,7 +111,10 @@ namespace Dungeon {
       this.state.Off(ToFlags(tiles));
     }
 
-
+    public Tile Copy()
+    {
+      return new Tile(this);
+    }
 
     private uint ToFlags(params Tiles[] tiles)
     {
