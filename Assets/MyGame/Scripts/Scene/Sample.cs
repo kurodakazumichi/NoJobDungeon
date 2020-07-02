@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Scene 
 {
@@ -10,6 +11,7 @@ namespace Scene
       void Start()
       {
         Debug.Log("Sample Scene!");
+        SceneManager.LoadScene("DungeonScene");
       }
 
       // Update is called once per frame
