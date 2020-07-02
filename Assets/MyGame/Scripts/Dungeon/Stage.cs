@@ -4,18 +4,16 @@ using UnityEngine;
 
 namespace Dungeon
 {
-	
-
 	public enum Tile
 	{
-		Wall = 1 << 0,
-		Room = 1 << 1,
-		Aisle = 1 << 2,
+		Wall   = 1 << 0,
+		Room   = 1 << 1,
+		Aisle  = 1 << 2,
 		Player = 1 << 3,
 		Friend = 1 << 4,
-		Enemy = 1 << 5,
-		Item = 1 << 6,
-		Trap = 1 << 7,
+		Enemy  = 1 << 5,
+		Item   = 1 << 6,
+		Trap   = 1 << 7,
 	}
 
 	public class Stage : MonoBehaviour
