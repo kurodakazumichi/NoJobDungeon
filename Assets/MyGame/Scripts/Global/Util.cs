@@ -5,30 +5,48 @@ using UnityEngine;
 public static class Util
 {
   /// <summary>
-  /// 範囲を指定したループ処理
+  /// 範囲を指定したループ処理(Action版)
   /// </summary>
-  static public void MapByRange(int from, int to, System.Action<int> cb)
+  static public void LoopByRange(int from, int to, System.Action<int> cb)
   {
-    for(int i = from; i < to; ++i)
-    {
+    for(int i = from; i < to; ++i) {
       cb(i);
     }
   }
 
-  static public void MapByRect(RectInt rect, System.Action<int, int> cb)
+  /// <summary>
+  /// 範囲を指定したループ処理(Func版)
+  /// cbでfalseを返すとそこでループから抜ける。
+  /// </summary>
+  static public void LoopByRange(int from, int to, System.Func<int, bool> cb)
+  {
+    for (int i = from; i < to; ++i) {
+      if (!cb(i)) break;
+    }
+  }
+
+
+  /// <summary>
+  /// Rectを元にした二次元ループ処理(Action版)
+  /// </summary>
+  static public void LoopByRect(RectInt rect, System.Action<int, int> cb)
 	{
-		for (int x = rect.x; x < rect.x + rect.width; ++x)
-		{
-			for (int y = rect.y; y < rect.y + rect.height; ++y)
-			{
+		for (int x = rect.x; x < rect.x + rect.width; ++x) 
+    {
+			for (int y = rect.y; y < rect.y + rect.height; ++y) {
 				cb(x, y);
 			}
 		}
 	}
 
-  static public void MapByRect(RectInt rect, System.Func<int, int, bool> cb)
+  /// <summary>
+  /// Rectを元にした二次元ループ処理(Func版)
+  /// 
+  /// </summary>
+  static public void LoopByRect(RectInt rect, System.Func<int, int, bool> cb)
   {
     bool isBreak = false;
+
 		for (int x = rect.x; x < rect.x + rect.width; ++x)
 		{
 			for (int y = rect.y; y < rect.y + rect.height; ++y)
@@ -37,6 +55,7 @@ public static class Util
 				
         if (isBreak) break;
 			}
+
       if (isBreak) break;
 		}
   }

@@ -7,6 +7,8 @@ namespace Dungeon {
   /// <summary>
   /// ダンジョン自動生成アルゴリズム(均等分割法)
   /// 配列を縦横に均等に分割する方法でダンジョンを生成する。
+  /// 
+  /// ※プレイヤーやアイテム、敵の配置などは行わない。
   /// </summary>
   public class Algorithm {
     private enum Flags : uint {
@@ -200,7 +202,7 @@ namespace Dungeon {
         int y1 = 1;
         int y2 = Define.HEIGHT - 2;
 
-        Util.MapByRange(y1, y2 + 1, (int y) => {
+        Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.ReservedAisle);
         });
       });
@@ -210,7 +212,7 @@ namespace Dungeon {
         int x1 = 1;
         int x2 = Define.WIDTH - 2;
 
-        Util.MapByRange(x1, x2 + 1, (int x) => {
+        Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.ReservedAisle);
         });
       });
@@ -275,7 +277,7 @@ namespace Dungeon {
     private void MarkupRoom()
     {
       MapForRoom((int rx, int ry, Room room) => {
-        Util.MapByRect(room.Area, (int x, int y) => {
+        Util.LoopByRect(room.Area, (int x, int y) => {
           this.chips[x, y].Set((uint)Flags.Room);
         });
       });
@@ -302,7 +304,7 @@ namespace Dungeon {
         if (x1 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.MapByRange(x1, x2 + 1, (int x) => {
+        Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -331,7 +333,7 @@ namespace Dungeon {
         if (x2 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.MapByRange(x1, x2 + 1, (int x) => {
+        Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -363,7 +365,7 @@ namespace Dungeon {
         if (y1 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.MapByRange(y1, y2 + 1, (int y) => {
+        Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -395,7 +397,7 @@ namespace Dungeon {
         if (y2 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.MapByRange(y1, y2 + 1, (int y) => {
+        Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -421,7 +423,7 @@ namespace Dungeon {
         // 最初と最後の地点を結ぶ。
         // こうする事で到達できない部屋が作られなくなる(はず)
         if (found.Count % 2 == 1 || index % 2 == 1) {
-          Util.MapByRange(found.First(), found.Last(), (int y) => {
+          Util.LoopByRange(found.First(), found.Last(), (int y) => {
             this.chips[x, y].On((uint)Flags.Aisle);
           });
           return;
@@ -429,7 +431,7 @@ namespace Dungeon {
 
         // 合流地点が偶数の場合
         for (int i = 0; i < found.Count; i += 2) {
-          Util.MapByRange(found[i], found[i + 1], (int y) => {
+          Util.LoopByRange(found[i], found[i + 1], (int y) => {
             this.chips[x, y].On((uint)Flags.Aisle);
           });
         }
@@ -491,13 +493,13 @@ namespace Dungeon {
       this.MapForChip((int x, int y, BitFlag flag) => {
 
         if (flag.Contain((uint)Flags.Wall)) {
-          stage.Set(x, y, Tiles.Wall);
+          stage.SetTileState(x, y, Tiles.Wall);
         }
         if (flag.Contain((uint)Flags.Room)) {
-          stage.Set(x, y, Tiles.Room);
+          stage.SetTileState(x, y, Tiles.Room);
         }
         if (flag.Contain((uint)Flags.Aisle)) {
-          stage.Set(x, y, Tiles.Aisle);
+          stage.SetTileState(x, y, Tiles.Aisle);
         }
       });
 
