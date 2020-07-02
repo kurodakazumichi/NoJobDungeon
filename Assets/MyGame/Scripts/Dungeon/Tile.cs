@@ -61,6 +61,16 @@ namespace Dungeon {
       get { return this.state.Contain((uint)Tiles.Trap); }
     }
 
+    /// <summary>
+    /// タイル上に何も存在しない(部屋か通路のいずれか)
+    /// </summary>
+    public bool IsEmpty
+    {
+      get {
+        return (this.state.Is((uint)Tiles.Room) || this.state.Is((uint)Tiles.Aisle));
+      }
+    }
+
     //-------------------------------------------------------------------------
     // メソッド
     //-------------------------------------------------------------------------

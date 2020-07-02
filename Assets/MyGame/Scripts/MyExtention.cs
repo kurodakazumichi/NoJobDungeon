@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MyExtension
 {
@@ -25,6 +26,12 @@ namespace MyExtension
     public static T Last<T>(this List<T> items)
     {
       return items[items.Count - 1];
+    }
+
+    public static T Rand<T>(this List<T> items)
+    {
+      int index = Random.Range(0, items.Count);
+      return items[index];
     }
   }
 }

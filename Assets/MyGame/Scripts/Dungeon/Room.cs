@@ -74,5 +74,14 @@ namespace Dungeon
       get { return this.area.xMax; }
     }
 
+    public Vector2Int RandomCoord
+    {
+      get {
+        int x = this.area.x + Random.Range(0, this.area.width);
+        int y = this.area.y + Random.Range(0, this.area.height);
+        return new Vector2Int(x, y);
+      }
+    }
+
   }
 }

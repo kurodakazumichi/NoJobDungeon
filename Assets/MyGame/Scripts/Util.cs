@@ -26,4 +26,19 @@ public static class Util
 		}
 	}
 
+  static public void MapByRect(RectInt rect, System.Func<int, int, bool> cb)
+  {
+    bool isBreak = false;
+		for (int x = rect.x; x < rect.x + rect.width; ++x)
+		{
+			for (int y = rect.y; y < rect.y + rect.height; ++y)
+			{
+        isBreak = cb(x, y);
+				
+        if (isBreak) break;
+			}
+      if (isBreak) break;
+		}
+  }
+
 }
