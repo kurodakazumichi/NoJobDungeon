@@ -27,7 +27,6 @@ namespace Singleton
         Destroy(this);
         return;
       }
-      DontDestroyOnLoad(this.gameObject);
     }
   }
 }
