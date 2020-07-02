@@ -50,18 +50,17 @@ namespace Dungeon
 
 		private void Create()
 		{
-			int x = Random.Range(2, 5);
-			int y = Random.Range(2, 5);
+			int x = Random.Range(2, 6);
+			int y = Random.Range(2, 4);
 			float r = Random.Range(0f, 1f);
 
 			new Algorithm().Make(this, x, y, r);
 		}
 
-
-
 		private void OnGUI()
 		{
 			GUIStyle styleWall = new GUIStyle();
+      GUIStyle styleWall2 = new GUIStyle();
 			GUIStyle styleAisle = new GUIStyle();
 			GUIStyle styleAisleCandidate = new GUIStyle();
 			GUIStyle styleRoomCandidate = new GUIStyle();
@@ -69,6 +68,7 @@ namespace Dungeon
 
 			GUIStyle style = null;
 			styleWall.normal.textColor = Color.black;
+      styleWall2.normal.textColor = Color.white;
 			styleAisle.normal.textColor = Color.gray;
 			styleAisleCandidate.normal.textColor = Color.magenta;
 			styleRoomCandidate.normal.textColor = Color.cyan;
@@ -76,7 +76,17 @@ namespace Dungeon
 
 			this.Map((int x, int y, Tile tile) =>
 			{
-				if ((tile & Tile.Wall) == Tile.Wall) style = styleWall;
+				if ((tile & Tile.Wall) == Tile.Wall){
+          if (x % 10 == 0 && y % 10 == 0)
+          {
+            style = styleWall2;
+          }
+
+          else
+          {
+            style = styleWall;
+          }
+        } 
 				if ((tile & Tile.AisleCandidate) == Tile.AisleCandidate) style = styleAisleCandidate;
 				if ((tile & Tile.RoomCandidate) == Tile.RoomCandidate) style = styleRoomCandidate;
 				if ((tile & Tile.Aisle) == Tile.Aisle) style = styleAisle;

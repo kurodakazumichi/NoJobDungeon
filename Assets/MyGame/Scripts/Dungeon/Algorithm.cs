@@ -54,12 +54,12 @@ namespace Dungeon
 		/// <summary>
 		/// 部屋予定地のエリア情報
 		/// </summary>
-		private List<RectInt> reservedRooms;
+		private RectInt[,] reservedRooms;
 
 		/// <summary>
     /// 部屋のエリア情報
     /// </summary>
-		private List<RectInt> rooms;
+		private RectInt[,] rooms;
 
     /// <summary>
     /// 通路を繋げる処理中に使用するフラグ変数
@@ -79,8 +79,6 @@ namespace Dungeon
 			this.chips         = new BitFlag[Dungeon.Define.WIDTH, Dungeon.Define.HEIGHT];
 			this.splitPointsX  = new List<int>();
 			this.splitPointsY  = new List<int>();
-			this.reservedRooms = new List<RectInt>();
-			this.rooms         = new List<RectInt>();
 
       this.flagForConnectingAisles = false;
 		}
@@ -93,6 +91,8 @@ namespace Dungeon
 			// ダンジョンの分割数を設定、最低でも1x1になるようにフィルター
 			this.size.Set(Mathf.Max(1, sizeX), Mathf.Max(1, sizeY));
 			this.roomMakingRate = Mathf.Max(0, Mathf.Min(1f, rate));
+      this.reservedRooms = new RectInt[this.size.x, this.size.y];
+      this.rooms         = new RectInt[this.size.x, this.size.y];
 
 			// 準備
 			this.Prepare();
@@ -213,64 +213,67 @@ namespace Dungeon
     /// </summary>
 		private void MakeReservedRoom()
     {
-			for(int y = 0; y < this.size.y; ++y)
+			this.MapForSize((int x, int y, int _) =>
       {
-				for(int x = 0; x < this.size.x; ++x)
-        {
-					int x1 = this.splitPointsX[x]   + 2;
-					int x2 = this.splitPointsX[x+1] - 2;
-					int y1 = this.splitPointsY[y]   + 2;
-					int y2 = this.splitPointsY[y+1] - 2;
-					int w  = x2 - x1 + 1;
-					int h  = y2 - y1 + 1;
+				int x1 = this.splitPointsX[x]   + 2;
+				int x2 = this.splitPointsX[x+1] - 2;
+				int y1 = this.splitPointsY[y]   + 2;
+				int y2 = this.splitPointsY[y+1] - 2;
+				int w  = x2 - x1 + 1;
+				int h  = y2 - y1 + 1;
 
-					// ルーム予定地のx,y座標、幅高さを決定
-					RectInt room = new RectInt(x1, y1, w, h);
-					this.reservedRooms.Add(room);
-        }
-      }
+				// ルーム予定地のx,y座標、幅高さを決定
+				RectInt room = new RectInt(x1, y1, w, h);
+				this.reservedRooms[x, y] = room;
+      });
+
     }
 
-		private int MinRoomCount
+
+
+    private RectInt CreateRoomByRect(RectInt area)
     {
-			get
-      {
-				return Mathf.Max(1, this.size.x * this.size.y / 2);
-      }
-    }
+      // 部屋なしの場合はRectIntの中見が全て0
+      var room = new RectInt();
 
+			// 部屋のサイズをランダムに決める(部屋予定地に収まるように)
+			room.width  = Random.Range(Define.MIN_ROOM_SIZE, area.width);
+			room.height = Random.Range(Define.MIN_ROOM_SIZE, area.height);
+
+			// 部屋の位置をランダムに決める。(部屋予定地に収まるように)
+			room.x      = Random.Range(area.xMin, area.xMax - room.width);
+			room.y      = Random.Range(area.yMin, area.yMax - room.height);
+      
+      return room;
+    }
 		/// <summary>
     /// 部屋予定地の中に部屋を作る。
-    /// 部屋は最低でも１部屋作られる。
     /// </summary>
 		private void MakeRoom()
     {
-			int roomCount = 0;
-
-			// 部屋予定地に部屋を作成する
-			this.reservedRooms.ForEach((RectInt area) =>
+      // 縦列に１つ部屋を作る
+      for(int x = 0; x < this.size.x; ++x)
       {
-				// 部屋なしの場合はRectIntの中見が全て0
-				RectInt room = new RectInt(0, 0, 0, 0);
+        int y = Random.Range(0, this.size.y);
+        this.rooms[x, y] = this.CreateRoomByRect(this.reservedRooms[x, y]);
+      }
 
+			// 残りの空間にランダムで部屋を作成する
+      this.MapForSize((int x, int y, int _) =>
+      {
+        // ランダムで部屋を作るかどうか決定
+        if (this.roomMakingRate < Random.Range(0f, 1f)) return;
 
+        // 既に部屋があったらスキップ
+        if (HasRoom(x, y)) return;
 
-				// 部屋が１個以下
-				if (roomCount < this.MinRoomCount || Random.Range(0f, 1f) < this.roomMakingRate)
-        {
-					// 部屋のサイズをランダムに決める(部屋予定地に収まるように)
-					room.width  = Random.Range(Define.MIN_ROOM_SIZE, area.width);
-					room.height = Random.Range(Define.MIN_ROOM_SIZE, area.height);
-
-					// 部屋の位置をランダムに決める。(部屋予定地に収まるように)
-					room.x      = Random.Range(area.xMin, area.xMax - room.width);
-					room.y      = Random.Range(area.yMin, area.yMax - room.height);
-					++roomCount;
-        }
-
-				this.rooms.Add(room);
+        this.rooms[x, y] = this.CreateRoomByRect(this.reservedRooms[x, y]);
       });
+    }
 
+    private bool HasRoom(int x, int y)
+    {
+      return this.IsEnableAsRoom(this.rooms[x, y]);
     }
 
 		/// <summary>
@@ -278,9 +281,10 @@ namespace Dungeon
     /// </summary>
 		private void MarkupRoom()
     {
-			this.rooms.ForEach((RectInt room) => {
-				this.SetChipsByRect(room, (uint)Flags.Room);
-			});
+      this.MapForRoom((int x, int y, RectInt room) =>
+      {
+        this.SetChipsByRect(room, (uint)Flags.Room);
+      });
     }
 
 		/// <summary>
@@ -380,25 +384,33 @@ namespace Dungeon
     /// </summary>
 		private void MakeAisleBetweenForY()
     {
+      int count = -1;
+
 			this.splitPointsX.ForEach((int x) =>
       {
-				// Y方向に通路を探す
-				var found = LookForChipsY(x, (uint)Flags.Aisle);
+        count++;
 
-				// 通路が１つもなければスキップする
-				if (found.Count == 0) return;
+				// 部屋と通路の合流地点を探す(Y方向)
+				var found = LookForChipsY(x, (uint)Flags.Confluence);
 
-				// 通路が１つだけあった場合、交差点を含めて探し直す
-				if (found.Count == 1)
+				// 合流地点が１つ以下ならスキップ
+				if (found.Count <= 1) return;
+
+        // 合流地点が奇数の場合は最初と最後の地点を結ぶ
+        if (found.Count % 2 == 1 || count % 2 == 1)
         {
-					found = LookForChipsY(x,  (uint)(Flags.Aisle|Flags.Cross));
-
-					// 先頭と末尾にかならずCrossが含まれるのでそれは削除しておく。
-					found.RemoveAt(0);
-					found.RemoveAt(found.Count - 1);
+          this.AddChipsY(x, found.First(), found.Last(), (uint)Flags.Aisle);
+          return;
         }
 
-				this.AddChipsY(x, found.First(), found.Last(), (uint)Flags.Aisle);
+        // 合流地点が偶数、かつ偶数列の場合
+        for (int i = 0; i < found.Count; i+=2)
+        {
+          this.AddChipsY(x, found[i], found[i+1], (uint)Flags.Aisle);
+        }
+        
+ 
+				
       });
     }
 
@@ -583,7 +595,7 @@ namespace Dungeon
 		private void MapForRoom(System.Action<int, int, RectInt> cb) {
 			this.MapForSize((int x, int y, int index) =>
       {
-				var room = this.rooms[index];
+				var room = this.rooms[x, y];
 				if (this.IsEnableAsRoom(room) == false) return;
 				cb(x, y, room);
       });
