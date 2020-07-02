@@ -25,15 +25,45 @@ public static class Util
     }
   }
 
+  /// <summary>
+  /// ２次元ループ処理(Action版)
+  /// </summary>
+  static public void Loop2D(int x, int y, System.Action<int, int> cb)
+  {
+    for(int ry = 0; ry < y; ++y) {
+      for (int rx = 0; rx < x; ++x) {
+        cb(x, y);
+      }
+    }
+  }
+
+  /// <summary>
+  /// ２次元ループ処理(Func版)
+  /// </summary>
+  static public void Loop2D(int x, int y, System.Func<int, int, bool> cb)
+  {
+    bool isBreak = false;
+
+    for(int ry = 0; ry < y; ++y) {
+      for (int rx = 0; rx < x; ++x) 
+      {
+        isBreak = cb(x, y);
+
+        if (isBreak) break;
+      }
+
+      if(isBreak) break;
+    }
+  }
 
   /// <summary>
   /// Rectを元にした二次元ループ処理(Action版)
   /// </summary>
   static public void LoopByRect(RectInt rect, System.Action<int, int> cb)
 	{
-		for (int x = rect.x; x < rect.x + rect.width; ++x) 
+		for (int y = rect.y; y < rect.y + rect.height; ++y) 
     {
-			for (int y = rect.y; y < rect.y + rect.height; ++y) {
+			for (int x = rect.x; x < rect.x + rect.width; ++x) {
 				cb(x, y);
 			}
 		}
@@ -47,9 +77,9 @@ public static class Util
   {
     bool isBreak = false;
 
-		for (int x = rect.x; x < rect.x + rect.width; ++x)
+		for (int y = rect.y; y < rect.y + rect.height; ++y) 
 		{
-			for (int y = rect.y; y < rect.y + rect.height; ++y)
+			for (int x = rect.x; x < rect.x + rect.width; ++x)
 			{
         isBreak = cb(x, y);
 				
@@ -59,5 +89,4 @@ public static class Util
       if (isBreak) break;
 		}
   }
-
 }

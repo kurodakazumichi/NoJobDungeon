@@ -108,15 +108,13 @@ namespace Dungeon
       return hasEmpty;
     }
 
+    //-------------------------------------------------------------------------
+    // その他
 		private void Map(System.Action<int, int, Tile> cb)
 		{
-			for (int x = 0; x < Define.WIDTH; x++)
-			{
-				for (int y = 0; y < Define.HEIGHT; y++)
-				{
-					cb(x, y, this.tiles[x, y]);
-				}
-			}
+      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
+        cb(x, y, this.tiles[x, y]);
+      });
 		}
 
     //-------------------------------------------------------------------------
