@@ -57,7 +57,7 @@ namespace Dungeon {
     /// <summary>
     /// 部屋のエリア情報
     /// </summary>
-    private RectInt[,] rooms;
+    private Room[,] rooms;
 
     /// <summary>
     /// 通路を繋げる処理中に使用するフラグ変数
@@ -137,7 +137,11 @@ namespace Dungeon {
       this.splitPointsY.Clear();
 
       this.reservedRooms = new RectInt[this.size.x, this.size.y];
-      this.rooms = new RectInt[this.size.x, this.size.y];
+      this.rooms = new Room[this.size.x, this.size.y];
+
+      MapForSize((int x, int y) => {
+        this.rooms[x, y] = new Room();
+      });
     }
 
     /// <summary>
@@ -270,8 +274,8 @@ namespace Dungeon {
     /// </summary>
     private void MarkupRoom()
     {
-      MapForRoom((int rx, int ry, RectInt room) => {
-        Util.MapByRect(room, (int x, int y) => {
+      MapForRoom((int rx, int ry, Room room) => {
+        Util.MapByRect(room.Area, (int x, int y) => {
           this.chips[x, y].Set((uint)Flags.Room);
         });
       });
@@ -283,7 +287,7 @@ namespace Dungeon {
     /// </summary>
     private void MakeAisleLeft()
     {
-      MapForRoom((int rx, int ry, RectInt room) => {
+      MapForRoom((int rx, int ry, Room room) => {
         // 左端の部屋は左方向の通路を伸ばさない。
         if (rx == 0) return;
 
@@ -312,7 +316,7 @@ namespace Dungeon {
     /// </summary>
     private void MakeAisleRight()
     {
-      this.MapForRoom((int rx, int ry, RectInt room) => {
+      this.MapForRoom((int rx, int ry, Room room) => {
         // 右端の部屋は右方向の通路を作らない。
         if (rx == this.size.x - 1) return;
 
@@ -341,7 +345,7 @@ namespace Dungeon {
     /// </summary>
     private void MakeAisleUp()
     {
-      this.MapForRoom((int rx, int ry, RectInt room) => {
+      this.MapForRoom((int rx, int ry, Room room) => {
         // 上端の部屋は上方向の通路を作らない
         if (ry == 0) return;
 
@@ -373,7 +377,7 @@ namespace Dungeon {
     /// </summary>
     private void MakeAisleDown()
     {
-      this.MapForRoom((int rx, int ry, RectInt room) => {
+      this.MapForRoom((int rx, int ry, Room room) => {
         // 下端の部屋からは下方向の通路を伸ばさない。
         if (ry == this.size.y - 1) return;
 
@@ -481,17 +485,25 @@ namespace Dungeon {
     /// </summary>
     private void DeployToStage(Stage stage)
     {
+      stage.Reset();
+
+      // マップチップを展開
       this.MapForChip((int x, int y, BitFlag flag) => {
 
         if (flag.Contain((uint)Flags.Wall)) {
-          stage.Set(x, y, Tile.Wall);
+          stage.Set(x, y, Tiles.Wall);
         }
         if (flag.Contain((uint)Flags.Room)) {
-          stage.Set(x, y, Tile.Room);
+          stage.Set(x, y, Tiles.Room);
         }
         if (flag.Contain((uint)Flags.Aisle)) {
-          stage.Set(x, y, Tile.Aisle);
+          stage.Set(x, y, Tiles.Aisle);
         }
+      });
+
+      // 部屋を登録
+      this.MapForRoom((int x, int y, Room room) => {
+        stage.AddRoom(room.Area);
       });
     }
 
@@ -516,28 +528,15 @@ namespace Dungeon {
       }
     }
 
-    private void MapForRoom(System.Action<int, int, RectInt> cb)
+    private void MapForRoom(System.Action<int, int, Room> cb)
     {
       MapForSize((int x, int y) => {
         var room = this.rooms[x, y];
 
-        if (IsEnableAsRoom(room)) {
+        if (room.isEnable) {
           cb(x, y, room);
         }
       });
-    }
-
-    /// <summary>
-    /// 部屋として有効かどうか
-    /// </summary>
-    private bool IsEnableAsRoom(RectInt room)
-    {
-      if (room.x == 0) return false;
-      if (room.y == 0) return false;
-      if (room.width == 0) return false;
-      if (room.height == 0) return false;
-
-      return true;
     }
 
     /// <summary>
@@ -660,7 +659,7 @@ namespace Dungeon {
     /// 矩形情報に収まるように部屋の位置、大きさを決定し矩形情報を返す。
     /// </summary>
     /// <param name="area">部屋作成が可能な領域</param>
-    private RectInt CreateRoomByRect(RectInt area)
+    private Room CreateRoomByRect(RectInt area)
     {
       // 部屋のサイズをランダムに決める(部屋予定地に収まるように)
       int width = Random.Range(Define.MIN_ROOM_SIZE, area.width);
@@ -670,7 +669,7 @@ namespace Dungeon {
       int x = Random.Range(area.xMin, area.xMax - width);
       int y = Random.Range(area.yMin, area.yMax - height);
 
-      return new RectInt(x, y, width, height);
+      return new Room(x, y, width, height);
     }
 
     /// <summary>
@@ -678,7 +677,7 @@ namespace Dungeon {
     /// </summary>
     private bool ExistsRoom(int x, int y)
     {
-      return this.IsEnableAsRoom(this.rooms[x, y]);
+      return this.rooms[x, y].isEnable;
     }
 
     //-------------------------------------------------------------------------
@@ -781,7 +780,7 @@ namespace Dungeon {
     /// <summary>
     /// デバッグ表示
     /// </summary>
-    public void _drawDebug()
+    public void OnGUI()
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sRoom = new GUIStyle();

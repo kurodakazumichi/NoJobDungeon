@@ -4,57 +4,57 @@ using UnityEngine;
 
 namespace Dungeon
 {
-	public enum Tile
+  /// <summary>
+  /// ダンジョンステージクラス
+  /// </summary>
+	public class Stage
 	{
-		Wall   = 1 << 0,
-		Room   = 1 << 1,
-		Aisle  = 1 << 2,
-		Player = 1 << 3,
-		Friend = 1 << 4,
-		Enemy  = 1 << 5,
-		Item   = 1 << 6,
-		Trap   = 1 << 7,
-	}
-
-	public class Stage : MonoBehaviour
-	{
-
+    /// <summary>
+    /// ステージ配列
+    /// </summary>
 		private Tile[,] tiles;
-		private List<RectInt> rooms;
 
-    private Algorithm algorithm;
+    /// <summary>
+    /// ルームリスト
+    /// </summary>
+		private List<Room> rooms;
 
-		void Awake()
-		{
-			this.Init();
-		}
-
-		// Use this for initialization
-		void Start()
-		{
-			this.Create();
-		}
-
-		public void Set(int x, int y, Tile tile)
+    //-------------------------------------------------------------------------
+    public Stage()
     {
-			this.tiles[x, y] = tile;
+      this.tiles = new Tile[Define.WIDTH, Define.HEIGHT];
+
+      Map((int x, int y, Tile _) => {
+        this.tiles[x, y] = new Tile();
+      });
+
+      this.Reset();
     }
 
-		private void Init()
-		{
-			this.tiles = new Tile[Define.WIDTH, Define.HEIGHT];
-			this.rooms = new List<RectInt>();
-      this.algorithm = new Algorithm();
-		}
+    public void Reset()
+    {
+		  Map((int x, int y, Tile tile) => {
+        tile.Reset();
+      });
 
-		private void Create()
-		{
-			int x = Random.Range(2, 6);
-			int y = Random.Range(2, 4);
-			float r = Random.Range(0f, 1f);
+			this.rooms = new List<Room>();
+    }
 
-			algorithm.Make(this, x, y, r);
-		}
+    public void AddRoom(RectInt area)
+    {
+      this.rooms.Add(new Room(area));
+    }
+
+		public void Set(int x, int y, Tiles tile)
+    {
+			this.tiles[x, y].Set(tile);
+    }
+
+    public int RoomCount {
+      get { return this.rooms.Count; }
+    }
+
+
 
 		private void Map(System.Action<int, int, Tile> cb)
 		{
@@ -72,30 +72,8 @@ namespace Dungeon
     //-------------------------------------------------------------------------
     private bool _toggleDetail = true;
 
-    private void OnGUI()
+    public void OnGUI()
     {
-			if (GUI.Button(new Rect(0, 0, 100, 20), "create"))
-			{
-				this.Init();
-				this.Create();
-			}
-
-      this._toggleDetail = GUI.Toggle(
-        new Rect(100, 0, 100, 20), 
-        this._toggleDetail, 
-        "Detail"
-      );
-
-      if (this._toggleDetail) {
-        this.algorithm._drawDebug();
-      } else {
-        this._drawDebug();
-      }
-    }
-
-
-    private void _drawDebug()
-		{
 			GUIStyle sWall = new GUIStyle();
 			GUIStyle sAisle = new GUIStyle();
 			GUIStyle sRoom = new GUIStyle();
@@ -107,13 +85,13 @@ namespace Dungeon
 
 			this.Map((int x, int y, Tile tile) =>
 			{
-				if ((tile & Tile.Wall) == Tile.Wall)   style = sWall;
-				if ((tile & Tile.Aisle) == Tile.Aisle) style = sAisle;
-				if ((tile & Tile.Room) == Tile.Room)   style = sRoom;
+				if (tile.IsWall) style = sWall;
+				if (tile.IsAisle) style = sAisle;
+				if (tile.IsRoom)  style = sRoom;
 
 				GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
 			});
-		}
+    }
 
     #endif
   }
