@@ -8,7 +8,7 @@ namespace Scene {
   /// <summary>
   /// ダンジョンシーン
   /// </summary>
-  public class Dungeon : MonoBehaviour
+  public class DungeonScene : MonoBehaviour
   {
     enum Phase {
       None,
