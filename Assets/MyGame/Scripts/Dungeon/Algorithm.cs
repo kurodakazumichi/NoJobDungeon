@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using MyExtension;
+
 
 namespace Dungeon
 {
@@ -15,9 +16,9 @@ namespace Dungeon
 			Wall          = 1 << 0, // 壁
 			Room          = 1 << 1, // 部屋
 			Aisle         = 1 << 2, // 通路
-			ReservedAisle = 1 << 3, // 通路予定
-			Cross         = 1 << 4, // 交差点
-			Confluence    = 1 << 5, // 合流地点
+			ReservedAisle = 1 << 3, // 通路予定地
+			Cross         = 1 << 4, // 交差点(通路予定地の交差地点)
+			Confluence    = 1 << 5, // 合流地点(部屋から伸ばす通路と通路予定地の合流地点)
 		}
 
     //-------------------------------------------------------------------------
@@ -64,7 +65,7 @@ namespace Dungeon
     /// <summary>
     /// 通路を繋げる処理中に使用するフラグ変数
     /// </summary>
-		private bool flagForConnectingAisles;
+		private bool aisleCreationFlag;
 
     #endregion
 
@@ -80,7 +81,7 @@ namespace Dungeon
 			this.splitPointsX  = new List<int>();
 			this.splitPointsY  = new List<int>();
 
-      this.flagForConnectingAisles = false;
+      this.aisleCreationFlag = false;
 		}
 
 		//-------------------------------------------------------------------------
@@ -91,54 +92,63 @@ namespace Dungeon
 			// ダンジョンの分割数を設定、最低でも1x1になるようにフィルター
 			this.size.Set(Mathf.Max(1, sizeX), Mathf.Max(1, sizeY));
 			this.roomMakingRate = Mathf.Max(0, Mathf.Min(1f, rate));
-      this.reservedRooms = new RectInt[this.size.x, this.size.y];
-      this.rooms         = new RectInt[this.size.x, this.size.y];
+
+      // 初期化
+      Init();
 
 			// 準備
-			this.Prepare();
+			Prepare();
 
-			// 空間分割
-			this.SplitChipsByXDirection();
-			this.SplitChipsByYDirection();
+			// マップチップ配列を分割
+			SplitChipsX();
+			SplitChipsY();
 
 			// 通路予定地を埋める
-			this.MarkupChipsWithReservedAisle();
+			MarkupChipsWithReservedAisle();
 
 			// ルームスペース確保
-			this.MakeReservedRoom();
+			MakeReservedRoom();
 
 			// ルーム作成
-			this.MakeRoom();
-			this.MarkupRoom();
+			MakeRoom();
+			MarkupRoom();
 
 			// 通路作成(上下左右)
-			this.MakeAisleLeft();
-			this.MakeAisleRight();
-			this.MakeAisleUp();
-			this.MakeAisleDown();
+			MakeAisleLeft();
+			MakeAisleRight();
+			MakeAisleUp();
+			MakeAisleDown();
 
 			// 通路を繋げる
-			this.MakeAisleBetweenForY();
-			this.MakeAisleBetweenForX();
+			ConnectAisleY();
+			ConnectAisleX();
 
 			// 不要な通路を消す
-			this.DeleteUselessAisle();
-
-			// 整理
-			this.Cleaning();
+			DeleteUselessAisle();
 
 			// ステージに内容を展開する
-			this.DeployToStage(stage);
+			DeployToStage(stage);
 		}
 
+    /// <summary>
+    /// メンバの初期化
+    /// </summary>
+    private void Init()
+    {
+      this.aisleCreationFlag = false;
+      this.splitPointsX.Clear();
+      this.splitPointsY.Clear();
+
+      this.reservedRooms = new RectInt[this.size.x, this.size.y];
+      this.rooms         = new RectInt[this.size.x, this.size.y];
+    }
 
 		/// <summary>
     /// ステージを生成する準備として、まずchipsをFlags.Wallで埋める。
     /// </summary>
 		private void Prepare()
     {
-			this.Map((int x, int y, BitFlag _) =>
-			{
+			MapForChip((int x, int y, BitFlag _) => {
 				this.chips[x, y].Set((uint)Flags.Wall);
 			});
 		}
@@ -146,14 +156,15 @@ namespace Dungeon
 		/// <summary>
     /// ステージをX方向に分割する位置を決定する
     /// </summary>
-		private void SplitChipsByXDirection()
+		private void SplitChipsX()
     {
+      // 均等分割なので単純に幅を分割数Xで割る
 			int width = Define.WIDTH  / this.size.x;
 
+      // 縦に分割するx座標リストを作成
 			this.splitPointsX.Add(1);
 
-			for(int i = 1; i < this.size.x; ++i)
-			{
+			for(int i = 1; i < this.size.x; ++i) {
 				this.splitPointsX.Add(i * width);
 			}
 
@@ -163,14 +174,15 @@ namespace Dungeon
 		/// <summary>
     /// ステージをY方向に分割する位置を決定する
     /// </summary>
-		private void SplitChipsByYDirection()
+		private void SplitChipsY()
     {
+      // 均等分割なので単純に高さを分割数Yで割る
 			int width = Define.HEIGHT / this.size.y;
 
+      // 横に分割するy座標リストを作成
 			this.splitPointsY.Add(1);
 
-			for(int i = 1; i < this.size.y; ++i)
-      {
+			for(int i = 1; i < this.size.y; ++i) {
 				this.splitPointsY.Add(i * width);
       }
 
@@ -187,7 +199,10 @@ namespace Dungeon
       {
 				int y1 = 1;
 				int y2 = Define.HEIGHT - 2;
-				this.SetChipsY(x, y1, y2, (uint)Flags.ReservedAisle);
+
+        Util.MapByRange(y1, y2 + 1, (int y) => {
+          this.chips[x, y].On((uint)Flags.ReservedAisle);
+        });
       });
 
 			// X方向の処理
@@ -195,7 +210,10 @@ namespace Dungeon
       {
 				int x1 = 1;
 				int x2 = Define.WIDTH - 2;
-				this.SetChipsX(y, x1, x2, (uint)Flags.ReservedAisle);
+
+        Util.MapByRange(x1, x2 + 1, (int x) => {
+          this.chips[x, y].On((uint)Flags.ReservedAisle);
+        });
       });
 
 			// 通路予定地が交差するポイントにも印をつける。
@@ -213,7 +231,7 @@ namespace Dungeon
     /// </summary>
 		private void MakeReservedRoom()
     {
-			this.MapForSize((int x, int y, int _) =>
+			this.MapForSize((int x, int y) =>
       {
 				int x1 = this.splitPointsX[x]   + 2;
 				int x2 = this.splitPointsX[x+1] - 2;
@@ -229,51 +247,32 @@ namespace Dungeon
 
     }
 
-
-
-    private RectInt CreateRoomByRect(RectInt area)
-    {
-      // 部屋なしの場合はRectIntの中見が全て0
-      var room = new RectInt();
-
-			// 部屋のサイズをランダムに決める(部屋予定地に収まるように)
-			room.width  = Random.Range(Define.MIN_ROOM_SIZE, area.width);
-			room.height = Random.Range(Define.MIN_ROOM_SIZE, area.height);
-
-			// 部屋の位置をランダムに決める。(部屋予定地に収まるように)
-			room.x      = Random.Range(area.xMin, area.xMax - room.width);
-			room.y      = Random.Range(area.yMin, area.yMax - room.height);
-      
-      return room;
-    }
 		/// <summary>
     /// 部屋予定地の中に部屋を作る。
     /// </summary>
 		private void MakeRoom()
     {
-      // 縦列に１つ部屋を作る
+      // 部屋が存在しない列が出来ると部屋を繋げるのが大変になるので
+      // 必ず縦列に１つ部屋を作る。
+      // 4x2に分割されている場合だと、最低でも4つは部屋が出来る事になる。
       for(int x = 0; x < this.size.x; ++x)
       {
         int y = Random.Range(0, this.size.y);
-        this.rooms[x, y] = this.CreateRoomByRect(this.reservedRooms[x, y]);
+        this.rooms[x, y] = CreateRoomByRect(this.reservedRooms[x, y]);
       }
 
-			// 残りの空間にランダムで部屋を作成する
-      this.MapForSize((int x, int y, int _) =>
+      // 部屋がない空間に対してランダムで部屋を生成する。
+      // これで多少ランダム性が生まれる。
+      this.MapForSize((int x, int y) =>
       {
+        // 既に部屋があったらスキップ
+        if (ExistsRoom(x, y)) return;
+
         // ランダムで部屋を作るかどうか決定
         if (this.roomMakingRate < Random.Range(0f, 1f)) return;
 
-        // 既に部屋があったらスキップ
-        if (HasRoom(x, y)) return;
-
-        this.rooms[x, y] = this.CreateRoomByRect(this.reservedRooms[x, y]);
+        this.rooms[x, y] = CreateRoomByRect(this.reservedRooms[x, y]);
       });
-    }
-
-    private bool HasRoom(int x, int y)
-    {
-      return this.IsEnableAsRoom(this.rooms[x, y]);
     }
 
 		/// <summary>
@@ -281,31 +280,42 @@ namespace Dungeon
     /// </summary>
 		private void MarkupRoom()
     {
-      this.MapForRoom((int x, int y, RectInt room) =>
+      MapForRoom((int rx, int ry, RectInt room) =>
       {
-        this.SetChipsByRect(room, (uint)Flags.Room);
+        Util.MapByRect(room, (int x, int y) => {
+          this.chips[x, y].Set((uint)Flags.Room);
+        });
       });
     }
+
 
 		/// <summary>
     /// 部屋から左方向への通路を伸ばす
     /// </summary>
 		private void MakeAisleLeft()
     {
-			this.MapForRoom((int sx, int sy, RectInt room) =>
+			MapForRoom((int rx, int ry, RectInt room) =>
       {
-				int x = room.xMin - 1;
+        // 左端の部屋は左方向の通路を伸ばさない。
+        if (rx == 0) return;
+
+        // 通路のY座標を決める
 				int y = Random.Range(room.yMin, room.yMax);
 
-        while (sx != 0)
-        {
-          var chip = this.chips[x, y];
+        // 通路のX座標(始点と終点)を求める。
+				int x2 = room.xMin - 1;
+        int x1 = SearchChipToLeft(x2, y, (uint)Flags.ReservedAisle);
 
-					this.SetAisleChipWhenMakeAisle(x, y, chip);
-          --x;
+        // 通路予定地が見つからなかったら終了
+        if (x1 < 0) return;
 
-          if (this.SatisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
-        }
+        // 部屋から通路予定地に通路を作成
+        Util.MapByRange(x1, x2 + 1, (int x) => { 
+          this.chips[x, y].On((uint)Flags.Aisle);
+        });
+
+        // 通路予定地と通路が合流したポイントをマークする
+        this.chips[x1, y].On((uint)Flags.Confluence);
       });
     }
 
@@ -314,20 +324,28 @@ namespace Dungeon
     /// </summary>
 		private void MakeAisleRight()
     {
-			this.MapForRoom((int sx, int sy, RectInt room) =>
+			this.MapForRoom((int rx, int ry, RectInt room) =>
       {
-				int x = room.xMax;
+        // 右端の部屋は右方向の通路を作らない。
+        if (rx == this.size.x - 1) return;
+
+        // 通路のY座標を決める
 				int y = Random.Range(room.yMin, room.yMax);
 
-				while (sx != this.size.x - 1)
-        {
-					var chip = this.chips[x, y];
+        // 通路のX座標(始点と終点)を求める。
+				int x1 = room.xMax;
+        int x2 = SearchChipToRight(x1, y, (uint)Flags.ReservedAisle);
 
-					this.SetAisleChipWhenMakeAisle(x, y, chip);
-					++x;
+        // 通路予定地が見つからなかったら終了
+        if (x2 < 0) return;
 
-					if (this.SatisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
-        }
+        // 部屋から通路予定地に通路を作成
+        Util.MapByRange(x1, x2 + 1, (int x) => { 
+          this.chips[x, y].On((uint)Flags.Aisle);
+        });
+
+        // 通路予定地と通路が合流したポイントをマークする
+        this.chips[x2, y].On((uint)Flags.Confluence);
       });
     }
 
@@ -336,22 +354,31 @@ namespace Dungeon
     /// </summary>
 		private void MakeAisleUp()
     {
-			this.MapForRoom((int sx, int sy, RectInt room) =>
+			this.MapForRoom((int rx, int ry, RectInt room) =>
       {
-				if (Random.Range(0f, 1f) < 0.5f) return;
+        // 上端の部屋は上方向の通路を作らない
+        if (ry == 0) return;
 
+        // 上方向の通路は50%の確立で作られる事にしておく。
+        if (Random.Range(0f, 1f) < 0.5f) return;
+
+        // 通路のX座標を決める
 				int x = Random.Range(room.xMin,  room.xMax);
-				int y = room.yMin - 1;
 
-				while(sy != 0)
-        {
-					var chip = this.chips[x, y];
+        // 通路のY座標(始点と終点)を求める。
+				int y2 = room.yMin - 1;
+        int y1 = SearchChipToUp(x, y2, (uint)Flags.ReservedAisle);
 
-					this.SetAisleChipWhenMakeAisle(x, y, chip);
-					--y;
+        // 通路予定地が見つからなかったら終了
+        if (y1 < 0) return;
 
-					if (this.SatisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
-        }
+        // 部屋から通路予定地に通路を作成
+        Util.MapByRange(y1, y2 + 1, (int y) => { 
+          this.chips[x, y].On((uint)Flags.Aisle);
+        });
+
+        // 通路予定地と通路が合流したポイントをマークする
+        this.chips[x, y1].On((uint)Flags.Confluence);
       });
     }
 
@@ -360,183 +387,114 @@ namespace Dungeon
     /// </summary>
 		private void MakeAisleDown()
     {
-			this.MapForRoom((int sx, int sy, RectInt room) =>
+			this.MapForRoom((int rx, int ry, RectInt room) =>
       {
+        // 下端の部屋からは下方向の通路を伸ばさない。
+        if (ry == this.size.y - 1) return;
+
+        // 下方向の通路は50%の確立で作られる事にしておく。
 				if (Random.Range(0, 1f) < 0.5f) return;
 
+        // 通路のX座標を決める
 				int x = Random.Range(room.xMin, room.xMax);
-				int y = room.yMax;
 
-				while(sy != this.size.y - 1)
-        {
-					var chip = this.chips[x, y];
+        // 通路のY座標(始点と終点)を求める。
+				int y1 = room.yMax;
+        int y2 = SearchChipToDown(x, y1, (uint)Flags.ReservedAisle);
 
-					this.SetAisleChipWhenMakeAisle(x, y, chip);
-					++y;
+        // 通路予定地が見つからなかったら終了
+        if (y2 < 0) return;
 
-					if (this.SatisfyConditionsToBreakTheAisleLoop(x, y, chip)) break;
-        }
+        // 部屋から通路予定地に通路を作成
+        Util.MapByRange(y1, y2 + 1, (int y) => { 
+          this.chips[x, y].On((uint)Flags.Aisle);
+        });
+
+        // 通路予定地と通路が合流したポイントをマークする
+        this.chips[x, y2].On((uint)Flags.Confluence);
       });
     }
 
 		/// <summary>
-    /// Y方向について、間の通路を作成する
+    /// Y方向について、通路を繋げる
+    /// このアルゴリズムではここの処理で全ての部屋が繋がるような道を作る。
     /// </summary>
-		private void MakeAisleBetweenForY()
+		private void ConnectAisleY()
     {
-      int count = -1;
-
-			this.splitPointsX.ForEach((int x) =>
+      this.splitPointsX.ForEach((int x, int index) =>
       {
-        count++;
-
 				// 部屋と通路の合流地点を探す(Y方向)
-				var found = LookForChipsY(x, (uint)Flags.Confluence);
+				var found = FindChipsY(x, (uint)Flags.Confluence);
 
 				// 合流地点が１つ以下ならスキップ
 				if (found.Count <= 1) return;
 
-        // 合流地点が奇数の場合は最初と最後の地点を結ぶ
-        if (found.Count % 2 == 1 || count % 2 == 1)
+        // 合流地点が奇数の場合、もしくは奇数列の場合は
+        // 最初と最後の地点を結ぶ。
+        // こうする事で到達できない部屋が作られなくなる(はず)
+        if (found.Count % 2 == 1 || index % 2 == 1)
         {
-          this.AddChipsY(x, found.First(), found.Last(), (uint)Flags.Aisle);
+          Util.MapByRange(found.First(), found.Last(), (int y) => {
+            this.chips[x, y].On((uint)Flags.Aisle);
+          });
           return;
         }
 
-        // 合流地点が偶数、かつ偶数列の場合
-        for (int i = 0; i < found.Count; i+=2)
+        // 合流地点が偶数の場合
+        for (int i = 0; i < found.Count; i+=2) 
         {
-          this.AddChipsY(x, found[i], found[i+1], (uint)Flags.Aisle);
+          Util.MapByRange(found[i], found[i+1], (int y) => {
+            this.chips[x, y].On((uint)Flags.Aisle);
+          });
         }
-        
- 
-				
       });
     }
 
 		/// <summary>
     /// X方向について、間の通路を作成する
+    /// Y方向の通路作成処理で全ての部屋は繋がるはずなので
+    /// X方向の通路はダンジョンのバリエーションを増やす方向で作成する。
     /// </summary>
-		private void MakeAisleBetweenForX()
+		private void ConnectAisleX()
     {
 			this.splitPointsY.ForEach((int y) =>
       {
-				var found = this.LookForChipsX(y, (uint)Flags.Confluence);
+        // 部屋と通路の合流地点を探す
+				var found = FindChipsX(y, (uint)Flags.Confluence);
 
 				found.ForEach((int x) =>
         {
-					this.flagForConnectingAisles = false;
-					this.ConnectAisleBetweenForX(x + 1, y);
+					this.aisleCreationFlag = false;
+					ProcConnectAisleX(x + 1, y);
         });
       });
     }
 
-		private void ConnectAisleBetweenForX(int x, int y)
-    {
-			var chip = this.chips[x, y];
 
-			if (chip.Contain((uint)Flags.Confluence))
-      {
-				this.flagForConnectingAisles = true;
-				return;
-      }
-
-			if (chip.Contain((uint)Flags.Cross))
-      {
-				if (x == Define.WIDTH - 2) return;
-
-				// 上下左右どこにもつながってない交差点なら繋げない
-				if (this.CountConnectedAisle(x, y) == 0)
-        {
-					return;
-        }
-
-				this.flagForConnectingAisles = (Random.Range(0f, 1f) < 0.2f);
-				if (this.flagForConnectingAisles)
-        {
-					this.chips[x, y].On((uint)Flags.Aisle);
-        }
-				return;
-      }
-
-			if (Define.WIDTH - 1 <= x) return;
-
-			this.ConnectAisleBetweenForX(x+1, y);
-
-			if (this.flagForConnectingAisles)
-      {
-				this.chips[x, y].On((uint)Flags.Aisle);
-      }
-    }
-
+    /// <summary>
+    /// 無駄な通路を消す。
+    ///
+    /// 合流地点の周囲に２つ以上の通路が確認できれば
+    /// その合流地点はどこかしらに繋がっているが
+    /// 合流地点の周囲に通路が1つしかない場合は無駄な道になっているので消す対象。
+    /// 
+    /// 縦方向に存在する合流地点は必ずどこかと繋がっているので
+    /// 確認するのは横方向の合流地点のみでよい。
+    /// </summary>
 		private void DeleteUselessAisle()
     {
 			this.splitPointsY.ForEach((int y) =>
       {
-				var found = this.LookForChipsX(y, (uint)Flags.Confluence);
+				var found = this.FindChipsX(y, (uint)Flags.Confluence);
 
 				// 合流地点の上下左右に繋がる通路があるかを見る
 				found.ForEach((int x) =>
         {
-					// 繋がる通路が１つしかないなら使えない通路なので消す
-					if (this.CountConnectedAisle(x, y) == 1)
-          {
-						this.DeleteUselessAnsle2(x, y);
+					// 周囲に通路が1つしかないなら無駄な通路なので消す。
+					if (this.CountAdjacencies(x, y, (uint)Flags.Aisle) == 1) {
+						this.ProcDeleteUselessAnsle(x, y);
           }
         });
-      });
-    }
-
-		private void DeleteUselessAnsle2(int x, int y)
-    {
-			var chip = this.chips[x, y];
-
-			// 部屋までたどり着いたら終了
-			if (chip.Contain((uint)Flags.Room)) return;
-
-			// 通路情報を消す
-			this.chips[x, y].Off((uint)Flags.Aisle);
-
-			// 上下左右を見に行く
-			if (this.chips[x, y + 1].Contain((uint)Flags.Aisle))
-      {
-				this.DeleteUselessAnsle2(x, y + 1);
-      }
-
-			if (this.chips[x, y - 1].Contain((uint)Flags.Aisle))
-      {
-				this.DeleteUselessAnsle2(x, y - 1);
-      }
-
-			if (this.chips[x + 1, y].Contain((uint)Flags.Aisle)){
-				this.DeleteUselessAnsle2(x + 1, y);
-			}
-
-			if (this.chips[x - 1, y].Contain((uint)Flags.Aisle)){
-				this.DeleteUselessAnsle2(x - 1, y);
-			}			
-
-    }
-
-		private void Cleaning()
-    {
-			Map((int x, int y, BitFlag _) =>
-      {
-				var chip = this.chips[x, y];
-
-				if (chip.Contain((uint)Flags.Room))
-        {
-					this.chips[x, y].Set((uint)Flags.Room);
-					return;
-        }
-
-				if (chip.Contain((uint)Flags.Aisle))
-        {
-					this.chips[x, y].Set((uint)Flags.Aisle);
-					return;
-        }
-
-				this.chips[x, y].Set((uint)Flags.Wall);
       });
     }
 
@@ -545,9 +503,9 @@ namespace Dungeon
     /// </summary>
 		private void DeployToStage(Stage stage)
     {
-			this.Map((int x, int y, BitFlag flag) => {
+			this.MapForChip((int x, int y, BitFlag flag) => {
 
-				if (flag.Is((uint)Flags.Wall))
+				if (flag.Contain((uint)Flags.Wall))
 				{
 					stage.Set(x, y, Tile.Wall);
         }
@@ -555,95 +513,44 @@ namespace Dungeon
         {
 					stage.Set(x, y, Tile.Room);
         }
-				if (flag.Contain((uint)Flags.ReservedAisle))
-        {
-					stage.Set(x, y, Tile.AisleCandidate);
-        }
 				if (flag.Contain((uint)Flags.Aisle))
         {
 					stage.Set(x, y, Tile.Aisle);
         }
-
 			});
     }
 
 		//-------------------------------------------------------------------------
     // Private Utility Methods
 
-		private void Map(System.Action<int, int, BitFlag> cb)
+		private void MapForChip(System.Action<int, int, BitFlag> cb)
 		{
-			for (int x = 0; x < Define.WIDTH; ++x)
-      {
-				for (int y = 0; y < Define.HEIGHT; ++y)
-        {
+			for (int x = 0; x < Define.WIDTH; ++x){
+				for (int y = 0; y < Define.HEIGHT; ++y){
 					cb(x, y, this.chips[x, y]);
         }
       }
 		}
 
-		private void MapForSize(System.Action<int, int, int> cb)
+		private void MapForSize(System.Action<int, int> cb)
     {
-			for(int y = 0; y < this.size.y; ++y)
-      {
-				for (int x = 0; x < this.size.x; ++x)
-        {
-					cb(x, y, y * this.size.x + x);
+			for (int y = 0; y < this.size.y; ++y) {
+				for (int x = 0; x < this.size.x; ++x) {
+					cb(x, y);
         }
       }
     }
 
-		private void MapForRoom(System.Action<int, int, RectInt> cb) {
-			this.MapForSize((int x, int y, int index) =>
+    private void MapForRoom(System.Action<int, int, RectInt> cb)
+    {
+      MapForSize((int x, int y) => 
       {
-				var room = this.rooms[x, y];
-				if (this.IsEnableAsRoom(room) == false) return;
-				cb(x, y, room);
+        var room = this.rooms[x, y];
+
+        if (IsEnableAsRoom(room)) {
+          cb(x, y, room);
+        }
       });
-		}
-
-
-		private void SetChipsByRect(RectInt rect, uint flag)
-		{
-			for (int x = rect.x; x < rect.x + rect.width; ++x)
-			{
-				for (int y = rect.y; y < rect.y + rect.height; ++y)
-				{
-					this.chips[x, y].Set(flag);
-				}
-			}
-		}
-
-		private void SetChipsY(int x, int fromY, int toY, uint chips)
-    {
-			for(int y = fromY; y <= toY; ++y)
-      {
-				this.chips[x, y].Set(chips);
-      }
-    }
-
-		private void SetChipsX(int y, int fromX, int toX, uint chips)
-    {
-			for(int x = fromX; x <= toX; ++x)
-      {
-				this.chips[x, y].Set(chips);
-      }
-    }
-
-		private void AddChipsY(int x, int fromY, int toY, uint chips)
-    {
-			for(int y = fromY; y <= toY; ++y)
-      {
-				this.chips[x, y].On(chips);
-      }
-    }
-
-
-		private void AddChipsX(int y, int fromX, int toX, uint chips)
-    {
-			for(int x = fromX; x <= toX; ++x)
-      {
-				this.chips[x, y].On(chips);
-      }
     }
 
 		/// <summary>
@@ -660,22 +567,68 @@ namespace Dungeon
     }
 
     /// <summary>
-    /// 指定した座標の周囲に通路がいくつあるか数える
+    /// 座標に隣接するflagsの数を数える。
     /// </summary>
-    /// <returns>隣接する通路の数</returns>
-    private int CountConnectedAisle(int x, int y)
+    /// <returns>隣接するflagsの数</returns>
+    private int CountAdjacencies(int x, int y, uint flags)
     {
       // 上下左右に2つ以上の通路がなければ無効
       int count = 0;
-			if (this.chips[x, y - 1].Contain((uint)Flags.Aisle)) ++count;
-			if (this.chips[x, y + 1].Contain((uint)Flags.Aisle)) ++count;
-			if (this.chips[x + 1, y].Contain((uint)Flags.Aisle)) ++count;
-			if (this.chips[x - 1, y].Contain((uint)Flags.Aisle)) ++count;
+			if (this.chips[x, y - 1].Contain(flags)) ++count;
+			if (this.chips[x, y + 1].Contain(flags)) ++count;
+			if (this.chips[x + 1, y].Contain(flags)) ++count;
+			if (this.chips[x - 1, y].Contain(flags)) ++count;
 
       return count;
     }
     
+    /// <summary>
+    /// 指定位置から左方向へ探索し、flagsに一致するチップの場所を返す。
+    /// 見つからなければ-1を返す。
+    /// </summary>
+    private int SearchChipToLeft(int x, int y, uint flags)
+    {
+      for(; 0 < x; --x) {
+        if (this.chips[x, y].Contain(flags)) return x;
+      }
+      return -1;
+    }
 
+    /// <summary>
+    /// 指定位置から右方向へ探索し、flagsに一致するチップの場所を返す。
+    /// 見つからなければ-1を返す。
+    /// </summary>
+    private int SearchChipToRight(int x, int y, uint flags)
+    {
+      for(; x < Define.WIDTH - 1; ++x) {
+        if (this.chips[x, y].Contain(flags)) return x;
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// 指定位置から上方向へ探索し、flagsに一致するチップの場所を返す。
+    /// 見つからなければ-1を返す。
+    /// </summary>
+    private int SearchChipToUp(int x, int y, uint flags)
+    {
+      for(; 0 < y; --y) {
+        if (this.chips[x, y].Contain(flags)) return y;
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// 指定位置から下方向へ探索し、flagsに一致するチップの場所を返す。
+    /// 見つからなければ-1を返す。
+    /// </summary>
+    private int SearchChipToDown(int x, int y, uint flags)
+    {
+      for(; y < Define.HEIGHT - 1; ++y) {
+        if (this.chips[x, y].Contain(flags)) return y;
+      }
+      return -1;
+    }
 
 		/// <summary>
     /// Y方向のチップ情報を見つける
@@ -683,7 +636,7 @@ namespace Dungeon
     /// <param name="x">指定したx列が走査の対象</param>
     /// <param name="chips">見つけたいチップ</param>
     /// <returns>該当するchipのY座標リスト</returns>
-		private List<int> LookForChipsY(int x, uint chips, bool isEither = true)
+		private List<int> FindChipsY(int x, uint chips, bool isEither = true)
     {
 			List<int> found = new List<int>();
 
@@ -708,7 +661,7 @@ namespace Dungeon
     /// <param name="y">指定したy行が操作の対象</param>
     /// <param name="chips">見つけたいchip</param>
     /// <returns>該当するchipのX座標リスト</returns>
-		private List<int> LookForChipsX(int y, uint chips, bool isEither = true)
+		private List<int> FindChipsX(int y, uint chips, bool isEither = true)
     {
 			List<int> found = new List<int>();
 
@@ -727,28 +680,175 @@ namespace Dungeon
 			return found;
     }
 
+
 		//-------------------------------------------------------------------------
-    // 部屋から通路を伸ばす際に使用する限定的な処理
+    // 部屋作成に関する処理
 
-		private bool SatisfyConditionsToBreakTheAisleLoop(int x, int y, BitFlag chip)
+    /// <summary>
+    /// 矩形情報に収まるように部屋の位置、大きさを決定し矩形情報を返す。
+    /// </summary>
+    /// <param name="area">部屋作成が可能な領域</param>
+    private RectInt CreateRoomByRect(RectInt area)
     {
-			if (chip.Contain((uint)Flags.ReservedAisle)) return true;
-			if (x <= 0) return true;
-			if (Define.WIDTH -1 <= x) return true;
-			if (y <= 0) return true;
-			if (Define.HEIGHT  - 1 <= y) return true;
+			// 部屋のサイズをランダムに決める(部屋予定地に収まるように)
+			int width  = Random.Range(Define.MIN_ROOM_SIZE, area.width);
+			int height = Random.Range(Define.MIN_ROOM_SIZE, area.height);
 
-			return false;
+			// 部屋の位置をランダムに決める。(部屋予定地に収まるように)
+			int x      = Random.Range(area.xMin, area.xMax - width);
+			int y      = Random.Range(area.yMin, area.yMax - height);
+      
+      return new RectInt(x, y, width, height);
     }
 
-		private void SetAisleChipWhenMakeAisle(int x, int y, BitFlag chip)
+    /// <summary>
+    /// 部屋が存在するかの判定
+    /// </summary>
+    private bool ExistsRoom(int x, int y)
     {
-			uint aisle = (uint)Flags.Aisle;
-			if (chip.Contain((uint)Flags.ReservedAisle))
+      return this.IsEnableAsRoom(this.rooms[x, y]);
+    }
+
+		//-------------------------------------------------------------------------
+    // 通路を繋げることに関する処理
+
+    /// <summary>
+    /// 指定された位置からX方向に通路を繋げていく再帰処理
+    /// 
+    /// [仕様]
+    /// #:壁, X:交差点, C:合流地点, 0:通路
+    /// 
+    /// ①合流地点から合流地点の場合はその間を通路化する
+    /// ###C########C####
+    /// ↓
+    /// ###C00000000C####
+    /// 
+    /// ②合流地点から交差点の間はランダムで通路化する
+    /// ###C########X####
+    /// ↓
+    /// ###C00000000X####
+    /// or
+    /// ###C########X####
+    /// </summary>
+		private void ProcConnectAisleX(int x, int y)
+    {
+			var chip = this.chips[x, y];
+
+      // 合流地点に到達したら通路作成フラグをON
+			if (chip.Contain((uint)Flags.Confluence))
       {
-				aisle |= (uint)Flags.Confluence;
+				this.aisleCreationFlag = true;
+				return;
       }
-			this.chips[x, y].On(aisle);
-		}
+
+      // 交差点に到達した場合
+			if (chip.Contain((uint)Flags.Cross))
+      {
+        // マップの右端の交差点の場合もあるので、その場合は無視する。
+				if (x == Define.WIDTH - 2) return;
+
+				// 上下左右どこにもつながってない交差点には繋げても意味ないので無視する。
+				if (CountAdjacencies(x, y, (uint)Flags.Aisle) == 0)
+        {
+					return;
+        }
+
+        // 20%の確率で通路作成フラグをONにする
+				this.aisleCreationFlag = (Random.Range(0f, 1f) < 0.2f);
+
+        // 通路作成
+				if (this.aisleCreationFlag) {
+					this.chips[x, y].On((uint)Flags.Aisle);
+        }
+				return;
+      }
+
+      // 右端に到達したら終了
+			if (Define.WIDTH - 1 <= x) return;
+
+      // 再帰処理
+			ProcConnectAisleX(x+1, y);
+
+      // 通路作成フラグがONだったら通路化する
+			if (this.aisleCreationFlag)
+      {
+				this.chips[x, y].On((uint)Flags.Aisle);
+      }
+    }
+
+
+    /// <summary>
+    /// 指定された位置から再帰的に通路を消す。
+		private void ProcDeleteUselessAnsle(int x, int y)
+    {
+			var chip = this.chips[x, y];
+
+			// 部屋までたどり着いたら終了
+			if (chip.Contain((uint)Flags.Room)) return;
+
+			// 通路情報を消す
+			this.chips[x, y].Off((uint)(Flags.Aisle|Flags.Confluence));
+
+			// 上下左右を見に行く
+			if (this.chips[x, y + 1].Contain((uint)Flags.Aisle)) {
+				ProcDeleteUselessAnsle(x, y + 1);
+      }
+
+			if (this.chips[x, y - 1].Contain((uint)Flags.Aisle)) {
+				ProcDeleteUselessAnsle(x, y - 1);
+      }
+
+			if (this.chips[x + 1, y].Contain((uint)Flags.Aisle)){
+				ProcDeleteUselessAnsle(x + 1, y);
+			}
+
+			if (this.chips[x - 1, y].Contain((uint)Flags.Aisle)){
+				ProcDeleteUselessAnsle(x - 1, y);
+			}			
+    }
+
+
+#if UNITY_EDITOR
+
+    /// <summary>
+    /// デバッグ表示
+    /// </summary>
+    public void _drawDebug()
+    {
+      GUIStyle sWall          = new GUIStyle();
+      GUIStyle sRoom          = new GUIStyle();
+      GUIStyle sAisle         = new GUIStyle();
+      GUIStyle sReservedAisle = new GUIStyle();
+      GUIStyle sConfluence    = new GUIStyle();
+      GUIStyle sCross         = new GUIStyle();
+
+      sWall.normal.textColor  = Color.black;
+      sRoom.normal.textColor  = Color.blue;
+      sAisle.normal.textColor = Color.white;
+      sReservedAisle.normal.textColor = Color.gray;
+      sConfluence.normal.textColor = Color.magenta;
+      sCross.normal.textColor = Color.cyan;
+
+      MapForChip((int x, int y, BitFlag chip) => 
+      {
+        GUIStyle style = null;
+
+        if (chip.Contain((uint)Flags.Wall))  style = sWall;
+        if (chip.Contain((uint)Flags.Room))  style = sRoom;
+        if (chip.Contain((uint)Flags.ReservedAisle)) style = sReservedAisle;
+        if (chip.Contain((uint)Flags.Aisle)) style = sAisle;
+        if (chip.Contain((uint)Flags.Confluence)) style = sConfluence;
+        if (chip.Contain((uint)Flags.Cross)) style = sCross;
+
+        if (style != null) {
+          GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
+        }
+
+      });
+    }
+#endif
+
 	}
+
+
 }

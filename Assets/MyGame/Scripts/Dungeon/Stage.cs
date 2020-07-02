@@ -16,8 +16,6 @@ namespace Dungeon
 		Enemy = 1 << 5,
 		Item = 1 << 6,
 		Trap = 1 << 7,
-		AisleCandidate = 1 << 10,
-		RoomCandidate = 1 << 11,
 	}
 
 	public class Stage : MonoBehaviour
@@ -25,6 +23,8 @@ namespace Dungeon
 
 		private Tile[,] tiles;
 		private List<RectInt> rooms;
+
+    private Algorithm algorithm;
 
 		void Awake()
 		{
@@ -46,6 +46,7 @@ namespace Dungeon
 		{
 			this.tiles = new Tile[Define.WIDTH, Define.HEIGHT];
 			this.rooms = new List<RectInt>();
+      this.algorithm = new Algorithm();
 		}
 
 		private void Create()
@@ -54,53 +55,7 @@ namespace Dungeon
 			int y = Random.Range(2, 4);
 			float r = Random.Range(0f, 1f);
 
-			new Algorithm().Make(this, x, y, r);
-		}
-
-		private void OnGUI()
-		{
-			GUIStyle styleWall = new GUIStyle();
-      GUIStyle styleWall2 = new GUIStyle();
-			GUIStyle styleAisle = new GUIStyle();
-			GUIStyle styleAisleCandidate = new GUIStyle();
-			GUIStyle styleRoomCandidate = new GUIStyle();
-			GUIStyle styleRoom = new GUIStyle();
-
-			GUIStyle style = null;
-			styleWall.normal.textColor = Color.black;
-      styleWall2.normal.textColor = Color.white;
-			styleAisle.normal.textColor = Color.gray;
-			styleAisleCandidate.normal.textColor = Color.magenta;
-			styleRoomCandidate.normal.textColor = Color.cyan;
-			styleRoom.normal.textColor = Color.blue;
-
-			this.Map((int x, int y, Tile tile) =>
-			{
-				if ((tile & Tile.Wall) == Tile.Wall){
-          if (x % 10 == 0 && y % 10 == 0)
-          {
-            style = styleWall2;
-          }
-
-          else
-          {
-            style = styleWall;
-          }
-        } 
-				if ((tile & Tile.AisleCandidate) == Tile.AisleCandidate) style = styleAisleCandidate;
-				if ((tile & Tile.RoomCandidate) == Tile.RoomCandidate) style = styleRoomCandidate;
-				if ((tile & Tile.Aisle) == Tile.Aisle) style = styleAisle;
-				if ((tile & Tile.Room) == Tile.Room) style = styleRoom;
-
-				GUI.Label(new Rect(x * 10, y * 10, 10, 10), "■", style);
-			});
-
-			if (GUI.Button(new Rect(0, 0, 100, 20), "create"))
-			{
-				this.Init();
-				this.Create();
-			}
-
+			algorithm.Make(this, x, y, r);
 		}
 
 		private void Map(System.Action<int, int, Tile> cb)
@@ -113,6 +68,55 @@ namespace Dungeon
 				}
 			}
 		}
-	}
 
+    //-------------------------------------------------------------------------
+    #if UNITY_EDITOR
+    //-------------------------------------------------------------------------
+    private bool _toggleDetail = true;
+
+    private void OnGUI()
+    {
+			if (GUI.Button(new Rect(0, 0, 100, 20), "create"))
+			{
+				this.Init();
+				this.Create();
+			}
+
+      this._toggleDetail = GUI.Toggle(
+        new Rect(100, 0, 100, 20), 
+        this._toggleDetail, 
+        "Detail"
+      );
+
+      if (this._toggleDetail) {
+        this.algorithm._drawDebug();
+      } else {
+        this._drawDebug();
+      }
+    }
+
+
+    private void _drawDebug()
+		{
+			GUIStyle sWall = new GUIStyle();
+			GUIStyle sAisle = new GUIStyle();
+			GUIStyle sRoom = new GUIStyle();
+
+			GUIStyle style = null;
+			sWall.normal.textColor  = Color.black;
+			sAisle.normal.textColor = Color.gray;
+			sRoom.normal.textColor  = Color.blue;
+
+			this.Map((int x, int y, Tile tile) =>
+			{
+				if ((tile & Tile.Wall) == Tile.Wall)   style = sWall;
+				if ((tile & Tile.Aisle) == Tile.Aisle) style = sAisle;
+				if ((tile & Tile.Room) == Tile.Room)   style = sRoom;
+
+				GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
+			});
+		}
+
+    #endif
+  }
 }
