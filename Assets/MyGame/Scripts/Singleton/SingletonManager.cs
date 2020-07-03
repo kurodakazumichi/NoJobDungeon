@@ -16,16 +16,19 @@ namespace Singleton {
       DontDestroyOnLoad(this.gameObject);
     }
 
-    public void Setup(string name, GameObject parent)
+    public SingletonManager Setup(string name, GameObject parent)
     {
       var go = new GameObject(name);
 
       switch(name) {
         case "DungeonManager": go.AddComponent<DungeonManager>(); break;
+        case "MapChipFactory": go.AddComponent<MapChipFactory>(); break;
         default: break;
       }
       
       go.transform.parent = parent.transform;
+
+      return this;
     }
   }
 }
