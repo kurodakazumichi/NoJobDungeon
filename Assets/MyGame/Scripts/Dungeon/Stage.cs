@@ -49,6 +49,11 @@ namespace Dungeon
     //-------------------------------------------------------------------------
     // タイル関連
 
+    public Tile[,] Tiles
+    {
+      get { return this.tiles; }
+    }
+
 		public void SetTileState(int x, int y, Tiles tile)
     {
 			this.tiles[x, y].Set(tile);
@@ -108,7 +113,7 @@ namespace Dungeon
 
     //-------------------------------------------------------------------------
     // その他
-		private void Map(System.Action<int, int, Tile> cb)
+		public void Map(System.Action<int, int, Tile> cb)
 		{
       Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         cb(x, y, this.tiles[x, y]);
