@@ -38,6 +38,9 @@ namespace Scene {
     private void BuildStagePhase()
     {
       DungeonManager.Instance.CreateStage();
+      PlayerManager.Instance.CreatePlayer();
+
+      
       this.phase = Phase.None;
     }
 
@@ -48,7 +51,8 @@ namespace Scene {
 
       SingletonManager.Instance
         .Setup("DungeonManager", system)
-        .Setup("MapChipFactory", system);
+        .Setup("MapChipFactory", system)
+        .Setup("PlayerManager" , system);
 
     }
   }

@@ -23,6 +23,7 @@ namespace Singleton {
       switch(name) {
         case "DungeonManager": go.AddComponent<DungeonManager>(); break;
         case "MapChipFactory": go.AddComponent<MapChipFactory>(); break;
+        case "PlayerManager" : go.AddComponent<PlayerManager>(); break;
         default: break;
       }
       

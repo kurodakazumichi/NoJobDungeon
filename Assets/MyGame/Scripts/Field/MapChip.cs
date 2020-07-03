@@ -29,11 +29,11 @@ namespace Field {
     void Awake()
     {
       this.sprites = Resources.LoadAll<Sprite>("mapchip320x240");
+      this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
     }
 
     void Start()
     {
-      this.spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
       this.UpdateSprite();
     }
 

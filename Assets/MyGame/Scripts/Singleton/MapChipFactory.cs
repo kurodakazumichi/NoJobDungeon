@@ -60,8 +60,8 @@ namespace Singleton
     /// <returns></returns>
     private MapChip CreateNewObject()
     {
-      var obj = new GameObject("MapChip", typeof(MapChip), typeof(SpriteRenderer));
-      return obj.GetComponent<MapChip>();
+      var obj = new GameObject("MapChip");
+      return obj.gameObject.AddComponent<MapChip>();
     }
   }
 }

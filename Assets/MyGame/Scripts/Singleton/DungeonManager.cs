@@ -25,14 +25,6 @@ namespace Singleton
 
     void Update()
     {
-      Vector3 pos = Camera.main.transform.position;
-
-      if (Input.GetKey(KeyCode.LeftArrow)) pos.x -= 0.1f;  
-      if (Input.GetKey(KeyCode.RightArrow)) pos.x += 0.1f;
-      if (Input.GetKey(KeyCode.UpArrow)) pos.y += 0.1f;
-      if (Input.GetKey(KeyCode.DownArrow)) pos.y -= 0.1f;
-
-      Camera.main.transform.position = pos;
       
     }
 
@@ -60,9 +52,14 @@ namespace Singleton
           chip.Type = MapChipType.Wall;
         }
 
-        chip.transform.position = new Vector3(x, -y, 0);
+        chip.transform.position = GetPosition(x, y);
 
       });
+    }
+
+    public Vector3 GetPosition(int x, int y)
+    {
+      return new Vector3(x, -y, 0);
     }
 
 
@@ -77,7 +74,7 @@ namespace Singleton
 				this.CreateStage();
 			}
 
-      //this.stage.OnGUI();
+      this.stage.OnGUI();
 
     }
     
