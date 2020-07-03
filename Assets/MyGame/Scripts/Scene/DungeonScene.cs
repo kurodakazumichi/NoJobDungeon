@@ -21,6 +21,9 @@ namespace Scene {
     void Start()
     {
       SetupSystems();
+      Camera.main.orthographic = true;
+      Camera.main.orthographicSize = 3;
+
       this.phase = Phase.BuildStage;
     }
 
@@ -43,7 +46,10 @@ namespace Scene {
       //DungeonManager.Instance.CreateStage();
       var system = new GameObject("System");
 
-      SingletonManager.Instance.Setup("DungeonManager", system);
+      SingletonManager.Instance
+        .Setup("DungeonManager", system)
+        .Setup("MapChipFactory", system);
+
     }
   }
 
