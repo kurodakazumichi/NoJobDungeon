@@ -24,6 +24,17 @@ namespace Singleton {
 
       this.player.transform.position = pos;
     }
+
+    /// <summary>
+    /// プレイヤーのゲームオブジェクト
+    /// </summary>
+    public GameObject PlayerObject
+    {
+      get {
+        if (this.player == null) return null;
+        return this.player.gameObject;
+      }
+    }
   }
 
 }

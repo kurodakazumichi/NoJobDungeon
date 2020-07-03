@@ -74,7 +74,7 @@ namespace Singleton
 				this.CreateStage();
 			}
 
-      this.stage.OnGUI();
+      //this.stage.OnGUI();
 
     }
     

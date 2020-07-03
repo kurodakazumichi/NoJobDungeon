@@ -15,15 +15,27 @@ namespace Scene {
       BuildStage,
     }
 
+    private DungeonManager DungeonMan
+    {
+      get { return DungeonManager.Instance; }
+    }
+
+    private PlayerManager PlayerMan
+    {
+      get { return PlayerManager.Instance; }
+    }
+
+    private CameraManager CameraMan
+    {
+      get { return CameraManager.Instance; }
+    }
+
     private Phase phase;
 
     // Start is called before the first frame update
     void Start()
     {
       SetupSystems();
-      Camera.main.orthographic = true;
-      Camera.main.orthographicSize = 3;
-
       this.phase = Phase.BuildStage;
     }
 
@@ -37,9 +49,9 @@ namespace Scene {
 
     private void BuildStagePhase()
     {
-      DungeonManager.Instance.CreateStage();
-      PlayerManager.Instance.CreatePlayer();
-
+      DungeonMan.CreateStage();
+      PlayerMan.CreatePlayer();
+      CameraMan.SetDungeonMode(PlayerMan.PlayerObject);
       
       this.phase = Phase.None;
     }
