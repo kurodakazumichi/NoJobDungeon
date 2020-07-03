@@ -29,7 +29,7 @@ namespace Singleton {
 
       var coord = DungeonManager.Instance.GetCoord(this.player.Coord, direction);
       var pos   = DungeonManager.Instance.GetPositionFromCoord(coord);
-      this.player.SetAimMode(0.4f, pos, coord);
+      this.player.Move(0.4f, pos, coord);
 
       DungeonManager.Instance.UpdatePlayerCoord(coord);
     }

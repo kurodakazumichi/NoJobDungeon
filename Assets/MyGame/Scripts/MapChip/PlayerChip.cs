@@ -95,7 +95,7 @@ namespace MapChip
       }
     }
 
-    public void SetAimMode(float time, Vector3 targetPosition, Vector2Int coord)
+    public void Move(float time, Vector3 targetPosition, Vector2Int coord)
     {
       this.timer = 0;
       this.specifiedTime = Mathf.Max(0.01f, time);
