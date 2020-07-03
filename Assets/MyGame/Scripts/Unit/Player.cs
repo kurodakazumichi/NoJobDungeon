@@ -14,7 +14,7 @@ namespace Unit {
       this.sprites = Resources.LoadAll<Sprite>("player");
       this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
       this.spriteRenderer.sprite = this.sprites[0];
-      this.spriteRenderer.sortingOrder = 1;
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Player;
     }
 
     private float animTimer = 0;
