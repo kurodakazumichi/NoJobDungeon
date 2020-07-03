@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Dungeon;
-using Field;
+using Chip;
 
 namespace Singleton 
 {

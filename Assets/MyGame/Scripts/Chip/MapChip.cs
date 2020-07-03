@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Field {
+namespace Chip {
 
   public enum MapChipType {
     None,
