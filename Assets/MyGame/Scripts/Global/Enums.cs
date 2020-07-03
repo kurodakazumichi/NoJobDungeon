@@ -4,12 +4,12 @@ using UnityEngine;
 
 public enum Direction8 {
   Neutral,    // 方向なし
-  LeftFront,  // 左前
-  Front,      // 前
-  RightFront, // 右前
+  LeftUp,     // 左上
+  Up,         // 前
+  RightUp,    // 右上
   Left,       // 左
   Right,      // 右
-  LeftBack,   // 左後ろ
-  Back,       // 後ろ
-  RightBack,  // 右後ろ
+  LeftDown,   // 左下
+  Down,       // 下
+  RightDown,  // 右下
 }
