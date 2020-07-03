@@ -31,6 +31,8 @@ namespace MapChip {
       this.sprites = Resources.LoadAll<Sprite>("mapchip320x240");
       this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
       this.spriteRenderer.sortingOrder = SpriteSortingOrder.BackGround;
+
+      var m = this.spriteRenderer.material;
     }
 
     void Start()

@@ -72,9 +72,19 @@ namespace Dungeon
     //-------------------------------------------------------------------------
     // タイル関連
 
-    public Tile[,] Tiles
+    public IReadOnlyTile[,] Tiles
     {
       get { return this.tiles; }
+    }
+
+    public IReadOnlyTile GetTile(int x, int y)
+    {
+      return this.tiles[x, y];
+    }
+
+    public IReadOnlyTile GetTile(Vector2Int coord)
+    {
+      return this.tiles[coord.x, coord.y];
     }
 
 		public void SetTileState(int x, int y, Tiles tile)
@@ -86,10 +96,18 @@ namespace Dungeon
     {
       this.tiles[x, y].On(tiles);
     }
+    public void AddTileState(Vector2Int coord, params Tiles[] tiles)
+    {
+      AddTileState(coord.x, coord.y, tiles);
+    }
 
     public void RemoveTileState(int x, int y, params Tiles[] tiles)
     {
       this.tiles[x, y].Off(tiles);
+    }
+    public void RemoveTileState(Vector2Int coord, params Tiles[] tiles)
+    {
+      RemoveTileState(coord.x, coord.y, tiles);
     }
 
     //-------------------------------------------------------------------------
@@ -215,6 +233,15 @@ namespace Dungeon
       });
 
       return list;
+    }
+
+    //-------------------------------------------------------------------------
+    // 更新
+    public void UpdatePlayerCoord(Vector2Int newCoord)
+    {
+      var oldCoord = Find(Dungeon.Tiles.Player)[0];
+      RemoveTileState(oldCoord, Dungeon.Tiles.Player);
+      AddTileState(newCoord, Dungeon.Tiles.Player);
     }
 
     //-------------------------------------------------------------------------

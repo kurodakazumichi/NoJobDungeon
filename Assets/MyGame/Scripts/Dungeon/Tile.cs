@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Dungeon {
 
+  public interface IReadOnlyTile {
+    bool IsObstacle { get; }
+  }
+
   /// <summary>
   /// ダンジョンのタイルの種類
   /// </summary>
@@ -22,7 +26,7 @@ namespace Dungeon {
   /// <summary>
   /// タイルクラス
   /// </summary>
-  public class Tile 
+  public class Tile : IReadOnlyTile
   {
     /// <summary>
     /// タイルの状態
@@ -96,6 +100,16 @@ namespace Dungeon {
     {
       get {
         return (this.state.Is((uint)Tiles.Room) || this.state.Is((uint)Tiles.Aisle));
+      }
+    }
+
+    /// <summary>
+    /// 壁、敵、プレイヤーのいずれかに該当するタイルは障害物があるタイルとして扱う
+    /// </summary>
+    public bool IsObstacle
+    {
+      get {
+        return this.ContainEither(Tiles.Wall, Tiles.Enemy, Tiles.Player);
       }
     }
 

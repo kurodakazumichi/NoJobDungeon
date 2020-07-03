@@ -3,9 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Singleton;
 
-namespace MapChip {
+namespace MapChip 
+{
+  /// <summary>
+  /// PlayerChipのReadOnly用インターフェース
+  /// </summary>
+  public interface IReadOnlyPlayerChip {
+    Direction8 Direction { get; }
+    bool IsIdle { get; }
+    bool IsMoving { get; }
+    Vector2Int Coord { get; }
+  }
 
-  public class PlayerChip : MyMonoBehaviour
+  public class PlayerChip : MyMonoBehaviour, IReadOnlyPlayerChip
   {
     enum Mode {
       None,
@@ -60,6 +70,7 @@ namespace MapChip {
 
     public Direction8 Direction
     {
+      get { return this.dir; }
       set {
         this.dir = value;
         int index = this.DirectionSpriteIndex;
@@ -84,12 +95,13 @@ namespace MapChip {
       }
     }
 
-    public void SetAimMode(float time, Vector3 targetPosition)
+    public void SetAimMode(float time, Vector3 targetPosition, Vector2Int coord)
     {
       this.timer = 0;
       this.specifiedTime = Mathf.Max(0.01f, time);
       this.start = this.transform.position;
       this.end   = targetPosition;
+      this.coord = coord;
       this.mode = Mode.Aim;
     }
     /// <summary>
@@ -105,6 +117,16 @@ namespace MapChip {
         this.transform.position = this.end;
         this.mode = Mode.None;
       }
+    }
+
+    public bool IsMoving
+    {
+      get { return this.mode == Mode.Aim; }
+    }
+
+    public bool IsIdle
+    {
+      get { return this.mode == Mode.None; }
     }
   }
 
