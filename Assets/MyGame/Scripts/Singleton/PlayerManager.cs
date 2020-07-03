@@ -43,9 +43,7 @@ namespace Singleton {
     public void CreatePlayer(Vector2Int coord)
     {
       if (!this.player){ 
-        var obj = new GameObject("Player");
-        obj.transform.parent = this.gameObject.transform;
-        this.player = obj.AddComponent<PlayerChip>();
+        this.player = MapChipFactory.Instance.CreatePlayerChip();
       } 
 
       this.player.Coord = coord;

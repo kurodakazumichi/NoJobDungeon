@@ -30,7 +30,7 @@ namespace Singleton
     void Start()
     {
       Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
-        this.chips[x, y] = MapChipFactory.Instance.Create(MapChipType.None);
+        this.chips[x, y] = MapChipFactory.Instance.CreateSimpleChip(MapChipType.None);
       });
     }
 
