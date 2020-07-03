@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Chip {
+namespace MapChip {
 
   public enum MapChipType {
     None,
@@ -10,7 +10,7 @@ namespace Chip {
     Floor,
   }
 
-  public class MapChip : MonoBehaviour
+  public class SimpleChip : MonoBehaviour
   {
     private MapChipType type = MapChipType.None;
 

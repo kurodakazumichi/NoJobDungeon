@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Chip;
+using MapChip;
 
 namespace Singleton 
 { 
@@ -10,12 +10,12 @@ namespace Singleton
     /// <summary>
     /// オブジェクトプール
     /// </summary>
-    private List<MapChip> pool = new List<MapChip>();
+    private List<SimpleChip> pool = new List<MapChip.SimpleChip>();
     
     /// <summary>
     /// マップチップを作成する。
     /// </summary>
-    public MapChip Create(MapChipType type)
+    public SimpleChip Create(MapChipType type)
     {
       var chip = GetInactiveObject();
 
@@ -33,7 +33,7 @@ namespace Singleton
     /// <summary>
     /// オブジェクトを解放する(非アクティブにするだけ)
     /// </summary>
-    public void Release(MapChip chip)
+    public void Release(MapChip.SimpleChip chip)
     {
       chip.gameObject.SetActive(false);
     }
@@ -41,7 +41,7 @@ namespace Singleton
     /// <summary>
     /// 非アクティブなオブジェクトを取得する
     /// </summary>
-    private MapChip GetInactiveObject()
+    private SimpleChip GetInactiveObject()
     {
       foreach(var chip in this.pool) 
       {
@@ -58,11 +58,11 @@ namespace Singleton
     /// 新しくオブジェクトを生成する
     /// </summary>
     /// <returns></returns>
-    private MapChip CreateNewObject()
+    private SimpleChip CreateNewObject()
     {
       var obj = new GameObject("MapChip");
       obj.transform.parent = this.transform;
-      return obj.gameObject.AddComponent<MapChip>();
+      return obj.gameObject.AddComponent<SimpleChip>();
     }
   }
 }

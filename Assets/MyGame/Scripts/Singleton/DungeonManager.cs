@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Dungeon;
-using Chip;
+using MapChip;
 
 namespace Singleton 
 {
@@ -14,7 +14,7 @@ namespace Singleton
     private Algorithm algorithm = new Algorithm();
     private Stage stage = new Stage();
 
-    private MapChip[,] chips = new MapChip[Define.WIDTH, Define.HEIGHT];
+    private MapChip.SimpleChip[,] chips = new MapChip.SimpleChip[Define.WIDTH, Define.HEIGHT];
 
     void Start()
     {

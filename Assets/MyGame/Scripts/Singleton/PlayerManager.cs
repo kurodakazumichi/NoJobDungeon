@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unit;
+using MapChip;
 
 namespace Singleton {
 
   public class PlayerManager : SingletonMonobehaviour<PlayerManager>
   {
-    private Player player = null;
+    private PlayerChip player = null;
 
     public void CreatePlayer()
     {
@@ -15,7 +15,7 @@ namespace Singleton {
 
       var obj = new GameObject("Player");
       obj.transform.parent = this.gameObject.transform;
-      this.player = obj.AddComponent<Player>();
+      this.player = obj.AddComponent<PlayerChip>();
     }
 
     public void SetPlayerPosition(Vector3 pos)

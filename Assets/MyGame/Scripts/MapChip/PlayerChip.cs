@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Singleton;
 
-namespace Unit {
+namespace MapChip {
 
-  public class Player : MyMonoBehaviour
+  public class PlayerChip : MyMonoBehaviour
   {
     enum Mode {
       None,
