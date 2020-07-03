@@ -61,6 +61,7 @@ namespace Singleton
     private MapChip CreateNewObject()
     {
       var obj = new GameObject("MapChip");
+      obj.transform.parent = this.transform;
       return obj.gameObject.AddComponent<MapChip>();
     }
   }
