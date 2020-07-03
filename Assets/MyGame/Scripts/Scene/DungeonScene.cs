@@ -22,42 +22,40 @@ namespace Scene {
         .Setup("MapChipFactory", system)
         .Setup("PlayerManager" , system);
 
-      SetPhaseToCreatingStage();
+      ToCreatingStagePhase();
     }
 
     //-------------------------------------------------------------------------
     // ダンジョン生成フェーズ
 
-    private void SetPhaseToCreatingStage()
+    private void ToCreatingStagePhase()
     {
-      SetFunc(UpdateCreateStage);
-    }
+      System.Action start = () => {
+        // ダンジョン生成
+        DungeonManager.Instance.CreateStage();
 
-    private bool UpdateCreateStage()
-    {
-      // ダンジョン生成
-      DungeonManager.Instance.CreateStage();
+        // マップチップを生成
+        DungeonManager.Instance.CreateMapChips();
 
-      // マップチップを生成
-      DungeonManager.Instance.CreateMapChips();
+        // プレイヤーを生成
+        PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
 
-      // プレイヤーを生成
-      PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
+        // カメラ設定
+        CameraManager.Instance.SetDungeonMode(PlayerManager.Instance.PlayerObject);
 
-      // カメラ設定
-      CameraManager.Instance.SetDungeonMode(PlayerManager.Instance.PlayerObject);
-      
-      // 入力待ちフェーズへ
-      SetPhaseToWaitingForInput();
-      return false;
+        // 入力待ちフェーズへ
+        ToWaitingForInputPhase();      
+      };
+
+      SetFunc(start, null);
     }
 
     //-------------------------------------------------------------------------
     // 入力待ちフェーズ
 
-    private void SetPhaseToWaitingForInput()
+    private void ToWaitingForInputPhase()
     {
-      SetFunc(UpdateWaitingForInput);
+      SetFunc(null, UpdateWaitingForInput);
     }
 
     private bool UpdateWaitingForInput()
@@ -75,28 +73,30 @@ namespace Scene {
       if (!PlayerManager.Instance.ChecksPlayerMovable(direction)) return true;
 
       // 入力された方向にプレイヤーを動かす
-      SetPhaseToMovingPlayer(direction);
+      ToMovingPlayerPhase(direction);
       return false;
     }
 
     //-------------------------------------------------------------------------
     // プレイヤー移動待ちフェーズ
     
-    private void SetPhaseToMovingPlayer(Direction8 direction)
+    private void ToMovingPlayerPhase(Direction8 direction)
     {
-      PlayerManager.Instance.MovePlayer(direction);
-      SetFunc(UpdateMovingPlayer);
-    }
+      System.Action start = () => {
+        PlayerManager.Instance.MovePlayer(direction);
+      };
 
-    private bool UpdateMovingPlayer()
-    {
-      // プレイヤーがIdleになるまで待つ
-      if (!PlayerManager.Instance.Player.IsIdle) return true;
+      System.Func<bool> update = () => {
+        // プレイヤーがIdleになるまで待つ
+        if (!PlayerManager.Instance.Player.IsIdle) return true;
 
-      SetPhaseToWaitingForInput();
-      return false;
+        ToWaitingForInputPhase();
+        return false;
+      };
+
+      SetFunc(start, update);
     }
-    
+  
   }
 
 }

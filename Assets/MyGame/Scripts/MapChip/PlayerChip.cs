@@ -20,6 +20,7 @@ namespace MapChip
     enum Mode {
       None,
       Aim,
+      Attack,
     };
 
     private Sprite[] sprites;
@@ -93,6 +94,11 @@ namespace MapChip
           default: return 0;
         }
       }
+    }
+
+    public void Attack()
+    {
+
     }
 
     public void Move(float time, Vector3 targetPosition, Vector2Int coord)
