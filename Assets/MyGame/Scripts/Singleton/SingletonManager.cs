@@ -24,6 +24,7 @@ namespace Singleton {
         case "DungeonManager": go.AddComponent<DungeonManager>(); break;
         case "MapChipFactory": go.AddComponent<MapChipFactory>(); break;
         case "PlayerManager" : go.AddComponent<PlayerManager>(); break;
+        case "CameraManager" : go.AddComponent<CameraManager>(); break;
         default: break;
       }
       

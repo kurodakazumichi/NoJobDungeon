@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 public class Boot : MonoBehaviour {
 
@@ -15,9 +16,14 @@ public class Boot : MonoBehaviour {
     // このDontDestoryOnLoadは大事だよ。
     DontDestroyOnLoad(system);
 
-    // 常駐させたいシステムがあればここで生成
-    var singleton = new GameObject("SingletonManager", typeof(Singleton.SingletonManager));
+    // シングルトンを管理するシングルトン
+    var singleton = new GameObject("SingletonManager", typeof(SingletonManager));
     singleton.transform.parent = system.transform;
+
+    // 常駐させたいシステムがあればここで生成
+    SingletonManager.Instance
+      .Setup("CameraManager", system);
+    
   }
 
 }
