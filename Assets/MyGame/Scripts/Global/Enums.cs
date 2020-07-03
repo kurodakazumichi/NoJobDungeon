@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction8 {
+  Neutral,    // 方向なし
   LeftFront,  // 左前
   Front,      // 前
   RightFront, // 右前
