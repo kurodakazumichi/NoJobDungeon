@@ -9,13 +9,16 @@ namespace Singleton {
   {
     private PlayerChip player = null;
 
-    public void CreatePlayer()
+    public void CreatePlayer(Vector3 pos, Vector2Int coord)
     {
-      if (this.player) return;
+      if (!this.player){ 
+        var obj = new GameObject("Player");
+        obj.transform.parent = this.gameObject.transform;
+        this.player = obj.AddComponent<PlayerChip>();
+      } 
 
-      var obj = new GameObject("Player");
-      obj.transform.parent = this.gameObject.transform;
-      this.player = obj.AddComponent<PlayerChip>();
+      this.player.transform.position = pos;
+      this.player.Coord = coord;
     }
 
     public void SetPlayerPosition(Vector3 pos)

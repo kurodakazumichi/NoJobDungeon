@@ -46,6 +46,29 @@ namespace Dungeon
 			this.rooms = new List<Room>();
     }
 
+    /// <summary>
+    /// ダンジョン生成
+    /// </summary>
+    public void Make(Algorithm algorithm)
+    {
+      // マップの生成
+      algorithm.Make(this);
+
+      // プレイヤーの生成
+      MakePlayer();
+
+      // ゴールの生成
+      MakeGoal();
+
+      // アイテムの配置
+      MakeItem();
+
+      // 敵の配置
+      MakeEnemy();
+
+      // 罠の配置
+    }
+
     //-------------------------------------------------------------------------
     // タイル関連
 
@@ -88,6 +111,46 @@ namespace Dungeon
     }
 
     //-------------------------------------------------------------------------
+    // 生成関連
+
+    /// <summary>
+    /// プレイヤーの生成
+    /// </summary>
+    public void MakePlayer()
+    {
+      var pos = PlaceableCoord;
+      AddTileState(pos.x, pos.y, Dungeon.Tiles.Player);
+    }
+
+    /// <summary>
+    /// ゴール生成
+    /// </summary>
+    public void MakeGoal()
+    {
+      var pos = PlaceableCoord;
+      AddTileState(pos.x, pos.y, Dungeon.Tiles.Goal);
+    }
+
+    /// <summary>
+    /// アイテムの生成
+    /// </summary>
+    public void MakeItem()
+    {
+      Util.LoopByRange(0, 10, (int i) => {
+        var pos = PlaceableCoord;
+        AddTileState(pos.x, pos.y, Dungeon.Tiles.Item);
+      });
+    }
+
+    public void MakeEnemy()
+    {
+      Util.LoopByRange(0, 3, (int i) => {
+        var pos = PlaceableCoord;
+        AddTileState(pos.x, pos.y, Dungeon.Tiles.Enemy);
+      });
+    }
+
+    //-------------------------------------------------------------------------
     // 配置関連
 
     /// <summary>
@@ -112,6 +175,49 @@ namespace Dungeon
     }
 
     //-------------------------------------------------------------------------
+    // 探す
+
+    /// <summary>
+    /// 指定したタイルの位置を見つける
+    /// </summary>
+    public List<Vector2Int> Find(params Tiles[] tiles)
+    {
+      var list = new List<Vector2Int>();
+
+      // 指定されたタイルが見つかったらループを抜ける
+      Map((int x, int y, Tile tile) => 
+      {
+        var isFound = tile.Contain(tiles);
+
+        if (isFound) {
+          list.Add(new Vector2Int(x, y));
+        }
+
+        return isFound;
+      });
+
+      return list;
+    }
+
+    /// <summary>
+    /// 指定したタイルに該当する座標を全て取得する
+    /// </summary>
+    public List<Vector2Int> FindAll(params Tiles[] tiles)
+    {
+      var list = new List<Vector2Int>();
+
+      Map((int x, int y, Tile tile) => 
+      {
+        if (tile.Contain(tiles)) {
+          list.Add(new Vector2Int(x, y));
+        }
+
+      });
+
+      return list;
+    }
+
+    //-------------------------------------------------------------------------
     // その他
 		public void Map(System.Action<int, int, Tile> cb)
 		{
@@ -119,6 +225,13 @@ namespace Dungeon
         cb(x, y, this.tiles[x, y]);
       });
 		}
+
+    public void Map(System.Func<int, int, Tile, bool> cb)
+    {
+      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
+        return cb(x, y, this.tiles[x, y]);
+      });      
+    }
 
     //-------------------------------------------------------------------------
     #if UNITY_EDITOR
@@ -130,12 +243,18 @@ namespace Dungeon
 			GUIStyle sAisle = new GUIStyle();
 			GUIStyle sRoom = new GUIStyle();
       GUIStyle sPlayer = new GUIStyle();
+      GUIStyle sGoal   = new GUIStyle();
+      GUIStyle sItem   = new GUIStyle();
+      GUIStyle sEnemy  = new GUIStyle();
 
 			GUIStyle style = null;
 			sWall.normal.textColor  = Color.black;
 			sAisle.normal.textColor = Color.gray;
 			sRoom.normal.textColor  = Color.blue;
-      sPlayer.normal.textColor = Color.yellow;
+      sPlayer.normal.textColor = Color.white;
+      sGoal.normal.textColor = Color.magenta;
+      sItem.normal.textColor = Color.cyan;
+      sEnemy.normal.textColor = Color.red;
 
 			this.Map((int x, int y, Tile tile) =>
 			{
@@ -143,11 +262,13 @@ namespace Dungeon
 				if (tile.IsAisle) style = sAisle;
 				if (tile.IsRoom)  style = sRoom;
         if (tile.IsPlayer) style = sPlayer;
+        if (tile.IsGoal) style = sGoal;
+        if (tile.IsItem) style = sItem;
+        if (tile.IsEnemy) style = sEnemy;
 
         if (style != null) {
 				  GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
         }
-
 			});
     }
 

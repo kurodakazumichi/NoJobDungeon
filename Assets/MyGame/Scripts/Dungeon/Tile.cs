@@ -16,6 +16,7 @@ namespace Dungeon {
 		Enemy  = 1 << 4,
 		Item   = 1 << 5,
 		Trap   = 1 << 6,
+    Goal   = 1 << 7,
 	}
 
   /// <summary>
@@ -73,9 +74,19 @@ namespace Dungeon {
       get { return this.state.Contain((uint)Tiles.Enemy); }
     }
 
+    public bool IsItem
+    {
+      get { return this.state.Contain((uint)Tiles.Item); }
+    }
+
     public bool IsTrap
     {
       get { return this.state.Contain((uint)Tiles.Trap); }
+    }
+
+    public bool IsGoal
+    {
+      get { return this.state.Contain((uint)Tiles.Goal); }
     }
 
     /// <summary>
@@ -109,6 +120,16 @@ namespace Dungeon {
     public void Off(params Tiles[] tiles)
     {
       this.state.Off(ToFlags(tiles));
+    }
+
+    public bool Contain(params Tiles[] tiles)
+    {
+      return this.state.Contain(ToFlags(tiles));
+    }
+
+    public bool ContainEither(params Tiles[] tiles)
+    {
+      return this.state.ContainEither(ToFlags(tiles));
     }
 
     public Tile Copy()

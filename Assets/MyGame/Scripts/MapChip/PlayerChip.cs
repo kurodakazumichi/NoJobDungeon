@@ -15,6 +15,12 @@ namespace MapChip {
     private Sprite[] sprites;
     private SpriteRenderer spriteRenderer;
 
+    private Vector2Int coord;
+    public Vector2Int Coord { 
+      get { return this.coord; }
+      set { this.coord = value; }
+    }
+
     private Vector3 start;
     private Vector3 end;
     private Vector3 velocity;

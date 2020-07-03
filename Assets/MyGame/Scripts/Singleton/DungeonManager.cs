@@ -11,6 +11,17 @@ namespace Singleton
   /// </summary>
   public class DungeonManager : SingletonMonobehaviour<DungeonManager>
   {
+
+    private PlayerManager PlayerMan
+    {
+      get { return PlayerManager.Instance; }
+    }
+
+    private CameraManager CameraMan
+    {
+      get { return CameraManager.Instance; }
+    }
+
     private Algorithm algorithm = new Algorithm();
     private Stage stage = new Stage();
 
@@ -28,13 +39,23 @@ namespace Singleton
       
     }
 
+    /// <summary>
+    /// ダンジョンの生成
+    /// </summary>
     public void CreateStage()
     {
-      this.algorithm.Make(this.stage, 3, 2, 0.5f);
+      this.algorithm.SetConfig(3, 2, 0.5f);
+      this.stage.Make(this.algorithm);
 
-      
-
+      // マップを生成
       this.CreateMapChips();
+
+      // プレイヤーを生成
+      var coord = this.stage.Find(Tiles.Player)[0];
+       PlayerMan.CreatePlayer(GetPosition(coord.x, coord.y), coord);
+
+      // カメラの設定
+      CameraMan.SetDungeonMode(PlayerMan.PlayerObject);
     }
 
     public void CreateMapChips()
@@ -66,15 +87,19 @@ namespace Singleton
     }
 
 #if UNITY_EDITOR
+
+    public bool showDebug = true;
+
     private void OnGUI()
     {
+      if (!this.showDebug) return;
 
 			if (GUI.Button(new Rect(0, 0, 100, 20), "create"))
 			{
 				this.CreateStage();
 			}
 
-      //this.stage.OnGUI();
+      this.stage.OnGUI();
 
     }
     

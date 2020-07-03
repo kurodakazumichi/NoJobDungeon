@@ -20,16 +20,6 @@ namespace Scene {
       get { return DungeonManager.Instance; }
     }
 
-    private PlayerManager PlayerMan
-    {
-      get { return PlayerManager.Instance; }
-    }
-
-    private CameraManager CameraMan
-    {
-      get { return CameraManager.Instance; }
-    }
-
     private Phase phase;
 
     // Start is called before the first frame update
@@ -49,9 +39,8 @@ namespace Scene {
 
     private void BuildStagePhase()
     {
+      // ダンジョン生成
       DungeonMan.CreateStage();
-      PlayerMan.CreatePlayer();
-      CameraMan.SetDungeonMode(PlayerMan.PlayerObject);
       
       this.phase = Phase.None;
     }

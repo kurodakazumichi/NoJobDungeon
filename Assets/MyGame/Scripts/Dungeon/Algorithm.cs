@@ -81,17 +81,29 @@ namespace Dungeon {
       this.splitPointsY = new List<int>();
 
       this.aisleCreationFlag = false;
+
+      SetConfig();
     }
 
     //-------------------------------------------------------------------------
     // ダンジョン生成 Methods
 
-    public void Make(Dungeon.Stage stage, int sizeX, int sizeY, float rate)
+    /// <summary>
+    /// ダンジョン生成パラメータの設定
+    /// </summary>
+    public void SetConfig(int sizeX = 1, int sizeY = 1, float rate = 1f)
     {
       // ダンジョンの分割数を設定、最低でも1x1になるようにフィルター
       this.size.Set(Mathf.Max(1, sizeX), Mathf.Max(1, sizeY));
       this.roomMakingRate = Mathf.Max(0, Mathf.Min(1f, rate));
+    }
 
+    /// <summary>
+    /// ダンジョン生成
+    /// </summary>
+    /// <param name="stage"></param>
+    public void Make(Dungeon.Stage stage)
+    {
       // 初期化
       Init();
 
