@@ -52,18 +52,18 @@ namespace Singleton
           chip.Type = MapChipType.Wall;
         }
 
+        chip.transform.localScale = Define.CHIP_SCALE;
         chip.transform.position = GetPosition(x, y);
 
       });
     }
 
+
+
     public Vector3 GetPosition(int x, int y)
     {
-      return new Vector3(x, -y, 0);
+      return new Vector3(x * Define.CHIP_SCALE.x, -y * Define.CHIP_SCALE.y, 0);
     }
-
-
-
 
 #if UNITY_EDITOR
     private void OnGUI()
