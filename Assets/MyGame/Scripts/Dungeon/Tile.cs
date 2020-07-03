@@ -4,8 +4,25 @@ using UnityEngine;
 
 namespace Dungeon {
 
-  public interface IReadOnlyTile {
+  /// <summary>
+  /// TileのReadOnly用インターフェース
+  /// </summary>
+  public interface IReadOnlyTile 
+  {
+    bool IsWall     { get; }
+    bool IsRoom     { get; }
+    bool IsAisle    { get; }
+    bool IsPlayer   { get; }
+    bool IsEnemy    { get; }
+    bool IsItem     { get; }
+    bool IsTrap     { get; }
+    bool IsGoal     { get; }
+    bool IsEmpty    { get; }
     bool IsObstacle { get; }
+
+    bool Contain(params Tiles[] tiles);
+    bool ContainEither(params Tiles[] tiles);
+
   }
 
   /// <summary>
@@ -144,11 +161,6 @@ namespace Dungeon {
     public bool ContainEither(params Tiles[] tiles)
     {
       return this.state.ContainEither(ToFlags(tiles));
-    }
-
-    public Tile Copy()
-    {
-      return new Tile(this);
     }
 
     private uint ToFlags(params Tiles[] tiles)
