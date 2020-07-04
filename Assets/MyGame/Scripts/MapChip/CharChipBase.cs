@@ -10,6 +10,7 @@ namespace MapChip {
   /// </summary>
   public interface IReadOnlyCharChipBase : IReadOnlyChipBase {
     Direction8 Direction { get; }
+    bool IsIdle { get; }
   }
 
   /// <summary>
@@ -17,8 +18,18 @@ namespace MapChip {
   /// </summary>
   public abstract class CharChipBase : ChipBase, IReadOnlyChipBase
   {
+    public enum State
+    {
+      Move,
+    }
+
     //-------------------------------------------------------------------------
     // メンバ変数
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    StateMachine<State> state;
 
     /// <summary>
     /// 基本のスプライトリソース
@@ -36,7 +47,7 @@ namespace MapChip {
     protected Vector3 start;
     protected Vector3 end;
     protected float specifiedTime;
-    protected float timer;
+    protected float elapsedTime;
 
     //-------------------------------------------------------------------------
     // 主要のメソッド
@@ -54,11 +65,18 @@ namespace MapChip {
       base.Awake();
       this.baseSprites = LoadBaseSprites();
       this.spriteRenderer.sortingOrder = SpriteSortingOrder.Charactor;
+      this.state = new StateMachine<State>();
       this.Direction = Direction8.Neutral;
+
       this.specifiedTime = 0;
-      this.timer = 0;
+      this.elapsedTime = 0;
       this.start = Vector3.zero;
       this.end   = Vector3.zero;
+    }
+
+    void Update()
+    {
+      this.state.Update();
     }
 
     //-------------------------------------------------------------------------
@@ -131,40 +149,72 @@ namespace MapChip {
     }
 
     //-------------------------------------------------------------------------
-    // 移動
+    // ステートマシン関連
+
+    public bool IsIdle
+    {
+      get
+      {
+        return this.state.IsIdle;
+      }
+    }
 
     /// <summary>
     /// 指定位置に指定された秒数で移動する
     /// </summary>
     public void Move(float time, Vector2Int coord)
     {
-      this.timer = 0;
-      this.specifiedTime = Mathf.Max(0.01f, time);
-      this.start = this.transform.position;
-      this.end   = DungeonManager.Instance.GetPositionFromCoord(coord);
-      this.coord = coord;
-      
+      System.Action enter = () =>
+      {
+        this.EnterMove(time, coord);
+      };
 
-      SetFunc(null, UpdateMove);
+
+      this.state.Add(State.Move, enter, UpdateMove);
+      this.state.SetState(State.Move);
+    }
+
+    /// <summary>
+    /// 移動開始処理
+    /// </summary>
+    private void EnterMove(float time, Vector2Int coord)
+    {
+      // ダンジョン系の座標からワールド座標を取得
+      var end = DungeonManager.Instance.GetPositionFromCoord(coord);
+
+      this.start = this.transform.position;
+      this.end   = end;
+
+      // タイマー初期化
+      this.elapsedTime         = 0;
+      this.specifiedTime = Mathf.Max(0.01f, time);
+
+      this.coord = coord;
     }
 
     /// <summary>
     /// 移動時の処理
     /// </summary>
-    bool UpdateMove()
+    private void UpdateMove()
     {
-      this.timer += TimeManager.Instance.DungeonDeltaTime;
-      var rate = this.timer / this.specifiedTime;
+      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
 
-      this.transform.position = Vector3.Lerp(this.start, this.end, rate);
+      var rate = this.elapsedTime / this.specifiedTime;
 
-      if (this.specifiedTime <= this.timer) {
-        this.transform.position = this.end;
+      if (this.elapsedTime < this.specifiedTime)
+      {
+        var pos = Vector3.Lerp(this.start, this.end, rate);
 
-        return false;
+        this.transform.position = pos;
+        return;
       }
 
-      return true;
+      if (this.specifiedTime <= this.elapsedTime) 
+      {
+        this.transform.position = this.end;
+
+        this.state.SetIdle();
+      }
     }
   }
 }

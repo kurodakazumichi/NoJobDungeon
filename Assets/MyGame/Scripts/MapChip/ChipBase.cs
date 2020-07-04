@@ -7,14 +7,14 @@ namespace MapChip {
   /// <summary>
   /// ChipBaseのReadOnly用インターフェース
   /// </summary>
-  public interface IReadOnlyChipBase : IReadOnlyStatefullMonoBehavior {
+  public interface IReadOnlyChipBase {
     Vector2Int Coord { get; }
   }
 
   /// <summary>
   /// マップチップのベースクラス
   /// </summary>
-  public class ChipBase : StatefullMonoBehavior, IReadOnlyChipBase
+  public class ChipBase : MyMonoBehaviour, IReadOnlyChipBase
   {
     protected SpriteRenderer spriteRenderer;
 
