@@ -113,7 +113,7 @@ namespace Scene {
       var direction = InputManager.Instance.GetDirectionKey();
 
       // 方向キーの入力がなければ継続
-      if (direction == Direction8.Neutral) return;
+      if (direction.IsNeutral) return;
 
       // プレイヤーの移動を試す
       var isMoved = PlayerManager.Instance.CheckAndMovePlayer(direction);
