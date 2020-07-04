@@ -52,19 +52,21 @@ public struct Direction
         if (v.y < 0)
         {
           this.value = (v.x < 0) ? Direction8.LeftDown : Direction8.RightDown;
+          return;
         }
         else
         {
           this.value = (v.x < 0) ? Direction8.LeftUp : Direction8.RightUp;
+          return;
         }
-        break;
+        
       }
       case 1:
       {
-        if (0 < v.y) this.value = Direction8.Up;
-        if (v.y < 0) this.value = Direction8.Down;
-        if (v.x < 0) this.value = Direction8.Left;
-        if (0 < v.x) this.value = Direction8.Right;
+        if (0 < v.y) { this.value = Direction8.Up; return; }
+        if (v.y < 0) { this.value = Direction8.Down; return; }
+        if (v.x < 0) { this.value = Direction8.Left; return; }
+        if (0 < v.x) { this.value = Direction8.Right; return; }
         break;
       }
     }
