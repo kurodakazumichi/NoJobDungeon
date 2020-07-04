@@ -29,9 +29,9 @@ namespace Singleton
 
     void Start()
     {
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
-        this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
-      });
+      //Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
+      //  this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
+      //});
     }
 
     void Update()
@@ -51,6 +51,14 @@ namespace Singleton
     public Vector2Int PlayerCoord
     {
       get { return this.stage.Find(Tiles.Player)[0]; }
+    }
+
+    public void Init()
+    {
+      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) =>
+      {
+        this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
+      });
     }
 
     // TODO: ここもここでやるのいや

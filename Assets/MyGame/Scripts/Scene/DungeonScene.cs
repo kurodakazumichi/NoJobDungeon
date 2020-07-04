@@ -34,7 +34,7 @@ namespace Scene {
 
       this.state = new StateMachine<Phase>();
 
-      this.state.Add(Phase.Load, null, LoadUpdate);
+      this.state.Add(Phase.Load, LoadEnter, LoadUpdate);
       this.state.Add(Phase.CreatingStage, CreateStageEnter);
       this.state.Add(Phase.WaitingForInput, WaitingForInputEnter, WaitingForInputUpdate);
       this.state.Add(Phase.MovingPlayer, null, MovingPlayerUpdate);
@@ -49,8 +49,22 @@ namespace Scene {
 
     //-------------------------------------------------------------------------
     // ロード
+    private void LoadEnter()
+    {
+      ResourceManager.Instance.LoadAsync(ResourceManager.DungeionLabel); 
+    }
+
     private void LoadUpdate()
     {
+      bool isLoading = ResourceManager.Instance.IsLoading(ResourceManager.DungeionLabel);
+      if (isLoading)
+      {
+        return;
+      }
+
+      //:TODO CreateStage前に呼びたいが、ロード後でないといけないけど、、ここもいや
+      DungeonManager.Instance.Init();
+
       this.state.SetState(Phase.CreatingStage);
     }
 

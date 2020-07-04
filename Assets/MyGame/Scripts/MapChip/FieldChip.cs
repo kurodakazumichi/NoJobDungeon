@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 namespace MapChip {
 
@@ -45,7 +46,8 @@ namespace MapChip {
 
       FieldChip.sprites = new Dictionary<FieldType, Sprite>();
 
-      var resources = Resources.LoadAll<Sprite>("mapchip320x240");
+      //var resources = Resources.LoadAll<Sprite>("mapchip320x240");
+      var resources = ResourceManager.Instance.GetResources<Sprite>("mapchip320x240");
       FieldChip.sprites[FieldType.None]  = null;
       FieldChip.sprites[FieldType.Floor] = resources[32];
       FieldChip.sprites[FieldType.Wall]  = resources[45];

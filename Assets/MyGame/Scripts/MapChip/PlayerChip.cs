@@ -20,7 +20,8 @@ namespace MapChip
     /// <returns></returns>
     protected override Sprite[] LoadBaseSprites()
     {
-      return Resources.LoadAll<Sprite>("player");
+      //return Resources.LoadAll<Sprite>("player");
+      return ResourceManager.Instance.GetResources<Sprite>("player");
     }
   }
 }
