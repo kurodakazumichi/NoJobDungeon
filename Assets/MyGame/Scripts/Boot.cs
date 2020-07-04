@@ -25,6 +25,7 @@ public class Boot : MonoBehaviour {
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
       .Setup(nameof(InputManager), system)
+      .Setup(nameof(ResourceManager), system);
   }
 
 }

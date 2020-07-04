@@ -27,6 +27,7 @@ namespace Singleton {
         case nameof(CameraManager)    : go.AddComponent<CameraManager>(); break;
         case nameof(TimeManager)      : go.AddComponent<TimeManager>(); break;
         case nameof(InputManager)     : go.AddComponent<InputManager>(); break;
+        case nameof(ResourceManager)  : go.AddComponent<ResourceManager>(); break;
         default: break;
       }
       
