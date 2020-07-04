@@ -99,7 +99,7 @@ namespace Singleton
     public Vector2Int GetCoord(Vector2Int coord, Direction dir)
     {
       // ダンジョン座標はY方向の上がマイナスなので、第一引数(yUp)にfalseを指定
-      return dir.ToVector(false);
+      return coord + dir.ToVector(false);
     }
 
     /// <summary>
