@@ -156,4 +156,17 @@ public struct Direction
     }
   }
 
+  /// <summary>
+  /// 方向のNeutralをDonwに統一したDirectionを返す
+  /// </summary>
+  public Direction Unified
+  {
+    get
+    {
+      return (this.IsNeutral)
+        ? new Direction(Direction8.Down)
+        : this;
+    }
+  }
+
 }
