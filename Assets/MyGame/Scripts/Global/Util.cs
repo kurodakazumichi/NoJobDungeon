@@ -89,4 +89,38 @@ public static class Util
       if (isBreak) break;
 		}
   }
+
+  /// <summary>
+  /// 斜め方向です。
+  /// </summary>
+ public static bool IsDiagonal(Direction8 direction) 
+  {
+    switch(direction)
+    {
+      case Direction8.LeftDown:
+      case Direction8.LeftUp:
+      case Direction8.RightDown:
+      case Direction8.RightUp:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /// <summary>
+  /// まっすぐです
+  /// </summary>
+  public static bool IsStraight(Direction8 direction)
+  {
+    switch(direction)
+    {
+      case Direction8.Left:
+      case Direction8.Right:
+      case Direction8.Up:
+      case Direction8.Down:
+        return true;
+      default:
+        return false;
+    }
+  }
 }

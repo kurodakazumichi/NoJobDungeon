@@ -81,9 +81,72 @@ namespace Singleton {
     /// </summary>
     public bool ChecksPlayerMovable(Direction8 direction)
     {
-      IReadOnlyTile tile = DungeonManager.Instance.GetTile(this.player.Coord, direction);
+      DungeonManager DM = DungeonManager.Instance;
 
-      return !tile.IsObstacle;
+      var coord = this.player.Coord;
+
+      IReadOnlyTile curr = DM.GetTile(coord);
+      IReadOnlyTile next = DM.GetTile(coord, direction);
+
+      // 上下左右だったら進行方向のタイルが障害物でなければ進める
+      if (Util.IsStraight(direction) || direction == Direction8.Neutral)
+      {
+        return !next.IsObstacle;
+      }
+
+      // 斜め入力の場合は入力された方向によって周囲の壁の情報を見て判断
+      IReadOnlyTile tile1;
+      IReadOnlyTile tile2;
+
+      switch(direction)
+      {
+        // 左上の場合は左と上のタイルを取得
+        case Direction8.LeftUp:
+        {
+          tile1 = DM.GetTile(coord, Direction8.Left);
+          tile2 = DM.GetTile(coord, Direction8.Up);
+          break;
+        }
+
+        // 左下の場合は左と下のタイルを取得
+        case Direction8.LeftDown:
+        {
+          tile1 = DM.GetTile(coord, Direction8.Left);
+          tile2 = DM.GetTile(coord, Direction8.Down);
+          break;
+        }
+
+        // 右上の場合は右と上のタイルを取得
+        case Direction8.RightUp:
+        {
+          tile1 = DM.GetTile(coord, Direction8.Right);
+          tile2 = DM.GetTile(coord, Direction8.Up);
+          break;
+        }
+
+        // 右下(default)の場合は右と下のタイルを取得
+        default:
+        {
+          tile1 = DM.GetTile(coord, Direction8.Right);
+          tile2 = DM.GetTile(coord, Direction8.Down);
+          break;
+        }
+      }
+
+      // 斜め入力時は周囲に壁があったら進めない
+      if (tile1.IsWall || tile2.IsWall)
+      {
+        return false;
+      }
+
+      // 斜め入力時に進行方向をふさぐように敵がいたら進めない
+      if (tile1.IsEnemy && tile2.IsEnemy)
+      {
+        return false;
+      }
+
+      // その他のケースはタイルが障害物でなければ進める
+      return !next.IsObstacle;
     }
 
     /// <summary>
