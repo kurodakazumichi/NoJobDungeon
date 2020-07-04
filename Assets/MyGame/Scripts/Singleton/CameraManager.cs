@@ -16,12 +16,22 @@ namespace Singleton {
   {
     private CameraMode mode = CameraMode.None;
     private GameObject target = null;
-
+    private bool isLock = false;
     public void SetDungeonMode(GameObject player)
     {
       Camera.main.orthographic     = true;
       Camera.main.orthographicSize = 3;
       SetTrackingMode(player);
+    }
+
+    public void Lock()
+    {
+      this.isLock = true;
+    }
+
+    public void Unlock()
+    {
+      this.isLock = false;
     }
 
     /// <summary>
@@ -41,6 +51,7 @@ namespace Singleton {
       switch(this.mode) {
         case CameraMode.Tracking: 
         {
+          if (this.isLock) return;
           var pos = this.target.transform.position;
 
           var cam = Camera.main.transform.position;
