@@ -15,15 +15,40 @@ namespace Singleton
         get
         {
           if( this.Object == null ) return string.Empty;
-          switch (this.Object)
-          {
-            case Sprite sprite: return sprite.texture.name;
-            default: return this.Object.name;
-          }
+          return this.Object.name;
         }
       }
 
+      public string MainAssetName
+      {
+        get
+        {
+          if (this.Object == null) return string.Empty;
+          switch (this.Object)
+          {
+            case Sprite sprite: return sprite.texture.name;
+          }
+          return this.Object.name;
+        }
+      }
+
+      public Type Type => Object.GetType();
+
       public UnityEngine.Object Object;
+
+      public bool IsSubAsset
+      {
+        get
+        {
+          if (this.Object == null) return false;
+          switch (this.Object)
+          {
+            case Sprite sprite: return true;
+          }
+          return false;
+        }
+
+      }
     }
 
     /// <summary>Dungeionラベル</summary>
@@ -109,7 +134,10 @@ namespace Singleton
     /// </summary>
     public T GetResource<T>(string name) where T : class
     {
-      var cache = caches.Find( x => x.Object.GetType() == typeof(T) && x.Name == name );
+      var cache = caches.Find( x => 
+        x.Type.Equals(typeof(T)) 
+        && (x.Name == name)
+      );
       return cache?.Object as T;
     }
 
@@ -118,11 +146,15 @@ namespace Singleton
     /// </summary>
     public T[] GetResources<T>(string name) where T : class
     {
-      var caches = this.caches.FindAll(x => x.Object.GetType() == typeof(T) && x.Name == name);
-      var array = new T[caches.Count];
-      for (int i = 0; i < caches.Count; i++)
+      var targets = this.caches.FindAll(x =>
+        x.Type.Equals(typeof(T)) 
+        && ( x.IsSubAsset ? x.MainAssetName == name : x.Name == name )
+      );
+
+      var array = new T[targets.Count];
+      for (int i = 0; i < targets.Count; i++)
       {
-        array[i] = caches[i].Object as T;
+        array[i] = targets[i].Object as T;
       }
       return array;
     }
