@@ -25,12 +25,12 @@ namespace Singleton
     private Algorithm algorithm = new Algorithm();
     private Stage stage = new Stage();
 
-    private MapChip.SimpleChip[,] chips = new MapChip.SimpleChip[Define.WIDTH, Define.HEIGHT];
+    private MapChip.FieldChip[,] chips = new MapChip.FieldChip[Define.WIDTH, Define.HEIGHT];
 
     void Start()
     {
       Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
-        this.chips[x, y] = MapChipFactory.Instance.CreateSimpleChip(MapChipType.None);
+        this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
       });
     }
 
@@ -61,12 +61,12 @@ namespace Singleton
         var chip = this.chips[x, y];
 
         if(tile.IsAisle || tile.IsRoom) {
-          chip.Type = MapChipType.Floor;
+          chip.Type = FieldType.Floor;
           
         }
 
         else {
-          chip.Type = MapChipType.Wall;
+          chip.Type = FieldType.Wall;
         }
 
         chip.transform.localScale = Define.CHIP_SCALE;

@@ -9,7 +9,7 @@ namespace Singleton
   /// マップチップの種類
   /// </summary>
   public enum MapChipGroup {
-    Simple,
+    Field,
     Player,
   }
 
@@ -34,26 +34,26 @@ namespace Singleton
 
       GameObject folder;
 
-      folder = CreateFolderObject("Simple"); 
-      this.pools.Add(MapChipGroup.Simple, new ObjectPool(folder));
+      folder = CreateFolderObject("Field"); 
+      this.pools.Add(MapChipGroup.Field, new ObjectPool(folder));
 
       folder = CreateFolderObject("Player");
       this.pools.Add(MapChipGroup.Player, new ObjectPool(folder));
     }
 
     /// <summary>
-    /// シンプルチップを作成
+    /// フィールドチップを作成
     /// </summary>
-    public SimpleChip CreateSimpleChip(MapChipType type)
+    public FieldChip CreateFieldChip(FieldType type)
     {
-      var chip = this.pools[MapChipGroup.Simple].Create<SimpleChip>();
+      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>(type.ToString());
       chip.Type = type;
       return chip;
     }
 
     public PlayerChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>();
+      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("Player");
       return chip;
     }
 
@@ -70,17 +70,29 @@ namespace Singleton
   /// </summary>
   class ObjectPool 
   {
+    /// <summary>
+    /// オブジェクトリスト
+    /// </summary>
     private List<GameObject> pool = new List<GameObject>();
-    private string objectName;
+
+    /// <summary>
+    /// 生成するゲームオブジェクトの親にするオブジェクト
+    /// </summary>
     private GameObject parent;
 
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
     public ObjectPool(GameObject parent)
     {
-      this.objectName = parent.name + "Chip";
       this.parent = parent;
     }
 
-    public T Create<T>() where T : MonoBehaviour
+    /// <summary>
+    /// ゲームオブジェクトを作成する。
+    /// オブジェクトプールに非アクティブなオブジェクトがあれば再利用。
+    /// </summary>
+    public T Create<T>(string name) where T : MonoBehaviour
     {
       var chip = GetInactiveObject();
 
@@ -89,23 +101,28 @@ namespace Singleton
         this.pool.Add(chip);
       }
 
+      chip.gameObject.name = name;
       chip.gameObject.SetActive(true);
-
 
       return chip.GetComponent<T>();
     }
 
+    /// <summary>
+    /// 不要になったオブジェクトを解放する。
+    /// </summary>
     public void Release<T> (T obj) where T:MonoBehaviour
     {
       obj.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// 新しくオブジェクトを生成する
+    /// </summary>
     private T CreateNewObject<T> () where T : MonoBehaviour {
-      var obj = new GameObject(this.objectName);
+      var obj = new GameObject();
       obj.transform.parent = this.parent.transform;
       return obj.gameObject.AddComponent<T>();
     }
-
 
     /// <summary>
     /// 非アクティブなオブジェクトを取得する

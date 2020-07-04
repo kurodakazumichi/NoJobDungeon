@@ -4,24 +4,28 @@ using UnityEngine;
 
 namespace MapChip {
 
-  public enum MapChipType {
+  public enum FieldType {
     None,
     Wall,
     Floor,
   }
 
-  public class SimpleChip : MonoBehaviour
+  /// <summary>
+  /// 床や壁などのフィールド系のチップ
+  /// </summary>
+  public class FieldChip : MonoBehaviour
   {
-    private MapChipType type = MapChipType.None;
+    private FieldType type = FieldType.None;
 
     private SpriteRenderer spriteRenderer;
     private Sprite[] sprites;
 
-    public MapChipType Type
+    public FieldType Type
     {
       get { return this.type; }
       set { 
         this.type = value;
+        this.name = type.ToString();
         this.UpdateSprite();
       }
     }
@@ -47,8 +51,8 @@ namespace MapChip {
       Sprite sprite = null;
 
       switch(this.type) {
-        case MapChipType.Floor: sprite = this.sprites[32]; break;
-        case MapChipType.Wall : sprite = this.sprites[45]; break;
+        case FieldType.Floor: sprite = this.sprites[32]; break;
+        case FieldType.Wall : sprite = this.sprites[45]; break;
       }
 
       this.spriteRenderer.sprite = sprite;
