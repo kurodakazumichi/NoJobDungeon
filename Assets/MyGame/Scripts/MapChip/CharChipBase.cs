@@ -9,7 +9,7 @@ namespace MapChip {
   /// ChipBaseのReadOnly用インターフェース
   /// </summary>
   public interface IReadOnlyCharChipBase : IReadOnlyChipBase {
-    Direction8 Direction { get; }
+    Direction Direction { get; }
     bool IsIdle { get; }
   }
 
@@ -40,7 +40,7 @@ namespace MapChip {
     /// <summary>
     /// 方向
     /// </summary>
-    private Direction8 direction;
+    private Direction direction;
 
     /// <summary>
     /// 移動制御用
@@ -67,7 +67,7 @@ namespace MapChip {
       this.baseSprites = LoadBaseSprites();
       this.spriteRenderer.sortingOrder = SpriteSortingOrder.Charactor;
       this.state = new StateMachine<State>();
-      this.Direction = Direction8.Neutral;
+      this.Direction = new Direction(Direction8.Neutral);
 
       ResetWorking();
     }
@@ -94,7 +94,7 @@ namespace MapChip {
     /// <summary>
     /// 方向セット時にスプライトも更新
     /// </summary>
-    public Direction8 Direction
+    public Direction Direction
     {
       get { return this.direction; }
       set {
@@ -108,9 +108,9 @@ namespace MapChip {
     /// </summary>
     /// <param name="direction"></param>
     /// <returns></returns>
-    private int GetSpriteIndexBy(Direction8 direction)
+    private int GetSpriteIndexBy(Direction direction)
     {
-      switch(this.direction) {
+      switch(direction.value) {
         case Direction8.Down      : return 0;
         case Direction8.LeftDown  : return 3;
         case Direction8.Left      : return 6;
@@ -137,7 +137,7 @@ namespace MapChip {
     /// <summary>
     /// 方向によるスプライトの更新処理
     /// </summary>
-    private void UpdateSpriteBy(Direction8 direction)
+    private void UpdateSpriteBy(Direction direction)
     {
       var index = GetSpriteIndexBy(direction);
       UpdateSpriteBy(index);
@@ -252,15 +252,7 @@ namespace MapChip {
       this.specifiedTime = time;
       this.start         = this.transform.position;
 
-      if (this.direction == Direction8.Neutral)
-      {
-        this.end = DungeonManager.Instance.GetPositionBy(coord, Direction8.Down);
-      }
-
-      else
-      {
-        this.end = DungeonManager.Instance.GetPositionBy(coord, this.direction);
-      }
+      this.end = DungeonManager.Instance.GetPositionBy(coord, this.Direction.Unified);
     }
 
     public void AttackUpdate()
