@@ -12,6 +12,14 @@ namespace Singleton {
     }
 
     /// <summary>
+    /// 攻撃ボタンが押された
+    /// </summary>
+    public bool Attack()
+    {
+      return Input.GetKeyDown(KeyCode.A);
+    }
+
+    /// <summary>
     /// 入力された方向キー(８方向)
     /// </summary>
     /// <returns></returns>
