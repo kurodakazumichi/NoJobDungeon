@@ -28,9 +28,9 @@ namespace Scene {
       var system = new GameObject("System");
 
       SingletonManager.Instance
-        .Setup("DungeonManager", system)
-        .Setup("MapChipFactory", system)
-        .Setup("PlayerManager" , system);
+        .Setup(nameof(DungeonManager), system)
+        .Setup(nameof(MapChipFactory), system)
+        .Setup(nameof(PlayerManager) , system);
 
       this.state = new StateMachine<Phase>();
 
