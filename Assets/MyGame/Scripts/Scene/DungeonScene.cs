@@ -56,8 +56,7 @@ namespace Scene {
 
     private void LoadUpdate()
     {
-      bool isLoading = ResourceManager.Instance.IsLoading(ResourceManager.DungeionLabel);
-      if (isLoading)
+      if (ResourceManager.Instance.IsLoading)
       {
         return;
       }

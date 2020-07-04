@@ -48,13 +48,9 @@ namespace Singleton
     /// <summary>
     /// ロード中か
     /// </summary>
-    public bool IsLoading(string label = "")
+    public bool IsLoading
     {
-      if (string.IsNullOrEmpty(label))
-      {
-        return !string.IsNullOrEmpty(label);
-      }
-      return label == loadingLabel;
+      get { return !string.IsNullOrEmpty(loadingLabel); }
     }
 
     /// <summary>
@@ -62,7 +58,7 @@ namespace Singleton
     /// </summary>
     public async void LoadAsync( string label )
     {
-      if(IsLoading(label)) return;
+      if(IsLoading) return;
 
       var sw = new System.Diagnostics.Stopwatch();
 
