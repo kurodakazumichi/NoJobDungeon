@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StatefullMonoBehavior : MyMonoBehaviour
+public interface IReadOnlyStatefullMonoBehavior {
+  bool IsIdle { get; }
+}
+
+public class StatefullMonoBehavior : MyMonoBehaviour, IReadOnlyStatefullMonoBehavior
 {
   /// <summary>
   /// 最初にupdateFuncが呼ばれる前に一度だけ呼ばれる
