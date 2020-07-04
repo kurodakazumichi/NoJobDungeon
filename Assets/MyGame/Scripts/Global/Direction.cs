@@ -133,27 +133,27 @@ public struct Direction
   /// <summary>
   /// 方向を表す２次元ベクトル
   /// </summary>
-  public Vector2Int ToVector
+  /// <param name="yUP">y方向の上が+の場合はture、-の場合はfalseを指定する</param>
+  public Vector2Int ToVector(bool yUP = true)
   {
-    get
+    int x = 0;
+    int y = 0;
+
+    switch (this.value)
     {
-      int x = 0;
-      int y = 0;
-
-      switch (this.value)
-      {
-        case Direction8.Left:      --x;      break;
-        case Direction8.Right:     ++x;      break;
-        case Direction8.Up:        ++y;      break;
-        case Direction8.Down:      --y;      break;
-        case Direction8.LeftUp:    --x; ++y; break;
-        case Direction8.LeftDown:  --x; --y; break;
-        case Direction8.RightUp:   ++x; ++y; break;
-        case Direction8.RightDown: ++x; --y; break;
-      }
-
-      return new Vector2Int(x, y);
+      case Direction8.Left:      --x;      break;
+      case Direction8.Right:     ++x;      break;
+      case Direction8.Up:        ++y;      break;
+      case Direction8.Down:      --y;      break;
+      case Direction8.LeftUp:    --x; ++y; break;
+      case Direction8.LeftDown:  --x; --y; break;
+      case Direction8.RightUp:   ++x; ++y; break;
+      case Direction8.RightDown: ++x; --y; break;
     }
+
+    if (yUP == false) y *= -1;
+
+    return new Vector2Int(x, y);
   }
 
   /// <summary>
