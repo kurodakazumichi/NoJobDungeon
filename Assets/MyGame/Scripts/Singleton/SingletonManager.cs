@@ -21,12 +21,12 @@ namespace Singleton {
       var go = new GameObject(name);
 
       switch(name) {
-        case "DungeonManager": go.AddComponent<DungeonManager>(); break;
-        case "MapChipFactory": go.AddComponent<MapChipFactory>(); break;
-        case "PlayerManager" : go.AddComponent<PlayerManager>(); break;
-        case "CameraManager" : go.AddComponent<CameraManager>(); break;
-        case "TimeManager"   : go.AddComponent<TimeManager>(); break;
-        case "InputManager"  : go.AddComponent<InputManager>(); break;
+        case nameof(DungeonManager)   : go.AddComponent<DungeonManager>(); break;
+        case nameof(MapChipFactory)   : go.AddComponent<MapChipFactory>(); break;
+        case nameof(PlayerManager)    : go.AddComponent<PlayerManager>(); break;
+        case nameof(CameraManager)    : go.AddComponent<CameraManager>(); break;
+        case nameof(TimeManager)      : go.AddComponent<TimeManager>(); break;
+        case nameof(InputManager)     : go.AddComponent<InputManager>(); break;
         default: break;
       }
       
