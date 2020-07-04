@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scene {
 
-  public class SceneBase : StatefullMonoBehavior 
+  public class SceneBase : MyMonoBehaviour 
   {
   }
 
