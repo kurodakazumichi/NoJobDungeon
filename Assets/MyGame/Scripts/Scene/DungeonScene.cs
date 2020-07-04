@@ -87,16 +87,14 @@ namespace Scene {
       // 方向キーの入力がなければ継続
       if (direction == Direction8.Neutral) return;
 
-      // 方向キーの入力があった場合
-      PlayerManager.Instance.SetPlayerDirection(direction);
+      // プレイヤーの移動を試す
+      var isMoved = PlayerManager.Instance.CheckAndMovePlayer(direction);
 
-      // 指定した方向にプレイヤーが動けるかどうかをチェック
-      if (!PlayerManager.Instance.ChecksPlayerMovable(direction)) return;
-
-      PlayerManager.Instance.MovePlayer(direction);
-
-      // プレイヤー移動待ち
-      this.state.SetState(Phase.MovingPlayer);
+      // プレイヤー移動待ちフェーズへ
+      if (isMoved) 
+      {
+        this.state.SetState(Phase.MovingPlayer);
+      }
     }
 
     //-------------------------------------------------------------------------
