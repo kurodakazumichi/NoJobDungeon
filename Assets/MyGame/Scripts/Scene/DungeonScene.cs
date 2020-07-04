@@ -36,7 +36,7 @@ namespace Scene {
 
       this.state.Add(Phase.Load, null, LoadUpdate);
       this.state.Add(Phase.CreatingStage, CreateStageEnter);
-      this.state.Add(Phase.WaitingForInput, null, WaitingForInputUpdate);
+      this.state.Add(Phase.WaitingForInput, WaitingForInputEnter, WaitingForInputUpdate);
       this.state.Add(Phase.MovingPlayer, null, MovingPlayerUpdate);
 
       this.state.SetState(Phase.Load);
@@ -79,8 +79,22 @@ namespace Scene {
     //-------------------------------------------------------------------------
     // 入力待ちフェーズ
 
+    private void WaitingForInputEnter()
+    {
+      CameraManager.Instance.Unlock();
+    }
+
     private void WaitingForInputUpdate()
     {
+      // 攻撃ボタンが押された
+      if (InputManager.Instance.Attack())
+      {
+        PlayerManager.Instance.SetAttack();
+        CameraManager.Instance.Lock();
+        this.state.SetState(Phase.MovingPlayer);
+        return;
+      }
+
       // 方向キーを取得
       var direction = InputManager.Instance.GetDirectionKey();
 

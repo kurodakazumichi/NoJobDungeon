@@ -70,7 +70,7 @@ namespace Singleton
         }
 
         chip.transform.localScale = Define.CHIP_SCALE;
-        chip.transform.position = GetPositionFromCoord(x, y);
+        chip.transform.position = GetPositionBy(x, y);
 
       });
     }
@@ -110,15 +110,30 @@ namespace Singleton
     }
 
     /// <summary>
-    /// 座標から位置を取得する
+    /// XY座標から位置を取得する
     /// </summary>
-    public Vector3 GetPositionFromCoord(int x, int y)
+    public Vector3 GetPositionBy(int x, int y)
     {
       return new Vector3(x * Define.CHIP_SCALE.x, -y * Define.CHIP_SCALE.y, 0);
     }
-    public Vector2 GetPositionFromCoord(Vector2Int coord)
+
+    /// <summary>
+    /// Vector2Intから位置を取得する
+    /// </summary>
+    /// <param name="coord"></param>
+    /// <returns></returns>
+    public Vector3 GetPositionBy(Vector2Int coord)
     {
-      return GetPositionFromCoord(coord.x, coord.y);
+      return GetPositionBy(coord.x, coord.y);
+    }
+
+    /// <summary>
+    /// XY座標+方向から位置を取得する
+    /// </summary>
+    public Vector3 GetPositionBy(Vector2Int coord, Direction8 direction)
+    {
+      var next = GetCoord(coord, direction);
+      return GetPositionBy(next);
     }
 
     public void UpdatePlayerCoord(Vector2Int coord)

@@ -21,6 +21,7 @@ namespace MapChip {
     public enum State
     {
       Move,
+      Attack,
     }
 
     //-------------------------------------------------------------------------
@@ -68,15 +69,23 @@ namespace MapChip {
       this.state = new StateMachine<State>();
       this.Direction = Direction8.Neutral;
 
-      this.specifiedTime = 0;
-      this.elapsedTime = 0;
-      this.start = Vector3.zero;
-      this.end   = Vector3.zero;
+      ResetWorking();
     }
 
     void Update()
     {
       this.state.Update();
+    }
+
+    /// <summary>
+    /// 作業用変数をリセット
+    /// </summary>
+    protected void ResetWorking()
+    {
+      this.specifiedTime = 0;
+      this.elapsedTime = 0;
+      this.start = Vector3.zero;
+      this.end = Vector3.zero;
     }
 
     //-------------------------------------------------------------------------
@@ -151,6 +160,9 @@ namespace MapChip {
     //-------------------------------------------------------------------------
     // ステートマシン関連
 
+    /// <summary>
+    /// ステートマシンが停止している状態です
+    /// </summary>
     public bool IsIdle
     {
       get
@@ -158,6 +170,9 @@ namespace MapChip {
         return this.state.IsIdle;
       }
     }
+
+    //-------------------------------------------------------------------------
+    // 指定位置移動
 
     /// <summary>
     /// 指定位置に指定された秒数で移動する
@@ -169,7 +184,6 @@ namespace MapChip {
         this.EnterMove(time, coord);
       };
 
-
       this.state.Add(State.Move, enter, UpdateMove);
       this.state.SetState(State.Move);
     }
@@ -180,7 +194,7 @@ namespace MapChip {
     private void EnterMove(float time, Vector2Int coord)
     {
       // ダンジョン系の座標からワールド座標を取得
-      var end = DungeonManager.Instance.GetPositionFromCoord(coord);
+      var end = DungeonManager.Instance.GetPositionBy(coord);
 
       this.start = this.transform.position;
       this.end   = end;
@@ -216,6 +230,58 @@ namespace MapChip {
         this.state.SetIdle();
       }
     }
+
+    //-------------------------------------------------------------------------
+    // 攻撃モーション
+
+    public void Attack(float time)
+    {
+      System.Action enter = () =>
+      {
+        AttackEnter(time);
+      };
+
+      this.state.Add(State.Attack, enter, AttackUpdate);
+      this.state.SetState(State.Attack);
+    }
+
+    public void AttackEnter(float time)
+    {
+      ResetWorking();
+
+      this.specifiedTime = time;
+      this.start         = this.transform.position;
+
+      if (this.direction == Direction8.Neutral)
+      {
+        this.end = DungeonManager.Instance.GetPositionBy(coord, Direction8.Down);
+      }
+
+      else
+      {
+        this.end = DungeonManager.Instance.GetPositionBy(coord, this.direction);
+      }
+    }
+
+    public void AttackUpdate()
+    {
+      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      
+      var rate = this.elapsedTime / this.specifiedTime;
+      rate = Mathf.Sin(rate * Mathf.PI);
+
+      if (this.elapsedTime < this.specifiedTime)
+      {
+        this.transform.position = Vector3.Lerp(this.start, this.end, rate);
+      } 
+      
+      else
+      {
+        this.transform.position = this.start;
+        this.state.SetIdle();
+      }
+    }
+
   }
 }
 

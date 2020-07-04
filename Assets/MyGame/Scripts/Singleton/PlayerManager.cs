@@ -53,7 +53,7 @@ namespace Singleton {
       }
 
       this.player.Coord = coord;
-      this.player.transform.position = DungeonManager.Instance.GetPositionFromCoord(coord);
+      this.player.transform.position = DungeonManager.Instance.GetPositionBy(coord);
     }
 
     //-------------------------------------------------------------------------
@@ -171,6 +171,10 @@ namespace Singleton {
       this.player.Direction = direction;
     }
 
+    /// <summary>
+    /// 指定した座標に配置する
+    /// </summary>
+    /// <param name="pos"></param>
     public void SetPlayerPosition(Vector3 pos)
     {
       if (!this.player) return;
@@ -178,7 +182,13 @@ namespace Singleton {
       this.player.transform.position = pos;
     }
 
+    //-------------------------------------------------------------------------
+    // 攻撃関連
 
+    public void SetAttack()
+    {
+      this.player.Attack(0.15f);
+    }
   }
 
 }
