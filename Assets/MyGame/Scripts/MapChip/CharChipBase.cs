@@ -136,12 +136,12 @@ namespace MapChip {
     /// <summary>
     /// 指定位置に指定された秒数で移動する
     /// </summary>
-    public void Move(float time, Vector3 targetPosition, Vector2Int coord)
+    public void Move(float time, Vector2Int coord)
     {
       this.timer = 0;
       this.specifiedTime = Mathf.Max(0.01f, time);
       this.start = this.transform.position;
-      this.end   = targetPosition;
+      this.end   = DungeonManager.Instance.GetPositionFromCoord(coord);
       this.coord = coord;
       
 

@@ -28,8 +28,7 @@ namespace Singleton {
       SetPlayerDirection(direction);
 
       var coord = DungeonManager.Instance.GetCoord(this.player.Coord, direction);
-      var pos   = DungeonManager.Instance.GetPositionFromCoord(coord);
-      this.player.Move(0.15f, pos, coord);
+      this.player.Move(0.15f, coord);
 
       DungeonManager.Instance.UpdatePlayerCoord(coord);
     }
