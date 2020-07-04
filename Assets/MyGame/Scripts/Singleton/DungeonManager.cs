@@ -134,13 +134,7 @@ namespace Singleton
     {
       if (!this.showDebug) return;
 
-			if (GUI.Button(new Rect(0, 0, 100, 20), "create"))
-			{
-				this.CreateStage();
-			}
-
       this.stage.OnGUI();
-
     }
     
 #endif

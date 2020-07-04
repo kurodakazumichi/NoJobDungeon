@@ -107,7 +107,19 @@ namespace Scene {
 
       this.state.SetState(Phase.WaitingForInput);
     }
- 
-  }
 
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool showDebug = false;
+
+    private void OnGUI()
+    {
+      if (!this.showDebug) return;
+      if (GUI.Button(new Rect(10, 10, 100, 20), "Create"))
+      {
+        this.state.SetState(Phase.CreatingStage);
+      }
+    }
+#endif
+  }
 }
