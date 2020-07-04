@@ -63,7 +63,7 @@ namespace Singleton {
     /// 指定方向にプレイヤーが移動できるかチェックし、移動できる場合は移動する。
     /// 移動できなかった場合はfalse、移動した場合はtureを返す。
     /// </summary>
-    public bool CheckAndMovePlayer(Direction8 direction)
+    public bool CheckAndMovePlayer(Direction direction)
     {
       // Playerの移動に関わらず方向は更新する
       SetPlayerDirection(direction);
@@ -79,7 +79,7 @@ namespace Singleton {
     /// <summary>
     /// 指定した方向にプレイヤーが動けるかを確認
     /// </summary>
-    public bool ChecksPlayerMovable(Direction8 direction)
+    public bool ChecksPlayerMovable(Direction direction)
     {
       DungeonManager DM = DungeonManager.Instance;
 
@@ -89,49 +89,19 @@ namespace Singleton {
       IReadOnlyTile next = DM.GetTile(coord, direction);
 
       // 上下左右だったら進行方向のタイルが障害物でなければ進める
-      if (Util.IsStraight(direction) || direction == Direction8.Neutral)
+      if (direction.IsStraight || direction.IsNeutral)
       {
         return !next.IsObstacle;
       }
 
       // 斜め入力の場合は入力された方向によって周囲の壁の情報を見て判断
-      IReadOnlyTile tile1;
-      IReadOnlyTile tile2;
+      IReadOnlyTile tile1 = (direction.hasLeft)
+        ? DM.GetTile(coord, Direction.left)
+        : DM.GetTile(coord, Direction.right);
 
-      switch(direction)
-      {
-        // 左上の場合は左と上のタイルを取得
-        case Direction8.LeftUp:
-        {
-          tile1 = DM.GetTile(coord, Direction8.Left);
-          tile2 = DM.GetTile(coord, Direction8.Up);
-          break;
-        }
-
-        // 左下の場合は左と下のタイルを取得
-        case Direction8.LeftDown:
-        {
-          tile1 = DM.GetTile(coord, Direction8.Left);
-          tile2 = DM.GetTile(coord, Direction8.Down);
-          break;
-        }
-
-        // 右上の場合は右と上のタイルを取得
-        case Direction8.RightUp:
-        {
-          tile1 = DM.GetTile(coord, Direction8.Right);
-          tile2 = DM.GetTile(coord, Direction8.Up);
-          break;
-        }
-
-        // 右下(default)の場合は右と下のタイルを取得
-        default:
-        {
-          tile1 = DM.GetTile(coord, Direction8.Right);
-          tile2 = DM.GetTile(coord, Direction8.Down);
-          break;
-        }
-      }
+      IReadOnlyTile tile2 = (direction.hasUp)
+        ? DM.GetTile(coord, Direction.up)
+        : DM.GetTile(coord, Direction.down);
 
       // 斜め入力時は周囲に壁があったら進めない
       if (tile1.IsWall || tile2.IsWall)
@@ -152,7 +122,7 @@ namespace Singleton {
     /// <summary>
     /// 指定方向にプレイヤーを動かす
     /// </summary>
-    public void MovePlayer(Direction8 direction)
+    public void MovePlayer(Direction direction)
     {
       SetPlayerDirection(direction);
 
@@ -166,7 +136,7 @@ namespace Singleton {
     /// プレイヤーの方向をセットする
     /// </summary>
     /// <param name="direction"></param>
-    public void SetPlayerDirection(Direction8 direction)
+    public void SetPlayerDirection(Direction direction)
     {
       this.player.Direction = direction;
     }

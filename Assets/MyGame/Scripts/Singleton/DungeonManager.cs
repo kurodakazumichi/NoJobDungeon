@@ -88,7 +88,7 @@ namespace Singleton
       return this.stage.GetTile(coord);
     }
 
-    public IReadOnlyTile GetTile(Vector2Int coord, Direction8 direction)
+    public IReadOnlyTile GetTile(Vector2Int coord, Direction direction)
     {
       return GetTile(GetCoord(coord, direction));
     }
@@ -96,25 +96,10 @@ namespace Singleton
     /// <summary>
     /// 指定座標に方向を加えた先の座標を取得する
     /// </summary>
-    public Vector2Int GetCoord(Vector2Int v, Direction8 dir)
+    public Vector2Int GetCoord(Vector2Int coord, Direction dir)
     {
-      int x = 0;
-      int y = 0;
-
-      switch(dir) {
-        case Direction8.Left     : --x; break;
-        case Direction8.Right    : ++x; break;
-        case Direction8.Up       : --y; break;
-        case Direction8.Down     : ++y; break;
-        case Direction8.LeftUp   : --x; --y; break;
-        case Direction8.LeftDown : --x; ++y; break;
-        case Direction8.RightUp  : ++x; --y; break;
-        case Direction8.RightDown: ++x; ++y; break;
-      }
-      
-      v.x += x;
-      v.y += y;
-      return v;
+      // ダンジョン座標はY方向の上がマイナスなので、第一引数(yUp)にfalseを指定
+      return dir.ToVector(false);
     }
 
     /// <summary>
@@ -138,7 +123,7 @@ namespace Singleton
     /// <summary>
     /// XY座標+方向から位置を取得する
     /// </summary>
-    public Vector3 GetPositionBy(Vector2Int coord, Direction8 direction)
+    public Vector3 GetPositionBy(Vector2Int coord, Direction direction)
     {
       var next = GetCoord(coord, direction);
       return GetPositionBy(next);
