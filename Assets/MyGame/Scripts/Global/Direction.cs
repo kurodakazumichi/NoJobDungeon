@@ -169,4 +169,15 @@ public struct Direction
     }
   }
 
+  // プリセット
+  static public Direction newtral   => (new Direction(Direction8.Neutral));
+  static public Direction left      => (new Direction(Direction8.Left));
+  static public Direction right     => (new Direction(Direction8.Right));
+  static public Direction up        => (new Direction(Direction8.Up));
+  static public Direction down      => (new Direction(Direction8.Down));
+  static public Direction leftDown  => (new Direction(Direction8.LeftDown));
+  static public Direction leftUp    => (new Direction(Direction8.LeftUp));
+  static public Direction rightDown => (new Direction(Direction8.RightDown));
+  static public Direction rightUp   => (new Direction(Direction8.RightUp));
+
 }
