@@ -24,6 +24,23 @@ public class StatefullMonoBehavior : MyMonoBehaviour
   private System.Action reservedFinalizeFunc = null;
 
   /// <summary>
+  /// アイドル状態
+  /// </summary>
+  public bool IsIdle
+  {
+    get { 
+      return (
+           this.startFunc == null
+        && this.reservedStartFunc == null
+        && this.updateFunc == null
+        && this.reservedUpdateFunc == null
+        && this.finalizeFunc == null
+        && this.reservedFinalizeFunc == null
+      );
+    }
+  }
+
+  /// <summary>
   /// 更新処理と後処理を登録する
   /// </summary>
   /// <param name="update"></param>

@@ -11,11 +11,11 @@ namespace MapChip
   public interface IReadOnlyPlayerChip {
     Direction8 Direction { get; }
     bool IsIdle { get; }
-    bool IsMoving { get; }
+
     Vector2Int Coord { get; }
   }
 
-  public class PlayerChip : MyMonoBehaviour, IReadOnlyPlayerChip
+  public class PlayerChip : StatefullMonoBehavior, IReadOnlyPlayerChip
   {
     enum Mode {
       None,
@@ -39,6 +39,7 @@ namespace MapChip
     private Direction8 dir = Direction8.Neutral;
     private float specifiedTime;
     private float timer;
+
     void Awake()
     {
       this.specifiedTime = 0;
@@ -54,20 +55,7 @@ namespace MapChip
       this.spriteRenderer.sprite = this.sprites[0];
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-      switch (this.mode) { 
-        case Mode.Aim: AimMode(); break;
-        default: break;
-      }
-    }
 
     public Direction8 Direction
     {
@@ -101,6 +89,9 @@ namespace MapChip
 
     }
 
+    //-------------------------------------------------------------------------
+    // 移動
+
     public void Move(float time, Vector3 targetPosition, Vector2Int coord)
     {
       this.timer = 0;
@@ -109,11 +100,11 @@ namespace MapChip
       this.end   = targetPosition;
       this.coord = coord;
       this.mode = Mode.Aim;
+
+      SetFunc(null, UpdateMove);
     }
-    /// <summary>
-    /// ある地点を目指すモード
-    /// </summary>
-    void AimMode()
+
+    bool UpdateMove()
     {
       this.timer += TimeManager.Instance.DungeonDeltaTime;
 
@@ -122,18 +113,12 @@ namespace MapChip
       if (this.specifiedTime <= this.timer) {
         this.transform.position = this.end;
         this.mode = Mode.None;
+        return false;
       }
+
+      return true;
     }
 
-    public bool IsMoving
-    {
-      get { return this.mode == Mode.Aim; }
-    }
-
-    public bool IsIdle
-    {
-      get { return this.mode == Mode.None; }
-    }
   }
 
 }
