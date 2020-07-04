@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Singleton;
 
 namespace MapChip {
 
@@ -29,6 +30,14 @@ namespace MapChip {
     /// </summary>
     private Direction8 direction;
 
+    /// <summary>
+    /// 移動制御用
+    /// </summary>
+    protected Vector3 start;
+    protected Vector3 end;
+    protected float specifiedTime;
+    protected float timer;
+
     //-------------------------------------------------------------------------
     // 主要のメソッド
 
@@ -46,6 +55,10 @@ namespace MapChip {
       this.baseSprites = LoadBaseSprites();
       this.spriteRenderer.sortingOrder = SpriteSortingOrder.Charactor;
       this.Direction = Direction8.Neutral;
+      this.specifiedTime = 0;
+      this.timer = 0;
+      this.start = Vector3.zero;
+      this.end   = Vector3.zero;
     }
 
     //-------------------------------------------------------------------------
@@ -115,6 +128,43 @@ namespace MapChip {
       }
 
       this.spriteRenderer.sprite = this.baseSprites[index];
+    }
+
+    //-------------------------------------------------------------------------
+    // 移動
+
+    /// <summary>
+    /// 指定位置に指定された秒数で移動する
+    /// </summary>
+    public void Move(float time, Vector3 targetPosition, Vector2Int coord)
+    {
+      this.timer = 0;
+      this.specifiedTime = Mathf.Max(0.01f, time);
+      this.start = this.transform.position;
+      this.end   = targetPosition;
+      this.coord = coord;
+      
+
+      SetFunc(null, UpdateMove);
+    }
+
+    /// <summary>
+    /// 移動時の処理
+    /// </summary>
+    bool UpdateMove()
+    {
+      this.timer += TimeManager.Instance.DungeonDeltaTime;
+      var rate = this.timer / this.specifiedTime;
+
+      this.transform.position = Vector3.Lerp(this.start, this.end, rate);
+
+      if (this.specifiedTime <= this.timer) {
+        this.transform.position = this.end;
+
+        return false;
+      }
+
+      return true;
     }
   }
 }
