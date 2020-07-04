@@ -57,6 +57,17 @@ namespace Singleton
       return chip;
     }
 
+    /// <summary>
+    /// 解放する
+    /// </summary>
+    public void Release<T>(T obj) where T : MonoBehaviour
+    {
+      obj.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// 生成した要素のフォルダーとなるオブジェクトを生成
+    /// </summary>
     private GameObject CreateFolderObject(string name)
     {
       var folder = new GameObject(name);
@@ -105,14 +116,6 @@ namespace Singleton
       chip.gameObject.SetActive(true);
 
       return chip.GetComponent<T>();
-    }
-
-    /// <summary>
-    /// 不要になったオブジェクトを解放する。
-    /// </summary>
-    public void Release<T> (T obj) where T:MonoBehaviour
-    {
-      obj.gameObject.SetActive(false);
     }
 
     /// <summary>

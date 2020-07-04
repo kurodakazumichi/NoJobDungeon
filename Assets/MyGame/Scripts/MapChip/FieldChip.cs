@@ -5,7 +5,7 @@ using UnityEngine;
 namespace MapChip {
 
   public enum FieldType {
-    None,
+    None  = -1,
     Wall,
     Floor,
   }
@@ -13,12 +13,17 @@ namespace MapChip {
   /// <summary>
   /// 床や壁などのフィールド系のチップ
   /// </summary>
-  public class FieldChip : MonoBehaviour
+  public class FieldChip : ChipBase
   {
-    private FieldType type = FieldType.None;
+    /// <summary>
+    /// スプライトリソースマップ
+    /// </summary>
+    private static Dictionary<FieldType, Sprite> sprites;
 
-    private SpriteRenderer spriteRenderer;
-    private Sprite[] sprites;
+    /// <summary>
+    /// FieldChipのタイプ
+    /// </summary>
+    private FieldType type = FieldType.None;
 
     public FieldType Type
     {
@@ -30,13 +35,29 @@ namespace MapChip {
       }
     }
 
-    void Awake()
+    /// <summary>
+    /// リソースのロードとマッピング
+    /// </summary>
+    private void LoadResrouces()
     {
-      this.sprites = Resources.LoadAll<Sprite>("mapchip320x240");
-      this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
-      this.spriteRenderer.sortingOrder = SpriteSortingOrder.BackGround;
+      // ロード済みならスキップ
+      if (FieldChip.sprites != null) return;
 
-      var m = this.spriteRenderer.material;
+      FieldChip.sprites = new Dictionary<FieldType, Sprite>();
+
+      var resources = Resources.LoadAll<Sprite>("mapchip320x240");
+      FieldChip.sprites[FieldType.None]  = null;
+      FieldChip.sprites[FieldType.Floor] = resources[32];
+      FieldChip.sprites[FieldType.Wall]  = resources[45];
+    }
+
+    override protected void Awake()
+    {
+      base.Awake();
+
+      LoadResrouces();
+      
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.BackGround;
     }
 
     void Start()
@@ -44,22 +65,16 @@ namespace MapChip {
       this.UpdateSprite();
     }
 
+    /// <summary>
+    /// スプライトの更新
+    /// </summary>
     private void UpdateSprite()
     {
       if (!this.spriteRenderer) return;
+      if (FieldChip.sprites == null) return;
 
-      Sprite sprite = null;
-
-      switch(this.type) {
-        case FieldType.Floor: sprite = this.sprites[32]; break;
-        case FieldType.Wall : sprite = this.sprites[45]; break;
-      }
-
-      this.spriteRenderer.sprite = sprite;
-
+      this.spriteRenderer.sprite = FieldChip.sprites[type];
     }
-
-
   }
 
 }
