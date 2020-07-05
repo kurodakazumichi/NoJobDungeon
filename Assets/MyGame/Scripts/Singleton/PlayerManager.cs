@@ -127,7 +127,7 @@ namespace Singleton {
       SetPlayerDirection(direction);
 
       var coord = DungeonManager.Instance.GetCoord(this.player.Coord, direction);
-      this.player.Move(0.15f, coord);
+      this.player.Move(Define.SEC_PER_TURN, coord);
 
       DungeonManager.Instance.UpdatePlayerCoord(coord);
     }
@@ -157,7 +157,7 @@ namespace Singleton {
 
     public void SetAttack()
     {
-      this.player.Attack(0.15f);
+      this.player.Attack(Define.SEC_PER_TURN);
     }
   }
 
