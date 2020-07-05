@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Singleton {
 
   public enum CameraMode {
-    None,
+    Free,
     Tracking,
   }
 
@@ -14,14 +14,13 @@ namespace Singleton {
   /// </summary>
   public class CameraManager : SingletonMonobehaviour<CameraManager>
   {
-    private CameraMode mode = CameraMode.None;
+    private CameraMode mode = CameraMode.Free;
     private GameObject target = null;
     private bool isLock = false;
-    public void SetDungeonMode(GameObject player)
+    public void SetDungeonSettings()
     {
       Camera.main.orthographic     = true;
       Camera.main.orthographicSize = 3;
-      SetTrackingMode(player);
     }
 
     public void Lock()
@@ -32,6 +31,16 @@ namespace Singleton {
     public void Unlock()
     {
       this.isLock = false;
+    }
+
+    /// <summary>
+    /// カメラをフリーモードにする
+    /// </summary>
+    public void SetFreeMode()
+    {
+      this.target = null;
+      this.isLock = false;
+      this.mode = CameraMode.Free;
     }
 
     /// <summary>

@@ -14,8 +14,7 @@ namespace Scene {
     {
       Load,
       CreatingStage,
-      WaitingForInput,
-      MovingPlayer,
+      PlayingStage,
     }
 
     private StateMachine<Phase> state;
@@ -36,8 +35,7 @@ namespace Scene {
 
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate);
       this.state.Add(Phase.CreatingStage, CreateStageEnter);
-      this.state.Add(Phase.WaitingForInput, WaitingForInputEnter, WaitingForInputUpdate);
-      this.state.Add(Phase.MovingPlayer, null, MovingPlayerUpdate);
+      this.state.Add(Phase.PlayingStage, PlayingStageEnter, PlayingStageUpdate);
 
       this.state.SetState(Phase.Load);
     }
@@ -81,58 +79,24 @@ namespace Scene {
       // プレイヤーを生成
       PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
 
-      // カメラ設定
-      CameraManager.Instance.SetDungeonMode(PlayerManager.Instance.PlayerObject);
+      // カメラをダンジョン設定にする
+      CameraManager.Instance.SetDungeonSettings();
 
       // 入力待ちフェーズへ
-      this.state.SetState(Phase.WaitingForInput);
+      this.state.SetState(Phase.PlayingStage);
 
     }
 
     //-------------------------------------------------------------------------
-    // 入力待ちフェーズ
-
-    private void WaitingForInputEnter()
+    // ステージプレイ中
+    private void PlayingStageEnter()
     {
-      CameraManager.Instance.Unlock();
+      PlayerManager.Instance.StartPlayer();
     }
 
-    private void WaitingForInputUpdate()
+    private void PlayingStageUpdate ()
     {
-      // 攻撃ボタンが押された
-      if (InputManager.Instance.Attack())
-      {
-        PlayerManager.Instance.SetAttack();
-        CameraManager.Instance.Lock();
-        this.state.SetState(Phase.MovingPlayer);
-        return;
-      }
-
-      // 方向キーを取得
-      var direction = InputManager.Instance.GetDirectionKey();
-
-      // 方向キーの入力がなければ継続
-      if (direction.IsNeutral) return;
-
-      // プレイヤーの移動を試す
-      var isMoved = PlayerManager.Instance.CheckAndMovePlayer(direction);
-
-      // プレイヤー移動待ちフェーズへ
-      if (isMoved) 
-      {
-        this.state.SetState(Phase.MovingPlayer);
-      }
-    }
-
-    //-------------------------------------------------------------------------
-    // プレイヤー移動待ちフェーズ
-    
-    private void MovingPlayerUpdate()
-    {
-      // プレイヤーがIdleになるまで待つ
-      if (!PlayerManager.Instance.Player.IsIdle) return;
-
-      this.state.SetState(Phase.WaitingForInput);
+      PlayerManager.Instance.UpdatePlayer();
     }
 
 #if UNITY_EDITOR
