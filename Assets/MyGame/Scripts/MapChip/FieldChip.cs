@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Singleton;
+using MyGame.Singleton;
 
-namespace MapChip {
+namespace MyGame.MapChip {
 
   public enum FieldType {
     None  = -1,

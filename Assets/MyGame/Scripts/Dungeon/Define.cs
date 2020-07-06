@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dungeon
+namespace MyGame.Dungeon
 {
 	public static class Define
 	{

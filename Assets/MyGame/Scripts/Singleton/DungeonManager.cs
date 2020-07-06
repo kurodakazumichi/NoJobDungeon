@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Dungeon;
-using MapChip;
+using MyGame.MapChip;
+using MyGame.Dungeon;
 
-namespace Singleton 
+namespace MyGame.Singleton 
 {
   /// <summary>
   /// ダンジョンマネージャー
@@ -85,7 +85,7 @@ namespace Singleton
         }
 
         chip.transform.localScale = Define.CHIP_SCALE;
-        chip.transform.position = GetPositionBy(x, y);
+        chip.transform.position   = Dungeon.Util.GetPositionBy(x, y);
 
       });
     }
@@ -97,43 +97,7 @@ namespace Singleton
 
     public IReadOnlyTile GetTile(Vector2Int coord, Direction direction)
     {
-      return GetTile(GetCoord(coord, direction));
-    }
-
-    /// <summary>
-    /// 指定座標に方向を加えた先の座標を取得する
-    /// </summary>
-    public Vector2Int GetCoord(Vector2Int coord, Direction dir)
-    {
-      // ダンジョン座標はY方向の上がマイナスなので、第一引数(yUp)にfalseを指定
-      return coord + dir.ToVector(false);
-    }
-
-    /// <summary>
-    /// XY座標から位置を取得する
-    /// </summary>
-    public Vector3 GetPositionBy(int x, int y)
-    {
-      return new Vector3(x * Define.CHIP_SCALE.x, -y * Define.CHIP_SCALE.y, 0);
-    }
-
-    /// <summary>
-    /// Vector2Intから位置を取得する
-    /// </summary>
-    /// <param name="coord"></param>
-    /// <returns></returns>
-    public Vector3 GetPositionBy(Vector2Int coord)
-    {
-      return GetPositionBy(coord.x, coord.y);
-    }
-
-    /// <summary>
-    /// XY座標+方向から位置を取得する
-    /// </summary>
-    public Vector3 GetPositionBy(Vector2Int coord, Direction direction)
-    {
-      var next = GetCoord(coord, direction);
-      return GetPositionBy(next);
+      return GetTile(Dungeon.Util.GetCoord(coord, direction));
     }
 
     public void UpdatePlayerCoord(Vector2Int coord)

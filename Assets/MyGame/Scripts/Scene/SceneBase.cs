@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scene {
+namespace MyGame.Scene {
 
   public class SceneBase : MyMonoBehaviour 
   {

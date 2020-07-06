@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Singleton {
+namespace MyGame.Singleton {
 
   public class InputManager : SingletonMonobehaviour<InputManager>
   {
