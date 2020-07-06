@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MapChip {
+namespace MyGame.MapChip {
 
   /// <summary>
   /// ChipBaseのReadOnly用インターフェース

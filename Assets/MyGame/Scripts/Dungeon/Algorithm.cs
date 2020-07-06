@@ -2,8 +2,7 @@
 using UnityEngine;
 using MyExtension;
 
-
-namespace Dungeon {
+namespace MyGame.Dungeon {
   /// <summary>
   /// ダンジョン自動生成アルゴリズム(均等分割法)
   /// 配列を縦横に均等に分割する方法でダンジョンを生成する。

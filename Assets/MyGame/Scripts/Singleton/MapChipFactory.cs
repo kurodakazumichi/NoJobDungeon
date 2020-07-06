@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MapChip;
+using MyGame.MapChip;
 
-namespace Singleton 
+namespace MyGame.Singleton 
 { 
   /// <summary>
   /// マップチップの種類

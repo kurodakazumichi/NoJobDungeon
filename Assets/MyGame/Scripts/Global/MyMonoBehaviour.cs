@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyMonoBehaviour : MonoBehaviour
+namespace MyGame
 {
+  public class MyMonoBehaviour : MonoBehaviour
+  {
+  }
 }
