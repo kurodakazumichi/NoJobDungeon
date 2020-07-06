@@ -11,7 +11,6 @@ namespace MyGame.Scene
       void Start()
       {
         Debug.Log("Sample Scene!");
-        SceneManager.LoadScene("DungeonScene");
       }
 
       // Update is called once per frame
