@@ -11,16 +11,33 @@ namespace MyGame.Singleton
   /// </summary>
   public class DungeonManager : SingletonMonobehaviour<DungeonManager>
   {
+    //-------------------------------------------------------------------------
+    // メンバ変数
+    /// <summary>
+    /// ダンジョン生成アルゴリズム
+    /// </summary>
     private Algorithm algorithm;
+
+    /// <summary>
+    /// ダンジョン配列
+    /// </summary>
     private Stage stage;
 
+    //-------------------------------------------------------------------------
+    // 主要なメソッド
 
+    /// <summary>
+    /// メンバの初期化
+    /// </summary>
     protected override void Awake()
     {
       base.Awake();
       this.algorithm = new Algorithm();
       this.stage     = new Stage();
     }
+
+    //-------------------------------------------------------------------------
+    // 生成
 
     /// <summary>
     /// ダンジョンの生成
@@ -36,7 +53,12 @@ namespace MyGame.Singleton
       get { return this.stage.Find(Tiles.Player)[0]; }
     }
 
+    //-------------------------------------------------------------------------
+    // 取得
 
+    /// <summary>
+    /// ステージのタイル情報を取得する
+    /// </summary>
     public IReadOnlyTile GetTile(Vector2Int coord)
     {
       return this.stage.GetTile(coord);
@@ -47,10 +69,17 @@ namespace MyGame.Singleton
       return GetTile(Dungeon.Util.GetCoord(coord, direction));
     }
 
+    /// <summary>
+    /// プレイヤーの座標を取得する
+    /// </summary>
+    /// <param name="coord"></param>
     public void UpdatePlayerCoord(Vector2Int coord)
     {
       this.stage.UpdatePlayerCoord(coord);
     }
+
+    //-------------------------------------------------------------------------
+    // その他
 
     public void Map(System.Action<int, int, IReadOnlyTile> cb)
     {
@@ -58,6 +87,8 @@ namespace MyGame.Singleton
     }
 
 #if UNITY_EDITOR
+    //-------------------------------------------------------------------------
+    // デバッグ
 
     public bool showDebug = true;
 
