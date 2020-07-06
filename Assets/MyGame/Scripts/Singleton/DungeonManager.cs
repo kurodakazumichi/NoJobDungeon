@@ -22,10 +22,17 @@ namespace Singleton
       get { return CameraManager.Instance; }
     }
 
-    private Algorithm algorithm = new Algorithm();
-    private Stage stage = new Stage();
+    private Algorithm algorithm;
+    private Stage stage;
 
     private MapChip.FieldChip[,] chips = new MapChip.FieldChip[Define.WIDTH, Define.HEIGHT];
+
+    protected override void Awake()
+    {
+      base.Awake();
+      this.algorithm = new Algorithm();
+      this.stage     = new Stage();
+    }
 
     void Start()
     {
