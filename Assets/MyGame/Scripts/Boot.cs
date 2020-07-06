@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Singleton;
+using MyGame.Singleton;
 
 public class Boot : MonoBehaviour {
 

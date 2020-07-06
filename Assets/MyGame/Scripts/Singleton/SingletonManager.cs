@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Singleton {
+namespace MyGame.Singleton {
 
   /// <summary>
   /// シングルトンを管理する

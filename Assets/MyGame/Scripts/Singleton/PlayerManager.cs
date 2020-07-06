@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MapChip;
-using Dungeon;
+using MyGame.Unit.Dungeon;
 
-namespace Singleton {
+namespace MyGame.Singleton {
 
   /// <summary>
   /// プレイヤーマネージャー

@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Singleton;
+using MyGame.Singleton;
+using MyGame.Dungeon;
 
-namespace Dungeon {
+namespace MyGame.Unit.Dungeon {
   
   public class Player
   {

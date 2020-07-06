@@ -1,55 +1,58 @@
-﻿/// <summary>
-/// ビットフラグを扱いやすくするためのクラス
-/// </summary>
-public struct BitFlag
+﻿namespace MyGame
 {
-  private uint value;
-
-  public void Clear()
+  /// <summary>
+  /// ビットフラグを扱いやすくするためのクラス
+  /// </summary>
+  public struct BitFlag
   {
-    this.value = 0;
-  }
+    private uint value;
 
-  public void Set(uint value)
-  {
-    this.value = value;
-  }
+    public void Clear()
+    {
+      this.value = 0;
+    }
 
-  public uint Get()
-  {
-    return this.value;
-  }
+    public void Set(uint value)
+    {
+      this.value = value;
+    }
 
-  public void On(uint flag)
-  {
-    this.value |= flag;
-  }
+    public uint Get()
+    {
+      return this.value;
+    }
 
-  public void Off(uint flag)
-  {
-    this.value &= ~flag;
-  }
+    public void On(uint flag)
+    {
+      this.value |= flag;
+    }
 
-  public bool Is(uint flag)
-  {
-    return this.value == flag;
-  }
+    public void Off(uint flag)
+    {
+      this.value &= ~flag;
+    }
 
-  public bool Contain(uint flag)
-  {
-    if (flag == 0) return false;
-    return (this.value & flag) == flag;
-  }
+    public bool Is(uint flag)
+    {
+      return this.value == flag;
+    }
 
-  public bool ContainEither(uint flag)
-  {
-    if (flag == 0) return false;
-    return (this.value & flag) != 0;
-  }
+    public bool Contain(uint flag)
+    {
+      if (flag == 0) return false;
+      return (this.value & flag) == flag;
+    }
 
-  public override string ToString()
-  {
-    return this.value.ToString();
-  }
+    public bool ContainEither(uint flag)
+    {
+      if (flag == 0) return false;
+      return (this.value & flag) != 0;
+    }
 
+    public override string ToString()
+    {
+      return this.value.ToString();
+    }
+
+  }
 }
