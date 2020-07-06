@@ -31,7 +31,7 @@ namespace MyGame.MapChip {
     /// <summary>
     /// SpriteRendererをアタッチする
     /// </summary>
-    protected virtual void Awake()
+    protected override void Awake()
     {
       this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
     }

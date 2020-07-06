@@ -22,7 +22,7 @@ namespace MyGame.Scene {
     /// <summary>
     /// 開始処理
     /// </summary>
-    void Start()
+    protected override void Start()
     {
       var system = new GameObject("System");
 
@@ -42,7 +42,7 @@ namespace MyGame.Scene {
       this.state.SetState(Phase.Load);
     }
 
-    private void Update()
+    protected override void Update()
     {
       this.state.Update();
     }

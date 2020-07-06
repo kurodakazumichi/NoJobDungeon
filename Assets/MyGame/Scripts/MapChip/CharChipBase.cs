@@ -78,7 +78,7 @@ namespace MyGame.MapChip {
       ResetWorking();
     }
 
-    void Update()
+    protected override void Update()
     {
       this.UpdateAnimation();
       this.state.Update();

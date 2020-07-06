@@ -62,7 +62,7 @@ namespace MyGame.MapChip {
       this.spriteRenderer.sortingOrder = SpriteSortingOrder.BackGround;
     }
 
-    void Start()
+    protected override void Start()
     {
       this.UpdateSprite();
     }
