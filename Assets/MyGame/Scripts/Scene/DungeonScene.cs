@@ -30,7 +30,8 @@ namespace MyGame.Scene {
         .Setup(nameof(DungeonManager), system)
         .Setup(nameof(MapChipFactory), system)
         .Setup(nameof(PlayerManager) , system)
-        .Setup(nameof(FieldManager)  , system);
+        .Setup(nameof(FieldManager)  , system)
+        .Setup(nameof(EnemyManager)  , system);
 
       this.state = new StateMachine<Phase>();
 
@@ -82,6 +83,9 @@ namespace MyGame.Scene {
       // プレイヤーを生成
       PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
 
+      // 敵を生成
+      EnemyManager.Instance.CreateEnemies();
+
       // カメラをダンジョン設定にする
       CameraManager.Instance.SetDungeonSettings();
 
@@ -95,6 +99,7 @@ namespace MyGame.Scene {
     private void PlayingStageEnter()
     {
       PlayerManager.Instance.StartPlayer();
+      EnemyManager.Instance.StartEnemies();
     }
 
     private void PlayingStageUpdate ()

@@ -11,6 +11,7 @@ namespace MyGame.Singleton
   public enum MapChipGroup {
     Field,
     Player,
+    Enemy,
   }
 
   /// <summary>
@@ -39,6 +40,9 @@ namespace MyGame.Singleton
 
       folder = CreateFolderObject("Player");
       this.pools.Add(MapChipGroup.Player, new ObjectPool(folder));
+
+      folder = CreateFolderObject("Enemy");
+      this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
     }
 
     /// <summary>
@@ -54,6 +58,12 @@ namespace MyGame.Singleton
     public PlayerChip CreatePlayerChip()
     {
       var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("Player");
+      return chip;
+    }
+
+    public EnemyChip CreateEnemyChip(EnemyType type)
+    {
+      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("Enemy");
       return chip;
     }
 
