@@ -24,6 +24,13 @@ MonoBehaviour:
     - Dungeon
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 72f58667d8300c644ace8834b1622eee
+    m_Address: enemy001
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Dungeon
+    m_MainAsset: {fileID: 2800000, guid: 72f58667d8300c644ace8834b1622eee, type: 3}
+    m_TargetAsset: {fileID: 2800000, guid: 72f58667d8300c644ace8834b1622eee, type: 3}
   - m_GUID: 90c7a8d17ffaf7c4488237141bd0d797
     m_Address: mapchip320x240
     m_ReadOnly: 0
