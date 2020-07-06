@@ -154,7 +154,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void MakeItem()
     {
-      Util.LoopByRange(0, 10, (int i) => {
+      MyGame.Util.LoopByRange(0, 10, (int i) => {
         var pos = PlaceableCoord;
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Item);
       });
@@ -162,7 +162,7 @@ namespace MyGame.Dungeon
 
     public void MakeEnemy()
     {
-      Util.LoopByRange(0, 3, (int i) => {
+      MyGame.Util.LoopByRange(0, 3, (int i) => {
         var pos = PlaceableCoord;
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Enemy);
       });
@@ -248,14 +248,14 @@ namespace MyGame.Dungeon
     // その他
 		public void Map(System.Action<int, int, Tile> cb)
 		{
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
+      MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         cb(x, y, this.tiles[x, y]);
       });
 		}
 
     public void Map(System.Func<int, int, Tile, bool> cb)
     {
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
+      MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         return cb(x, y, this.tiles[x, y]);
       });      
     }

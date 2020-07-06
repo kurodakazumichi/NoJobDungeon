@@ -213,7 +213,7 @@ namespace MyGame.Dungeon {
         int y1 = 1;
         int y2 = Define.HEIGHT - 2;
 
-        Util.LoopByRange(y1, y2 + 1, (int y) => {
+        MyGame.Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.ReservedAisle);
         });
       });
@@ -223,7 +223,7 @@ namespace MyGame.Dungeon {
         int x1 = 1;
         int x2 = Define.WIDTH - 2;
 
-        Util.LoopByRange(x1, x2 + 1, (int x) => {
+        MyGame.Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.ReservedAisle);
         });
       });
@@ -288,7 +288,7 @@ namespace MyGame.Dungeon {
     private void MarkupRoom()
     {
       MapForRoom((int rx, int ry, Room room) => {
-        Util.LoopByRect(room.Area, (int x, int y) => {
+        MyGame.Util.LoopByRect(room.Area, (int x, int y) => {
           this.chips[x, y].Set((uint)Flags.Room);
         });
       });
@@ -315,7 +315,7 @@ namespace MyGame.Dungeon {
         if (x1 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.LoopByRange(x1, x2 + 1, (int x) => {
+        MyGame.Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -344,7 +344,7 @@ namespace MyGame.Dungeon {
         if (x2 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.LoopByRange(x1, x2 + 1, (int x) => {
+        MyGame.Util.LoopByRange(x1, x2 + 1, (int x) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -376,7 +376,7 @@ namespace MyGame.Dungeon {
         if (y1 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.LoopByRange(y1, y2 + 1, (int y) => {
+        MyGame.Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -408,7 +408,7 @@ namespace MyGame.Dungeon {
         if (y2 < 0) return;
 
         // 部屋から通路予定地に通路を作成
-        Util.LoopByRange(y1, y2 + 1, (int y) => {
+        MyGame.Util.LoopByRange(y1, y2 + 1, (int y) => {
           this.chips[x, y].On((uint)Flags.Aisle);
         });
 
@@ -434,7 +434,7 @@ namespace MyGame.Dungeon {
         // 最初と最後の地点を結ぶ。
         // こうする事で到達できない部屋が作られなくなる(はず)
         if (found.Count % 2 == 1 || index % 2 == 1) {
-          Util.LoopByRange(found.First(), found.Last(), (int y) => {
+          MyGame.Util.LoopByRange(found.First(), found.Last(), (int y) => {
             this.chips[x, y].On((uint)Flags.Aisle);
           });
           return;
@@ -442,7 +442,7 @@ namespace MyGame.Dungeon {
 
         // 合流地点が偶数の場合
         for (int i = 0; i < found.Count; i += 2) {
-          Util.LoopByRange(found[i], found[i + 1], (int y) => {
+          MyGame.Util.LoopByRange(found[i], found[i + 1], (int y) => {
             this.chips[x, y].On((uint)Flags.Aisle);
           });
         }

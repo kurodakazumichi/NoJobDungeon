@@ -194,7 +194,7 @@ namespace MyGame.MapChip {
     private void EnterMove(float time, Vector2Int coord)
     {
       // ダンジョン系の座標からワールド座標を取得
-      var end = DungeonManager.Instance.GetPositionBy(coord);
+      var end = Dungeon.Util.GetPositionBy(coord);
 
       this.start = this.transform.position;
       this.end   = end;
@@ -252,7 +252,7 @@ namespace MyGame.MapChip {
       this.specifiedTime = time;
       this.start         = this.transform.position;
 
-      this.end = DungeonManager.Instance.GetPositionBy(coord, this.Direction.Unified);
+      this.end = Dungeon.Util.GetPositionBy(coord, this.Direction.Unified);
     }
 
     public void AttackUpdate()
