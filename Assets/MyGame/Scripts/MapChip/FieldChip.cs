@@ -50,7 +50,7 @@ namespace MyGame.MapChip {
       var resources = ResourceManager.Instance.GetResources<Sprite>("mapchip320x240");
       FieldChip.sprites[FieldType.None]  = null;
       FieldChip.sprites[FieldType.Floor] = resources[32];
-      FieldChip.sprites[FieldType.Wall]  = resources[45];
+      FieldChip.sprites[FieldType.Wall]  = resources[87];
     }
 
     override protected void Awake()
