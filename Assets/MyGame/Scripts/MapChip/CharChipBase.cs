@@ -78,8 +78,6 @@ namespace MyGame.MapChip {
       ResetWorking();
     }
 
-    private float timer = 0;
-
     void Update()
     {
       this.UpdateAnimation();
@@ -92,7 +90,7 @@ namespace MyGame.MapChip {
     void UpdateAnimation()
     {
       this.animTimer += Time.deltaTime * 3;
-      var index = this.DirectionSpriteIndex + animIndex[((int)this.timer) % 4];
+      var index = this.DirectionSpriteIndex + this.animIndex[((int)this.animTimer) % 4];
       UpdateSpriteBy(index);
     }
 
