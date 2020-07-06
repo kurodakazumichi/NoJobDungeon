@@ -11,35 +11,15 @@ namespace MyGame.Singleton
   /// </summary>
   public class DungeonManager : SingletonMonobehaviour<DungeonManager>
   {
-
-    private PlayerManager PlayerMan
-    {
-      get { return PlayerManager.Instance; }
-    }
-
-    private CameraManager CameraMan
-    {
-      get { return CameraManager.Instance; }
-    }
-
     private Algorithm algorithm;
     private Stage stage;
 
-    private MapChip.FieldChip[,] chips = new MapChip.FieldChip[Define.WIDTH, Define.HEIGHT];
 
     protected override void Awake()
     {
       base.Awake();
       this.algorithm = new Algorithm();
       this.stage     = new Stage();
-    }
-
-    void Start()
-    {
-    }
-
-    void Update()
-    {
     }
 
     /// <summary>
