@@ -50,6 +50,12 @@ namespace MyGame.MapChip {
     protected float specifiedTime;
     protected float elapsedTime;
 
+    /// <summary>
+    /// アニメーション用タイマー
+    /// </summary>
+    private float animTimer = 0;
+    private int[] animIndex = {0, 1, 2, 1};  
+
     //-------------------------------------------------------------------------
     // 主要のメソッド
 
@@ -72,9 +78,22 @@ namespace MyGame.MapChip {
       ResetWorking();
     }
 
+    private float timer = 0;
+
     void Update()
     {
+      this.UpdateAnimation();
       this.state.Update();
+    }
+
+    /// <summary>
+    /// アニメーション
+    /// </summary>
+    void UpdateAnimation()
+    {
+      this.animTimer += Time.deltaTime * 3;
+      var index = this.DirectionSpriteIndex + animIndex[((int)this.timer) % 4];
+      UpdateSpriteBy(index);
     }
 
     /// <summary>
