@@ -36,14 +36,10 @@ namespace MyGame.Singleton
 
     void Start()
     {
-      //Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
-      //  this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
-      //});
     }
 
     void Update()
     {
-      
     }
 
     /// <summary>
@@ -60,35 +56,6 @@ namespace MyGame.Singleton
       get { return this.stage.Find(Tiles.Player)[0]; }
     }
 
-    public void Init()
-    {
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) =>
-      {
-        this.chips[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
-      });
-    }
-
-    // TODO: ここもここでやるのいや
-    public void CreateMapChips()
-    {
-      this.stage.Map((int x, int y, Tile tile) => {
-
-        var chip = this.chips[x, y];
-
-        if(tile.IsAisle || tile.IsRoom) {
-          chip.Type = FieldType.Floor;
-          
-        }
-
-        else {
-          chip.Type = FieldType.Wall;
-        }
-
-        chip.transform.localScale = Define.CHIP_SCALE;
-        chip.transform.position   = Dungeon.Util.GetPositionBy(x, y);
-
-      });
-    }
 
     public IReadOnlyTile GetTile(Vector2Int coord)
     {
