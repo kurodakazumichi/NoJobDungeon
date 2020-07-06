@@ -14,7 +14,7 @@ namespace MyGame.MapChip {
   /// <summary>
   /// マップチップのベースクラス
   /// </summary>
-  public class ChipBase : MyMonoBehaviour, IReadOnlyChipBase
+  public class DeprecatedChipBase : MyMonoBehaviour, IReadOnlyChipBase
   {
     protected SpriteRenderer spriteRenderer;
 

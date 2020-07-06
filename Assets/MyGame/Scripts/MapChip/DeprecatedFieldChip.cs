@@ -14,7 +14,7 @@ namespace MyGame.MapChip {
   /// <summary>
   /// 床や壁などのフィールド系のチップ
   /// </summary>
-  public class FieldChip : ChipBase
+  public class DeprecatedFieldChip : DeprecatedChipBase
   {
     /// <summary>
     /// スプライトリソースマップ
@@ -42,15 +42,15 @@ namespace MyGame.MapChip {
     private void LoadResrouces()
     {
       // ロード済みならスキップ
-      if (FieldChip.sprites != null) return;
+      if (DeprecatedFieldChip.sprites != null) return;
 
-      FieldChip.sprites = new Dictionary<FieldType, Sprite>();
+      DeprecatedFieldChip.sprites = new Dictionary<FieldType, Sprite>();
 
       //var resources = Resources.LoadAll<Sprite>("mapchip320x240");
       var resources = ResourceManager.Instance.GetResources<Sprite>("mapchip320x240");
-      FieldChip.sprites[FieldType.None]  = null;
-      FieldChip.sprites[FieldType.Floor] = resources[32];
-      FieldChip.sprites[FieldType.Wall]  = resources[87];
+      DeprecatedFieldChip.sprites[FieldType.None]  = null;
+      DeprecatedFieldChip.sprites[FieldType.Floor] = resources[32];
+      DeprecatedFieldChip.sprites[FieldType.Wall]  = resources[87];
     }
 
     override protected void Awake()
@@ -73,9 +73,9 @@ namespace MyGame.MapChip {
     private void UpdateSprite()
     {
       if (!this.spriteRenderer) return;
-      if (FieldChip.sprites == null) return;
+      if (DeprecatedFieldChip.sprites == null) return;
 
-      this.spriteRenderer.sprite = FieldChip.sprites[type];
+      this.spriteRenderer.sprite = DeprecatedFieldChip.sprites[type];
     }
   }
 

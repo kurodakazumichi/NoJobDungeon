@@ -48,9 +48,9 @@ namespace MyGame.Singleton
     /// <summary>
     /// フィールドチップを作成
     /// </summary>
-    public FieldChip CreateFieldChip(FieldType type)
+    public DeprecatedFieldChip CreateFieldChip(FieldType type)
     {
-      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Field].Create<DeprecatedFieldChip>(type.ToString());
       chip.Type = type;
       return chip;
     }

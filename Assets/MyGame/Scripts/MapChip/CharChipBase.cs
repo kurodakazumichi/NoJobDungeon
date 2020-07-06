@@ -16,7 +16,7 @@ namespace MyGame.MapChip {
   /// <summary>
   /// ８方向キャラクターチップのベースクラス
   /// </summary>
-  public abstract class CharChipBase : ChipBase, IReadOnlyChipBase
+  public abstract class CharChipBase : DeprecatedChipBase, IReadOnlyChipBase
   {
     public enum State
     {

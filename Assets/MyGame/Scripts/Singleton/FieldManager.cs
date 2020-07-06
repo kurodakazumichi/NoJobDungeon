@@ -11,7 +11,7 @@ namespace MyGame.Singleton
   /// </summary>
   public class FieldManager : SingletonMonobehaviour<FieldManager>
   {
-    private FieldChip[,] fields;
+    private DeprecatedFieldChip[,] fields;
 
     /// <summary>
     /// メンバの初期化
@@ -19,7 +19,7 @@ namespace MyGame.Singleton
     protected override void Awake()
     {
       base.Awake();
-      this.fields = new FieldChip[Define.WIDTH, Define.HEIGHT];
+      this.fields = new DeprecatedFieldChip[Define.WIDTH, Define.HEIGHT];
     }
 
     /// <summary>
