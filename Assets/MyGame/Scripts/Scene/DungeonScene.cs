@@ -30,7 +30,8 @@ namespace MyGame.Scene {
         .Setup(nameof(DungeonManager), system)
         .Setup(nameof(MapChipFactory), system)
         .Setup(nameof(PlayerManager) , system)
-        .Setup(nameof(FieldManager)  , system);
+        .Setup(nameof(FieldManager)  , system)
+        .Setup(nameof(EnemyManager)  , system);
 
       this.state = new StateMachine<Phase>();
 
