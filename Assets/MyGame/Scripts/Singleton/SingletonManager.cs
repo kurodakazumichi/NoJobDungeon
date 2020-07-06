@@ -28,6 +28,7 @@ namespace MyGame.Singleton {
         case nameof(TimeManager)      : go.AddComponent<TimeManager>(); break;
         case nameof(InputManager)     : go.AddComponent<InputManager>(); break;
         case nameof(ResourceManager)  : go.AddComponent<ResourceManager>(); break;
+        case nameof(FieldManager)     : go.AddComponent<FieldManager>(); break;
         default: break;
       }
       

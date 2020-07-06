@@ -29,11 +29,12 @@ namespace MyGame.Scene {
       SingletonManager.Instance
         .Setup(nameof(DungeonManager), system)
         .Setup(nameof(MapChipFactory), system)
-        .Setup(nameof(PlayerManager) , system);
+        .Setup(nameof(PlayerManager) , system)
+        .Setup(nameof(FieldManager)  , system);
 
       this.state = new StateMachine<Phase>();
 
-      this.state.Add(Phase.Load, LoadEnter, LoadUpdate);
+      this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
       this.state.Add(Phase.CreatingStage, CreateStageEnter);
       this.state.Add(Phase.PlayingStage, PlayingStageEnter, PlayingStageUpdate);
 
@@ -59,10 +60,12 @@ namespace MyGame.Scene {
         return;
       }
 
-      //:TODO CreateStage前に呼びたいが、ロード後でないといけないけど、、ここもいや
-      DungeonManager.Instance.Init();
-
       this.state.SetState(Phase.CreatingStage);
+    }
+
+    private void LoadExit()
+    {
+      FieldManager.Instance.ReserveFields();
     }
 
     //-------------------------------------------------------------------------
@@ -74,7 +77,7 @@ namespace MyGame.Scene {
       DungeonManager.Instance.CreateStage();
 
       // マップチップを生成
-      DungeonManager.Instance.CreateMapChips();
+      FieldManager.Instance.CreateFields();
 
       // プレイヤーを生成
       PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
