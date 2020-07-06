@@ -141,6 +141,11 @@ namespace Singleton
       this.stage.UpdatePlayerCoord(coord);
     }
 
+    public void Map(System.Action<int, int, IReadOnlyTile> cb)
+    {
+      this.stage.Map(cb);
+    }
+
 #if UNITY_EDITOR
 
     public bool showDebug = true;
