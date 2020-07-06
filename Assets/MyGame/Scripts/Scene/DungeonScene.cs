@@ -83,6 +83,9 @@ namespace MyGame.Scene {
       // プレイヤーを生成
       PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
 
+      // 敵を生成
+      EnemyManager.Instance.CreateEnemies();
+
       // カメラをダンジョン設定にする
       CameraManager.Instance.SetDungeonSettings();
 
@@ -96,6 +99,7 @@ namespace MyGame.Scene {
     private void PlayingStageEnter()
     {
       PlayerManager.Instance.StartPlayer();
+      EnemyManager.Instance.StartEnemies();
     }
 
     private void PlayingStageUpdate ()
