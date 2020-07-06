@@ -41,7 +41,7 @@ namespace MyGame.Unit.Dungeon {
 
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
       this.chip.Coord = coord;
-      this.chip.transform.position = DungeonManager.Instance.GetPositionBy(coord);
+      this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
 
       // Stateを作成
       this.state.Add(Mode.WaitMyTurn, null, WaitMyTurnUpdate);
@@ -113,7 +113,7 @@ namespace MyGame.Unit.Dungeon {
       // プレイヤー移動待ちフェーズへ
       if (isMovable)
       {
-        var nextCoord = DungeonManager.Instance.GetCoord(this.chip.Coord, direction);
+        var nextCoord = MyGame.Dungeon.Util.GetCoord(this.chip.Coord, direction);
         SetMoveState(nextCoord);
       }
     }
