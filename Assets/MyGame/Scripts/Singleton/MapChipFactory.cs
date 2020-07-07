@@ -65,9 +65,9 @@ namespace MyGame
       return chip;
     }
 
-    public PlayerChip CreatePlayerChip()
+    public DeprecatedPlayerChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("Player");
+      var chip = this.pools[MapChipGroup.Player].Create<DeprecatedPlayerChip>("Player");
       return chip;
     }
 

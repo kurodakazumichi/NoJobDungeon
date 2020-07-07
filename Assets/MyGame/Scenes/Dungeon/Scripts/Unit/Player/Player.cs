@@ -21,7 +21,7 @@ namespace MyGame.Dungeon {
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private PlayerChip chip;
+    private DeprecatedPlayerChip chip;
 
     /// <summary>
     /// ステートマシン
