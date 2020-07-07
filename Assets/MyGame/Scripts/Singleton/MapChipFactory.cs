@@ -65,9 +65,10 @@ namespace MyGame
       return chip;
     }
 
-    public DeprecatedPlayerChip CreatePlayerChip()
+    public PlayerChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<DeprecatedPlayerChip>("Player");
+      var prefab = ResourceManager.Instance.GetResource<GameObject>("Player"); 
+      var chip   = this.pools[MapChipGroup.Player].Create<PlayerChip>(prefab);
       return chip;
     }
 
@@ -123,6 +124,7 @@ namespace MyGame
     /// ゲームオブジェクトを作成する。
     /// オブジェクトプールに非アクティブなオブジェクトがあれば再利用。
     /// </summary>
+    [System.Obsolete]
     public T Create<T>(string name) where T : MonoBehaviour
     {
       var chip = GetInactiveObject();

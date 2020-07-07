@@ -70,7 +70,7 @@ namespace MyGame {
     {
       base.Awake();
       this.baseSprites = LoadBaseSprites();
-      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Charactor;
+
       this.state = new StateMachine<State>();
       this.Direction = new Direction(Direction8.Neutral);
 

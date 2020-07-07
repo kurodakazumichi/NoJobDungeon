@@ -324,7 +324,7 @@ namespace MyGame
     /// <summary>
     /// Idle状態かどうか
     /// </summary>
-    bool IsIdle => (this.state.StateKey == State.Idle);
+    public bool IsIdle => (this.state.StateKey == State.Idle);
 
     //-------------------------------------------------------------------------
     // 指定位置移動
