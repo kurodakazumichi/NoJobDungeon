@@ -56,6 +56,12 @@ MonoBehaviour:
       type: 3}
     m_TargetAsset: {fileID: 4177607095212378038, guid: 9e6dc405effeca14f882c7b08efdbb1c,
       type: 3}
+  - m_GUID: adab0e537b14de745bb8269a89725f8c
+    m_Address: /Prefabs/MapChips/Enemies/EM001_0
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: ae1d3f9e139d5ee48a3dd09d31e44030
     m_Address: /Prefabs/MapChips/Fields/Floor
     m_ReadOnly: 0
