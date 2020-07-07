@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace MyGame.Singleton {
+namespace MyGame {
 
   /// <summary>
   /// シングルトンを管理する
@@ -21,15 +21,15 @@ namespace MyGame.Singleton {
       var go = new GameObject(name);
 
       switch(name) {
-        case nameof(DungeonManager)   : go.AddComponent<DungeonManager>(); break;
+        case nameof(Singleton.DungeonManager)   : go.AddComponent<Singleton.DungeonManager>(); break;
         case nameof(MapChipFactory)   : go.AddComponent<MapChipFactory>(); break;
-        case nameof(PlayerManager)    : go.AddComponent<PlayerManager>(); break;
+        case nameof(Singleton.PlayerManager)    : go.AddComponent<Singleton.PlayerManager>(); break;
         case nameof(CameraManager)    : go.AddComponent<CameraManager>(); break;
         case nameof(TimeManager)      : go.AddComponent<TimeManager>(); break;
         case nameof(InputManager)     : go.AddComponent<InputManager>(); break;
         case nameof(ResourceManager)  : go.AddComponent<ResourceManager>(); break;
-        case nameof(FieldManager)     : go.AddComponent<FieldManager>(); break;
-        case nameof(EnemyManager)     : go.AddComponent<EnemyManager>(); break;
+        case nameof(Singleton.FieldManager)     : go.AddComponent<Singleton.FieldManager>(); break;
+        case nameof(Singleton.EnemyManager)     : go.AddComponent<Singleton.EnemyManager>(); break;
         default: break;
       }
       

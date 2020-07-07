@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyGame.MapChip;
 
-namespace MyGame.Singleton 
+namespace MyGame 
 { 
   /// <summary>
   /// マップチップの種類
