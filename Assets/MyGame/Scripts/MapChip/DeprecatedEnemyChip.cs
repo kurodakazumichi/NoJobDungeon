@@ -25,5 +25,11 @@ namespace MyGame
     {
       return ResourceManager.Instance.GetResources<Sprite>("em001");
     }
+
+    protected override void Start()
+    {
+      base.Start();
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Enemy;
+    }
   }
 }
