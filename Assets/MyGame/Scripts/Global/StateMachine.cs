@@ -61,6 +61,11 @@ namespace MyGame
     private State current;
 
     /// <summary>
+    /// 現在のステートキー
+    /// </summary>
+    private T currentKey;
+
+    /// <summary>
     /// ステートを追加
     /// </summary>
     public void Add(T key, Action enter = null, Action update = null, Action exit = null)
@@ -80,11 +85,19 @@ namespace MyGame
 
       this.current = this.table[key];
       this.current.Enter();
+
+      this.currentKey = key;
     }
+
+    /// <summary>
+    /// 現在のステートのキーを返す
+    /// </summary>
+    public T StateKey => (this.currentKey);
 
     /// <summary>
     /// アイドル状態にする
     /// </summary>
+    [Obsolete]
     public void SetIdle()
     {
       if (this.current != null)
@@ -120,6 +133,7 @@ namespace MyGame
     /// <summary>
     /// アイドル状態です
     /// </summary>
+    [Obsolete]
     public bool IsIdle
     {
       get
