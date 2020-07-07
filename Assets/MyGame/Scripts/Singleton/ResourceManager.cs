@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace MyGame.Singleton
+namespace MyGame
 {
   public class ResourceManager : SingletonMonobehaviour<ResourceManager>
   {

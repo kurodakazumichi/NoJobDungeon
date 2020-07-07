@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.MapChip;
-using MyGame.Dungeon;
 
-namespace MyGame.Singleton 
+namespace MyGame.Dungeon
 {
   /// <summary>
   /// ダンジョンマネージャー

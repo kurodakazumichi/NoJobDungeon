@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.Singleton;
 
-namespace MyGame.MapChip {
+namespace MyGame {
 
   /// <summary>
   /// ChipBaseのReadOnly用インターフェース
@@ -16,7 +15,7 @@ namespace MyGame.MapChip {
   /// <summary>
   /// ８方向キャラクターチップのベースクラス
   /// </summary>
-  public abstract class CharChipBase : ChipBase, IReadOnlyChipBase
+  public abstract class CharChipBase : DeprecatedChipBase, IReadOnlyChipBase
   {
     public enum State
     {
@@ -78,7 +77,7 @@ namespace MyGame.MapChip {
       ResetWorking();
     }
 
-    void Update()
+    protected override void Update()
     {
       this.UpdateAnimation();
       this.state.Update();

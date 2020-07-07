@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame.Singleton 
+namespace MyGame 
 {
   public class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBehaviour
   {

@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.Singleton;
 using MyGame.Dungeon;
 
-namespace MyGame.Unit.Dungeon {
+namespace MyGame.Dungeon {
   
   public class Player
   {
@@ -22,7 +21,7 @@ namespace MyGame.Unit.Dungeon {
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private MapChip.PlayerChip chip;
+    private PlayerChip chip;
 
     /// <summary>
     /// ステートマシン

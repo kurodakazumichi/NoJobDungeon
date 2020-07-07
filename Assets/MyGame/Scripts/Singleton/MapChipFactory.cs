@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.MapChip;
 
-namespace MyGame.Singleton 
+namespace MyGame 
 { 
   /// <summary>
   /// マップチップの種類
@@ -14,6 +13,12 @@ namespace MyGame.Singleton
     Enemy,
   }
 
+  public enum FieldType
+  {
+    Wall,
+    Floor,
+  }
+
   /// <summary>
   /// マップチップ生成クラス
   /// </summary>
@@ -22,7 +27,7 @@ namespace MyGame.Singleton
     /// <summary>
     /// オブジェクトプールリスト
     /// </summary>
-    private Dictionary<MapChipGroup, ObjectPool> pools;
+    private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
 
     /// <summary>
     /// マップチップグループ用のフォルダオブジェクトとプールを作成
@@ -30,8 +35,6 @@ namespace MyGame.Singleton
     override protected void Awake()
     {
       base.Awake();
-
-      this.pools = new Dictionary<MapChipGroup, ObjectPool>();
 
       GameObject folder;
 
@@ -45,13 +48,20 @@ namespace MyGame.Singleton
       this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
     }
 
-    /// <summary>
-    /// フィールドチップを作成
-    /// </summary>
     public FieldChip CreateFieldChip(FieldType type)
     {
-      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>(type.ToString());
-      chip.Type = type;
+      GameObject prefab = null;
+
+      var RM = ResourceManager.Instance;
+
+      switch(type)
+      {
+        case FieldType.Wall : prefab = RM.GetResource<GameObject>("Wall"); break;
+        case FieldType.Floor: prefab = RM.GetResource<GameObject>("Floor"); break;
+        default: return null;
+      }
+
+      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>(prefab);
       return chip;
     }
 
@@ -129,6 +139,28 @@ namespace MyGame.Singleton
     }
 
     /// <summary>
+    /// Prefabを元にゲームオブジェクトを生成する
+    /// </summary>
+    public T Create<T>(GameObject origin) where T : MonoBehaviour
+    {
+      var obj = GetInactiveObject(origin);
+
+      if (obj == null)
+      {
+        obj = GameObject.Instantiate(origin);
+        this.pool.Add(obj);
+      }
+
+      obj.name             = origin.name;
+      obj.transform.parent = this.parent.transform;
+      obj.gameObject.SetActive(true);
+
+      T component = obj.GetComponent<T>();
+
+      return component;
+    }
+
+    /// <summary>
     /// 新しくオブジェクトを生成する
     /// </summary>
     private T CreateNewObject<T> () where T : MonoBehaviour {
@@ -148,6 +180,22 @@ namespace MyGame.Singleton
         {
           chip.gameObject.SetActive(true);
           return chip;
+        }
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// 非アクティブなオブジェクトを取得する
+    /// </summary>
+    private GameObject GetInactiveObject(GameObject origin)
+    {
+      foreach(var obj in this.pool)
+      {
+        if (obj.gameObject.activeSelf == false && obj.gameObject.name == origin.name)
+        {
+          obj.gameObject.SetActive(true);
+          return obj;
         }
       }
       return null;

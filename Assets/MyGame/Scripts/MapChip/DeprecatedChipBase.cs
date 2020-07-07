@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame.MapChip {
+namespace MyGame {
 
   /// <summary>
   /// ChipBaseのReadOnly用インターフェース
@@ -14,7 +14,7 @@ namespace MyGame.MapChip {
   /// <summary>
   /// マップチップのベースクラス
   /// </summary>
-  public class ChipBase : MyMonoBehaviour, IReadOnlyChipBase
+  public class DeprecatedChipBase : MyMonoBehaviour, IReadOnlyChipBase
   {
     protected SpriteRenderer spriteRenderer;
 
@@ -31,7 +31,7 @@ namespace MyGame.MapChip {
     /// <summary>
     /// SpriteRendererをアタッチする
     /// </summary>
-    protected virtual void Awake()
+    protected override void Awake()
     {
       this.spriteRenderer = this.gameObject.AddComponent<SpriteRenderer>();
     }

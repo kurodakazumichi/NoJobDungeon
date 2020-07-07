@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.MapChip;
-using MyGame.Dungeon;
 
-namespace MyGame.Singleton
+namespace MyGame.Dungeon
 {
   /// <summary>
   /// フィールドの情報を管理する
@@ -22,16 +20,6 @@ namespace MyGame.Singleton
       this.fields = new FieldChip[Define.WIDTH, Define.HEIGHT];
     }
 
-    /// <summary>
-    /// Fieldはサイズが決まっているので一括で用意して、それを使いまわす。
-    /// </summary>
-    public void ReserveFields()
-    {
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) =>
-      {
-        this.fields[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
-      });
-    }
 
     /// <summary>
     /// フィールドのマップチップを生成
@@ -40,20 +28,23 @@ namespace MyGame.Singleton
     {
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
-        var chip = this.fields[x, y];
-
+        FieldChip chip = null;
+        
         if (tile.IsAisle || tile.IsRoom)
         {
-          chip.Type = FieldType.Floor;
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Floor);
         }
 
         if (tile.IsWall)
         {
-          chip.Type = FieldType.Wall;
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Wall);
         }
 
-        chip.transform.localScale = Define.CHIP_SCALE;
-        chip.transform.position = Dungeon.Util.GetPositionBy(x, y);
+        if (chip != null) {
+          chip.transform.localScale = Define.CHIP_SCALE;
+          chip.transform.position = Dungeon.Util.GetPositionBy(x, y);
+          this.fields[x, y] = chip;
+        }
       });
     }
   }

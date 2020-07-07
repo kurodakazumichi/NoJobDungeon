@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.Singleton;
 
-namespace MyGame.Scene {
+namespace MyGame.Dungeon {
 
   /// <summary>
   /// ダンジョンシーン
@@ -22,7 +21,7 @@ namespace MyGame.Scene {
     /// <summary>
     /// 開始処理
     /// </summary>
-    void Start()
+    protected override void Start()
     {
       var system = new GameObject("System");
 
@@ -42,7 +41,7 @@ namespace MyGame.Scene {
       this.state.SetState(Phase.Load);
     }
 
-    private void Update()
+    protected override void Update()
     {
       this.state.Update();
     }
@@ -66,7 +65,6 @@ namespace MyGame.Scene {
 
     private void LoadExit()
     {
-      FieldManager.Instance.ReserveFields();
     }
 
     //-------------------------------------------------------------------------
