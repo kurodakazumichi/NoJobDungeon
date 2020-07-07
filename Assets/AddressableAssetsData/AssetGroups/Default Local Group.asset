@@ -48,7 +48,7 @@ MonoBehaviour:
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 9e6dc405effeca14f882c7b08efdbb1c
-    m_Address: /Prefabs/MapChips/Player/Player
+    m_Address: /Prefabs/MapChips/Players/Player
     m_ReadOnly: 0
     m_SerializedLabels:
     - Dungeon
