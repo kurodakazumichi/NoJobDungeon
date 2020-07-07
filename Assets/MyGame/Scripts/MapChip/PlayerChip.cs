@@ -6,5 +6,10 @@ namespace MyGame
 {
   public class PlayerChip : CharChipBase
   {
+    protected override void Start()
+    {
+      base.Start();
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Player;
+    }
   }
 }
