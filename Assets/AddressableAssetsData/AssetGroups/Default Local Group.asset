@@ -29,8 +29,17 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Dungeon
-    m_MainAsset: {fileID: 2800000, guid: 72f58667d8300c644ace8834b1622eee, type: 3}
-    m_TargetAsset: {fileID: 2800000, guid: 72f58667d8300c644ace8834b1622eee, type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 72f69a579e1abf147887571412f67c27
+    m_Address: /Prefabs/MapChips/Fields/Wall
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Dungeon
+    m_MainAsset: {fileID: 3467317290387231782, guid: 72f69a579e1abf147887571412f67c27,
+      type: 3}
+    m_TargetAsset: {fileID: 3467317290387231782, guid: 72f69a579e1abf147887571412f67c27,
+      type: 3}
   - m_GUID: 90c7a8d17ffaf7c4488237141bd0d797
     m_Address: mapchip320x240
     m_ReadOnly: 0
@@ -38,6 +47,24 @@ MonoBehaviour:
     - Dungeon
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 9e6dc405effeca14f882c7b08efdbb1c
+    m_Address: /Prefabs/MapChips/Player/Player
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Dungeon
+    m_MainAsset: {fileID: 4177607095212378038, guid: 9e6dc405effeca14f882c7b08efdbb1c,
+      type: 3}
+    m_TargetAsset: {fileID: 4177607095212378038, guid: 9e6dc405effeca14f882c7b08efdbb1c,
+      type: 3}
+  - m_GUID: ae1d3f9e139d5ee48a3dd09d31e44030
+    m_Address: /Prefabs/MapChips/Fields/Floor
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Dungeon
+    m_MainAsset: {fileID: 2683733583924152902, guid: ae1d3f9e139d5ee48a3dd09d31e44030,
+      type: 3}
+    m_TargetAsset: {fileID: 2683733583924152902, guid: ae1d3f9e139d5ee48a3dd09d31e44030,
+      type: 3}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53eef5a1bab80744bbafe25566736f6, type: 2}
   m_SchemaSet:
