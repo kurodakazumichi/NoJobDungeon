@@ -5,16 +5,10 @@ using UnityEngine;
 namespace MyGame {
 
   /// <summary>
-  /// ChipBaseのReadOnly用インターフェース
-  /// </summary>
-  public interface IReadOnlyMapChipBase {
-  }
-
-  /// <summary>
   /// マップチップのベースクラス
   /// </summary>
   [RequireComponent(typeof(SpriteRenderer))]
-  public class MapChipBase : MyMonoBehaviour, IReadOnlyMapChipBase
+  public class MapChipBase : MyMonoBehaviour
   {
     protected SpriteRenderer spriteRenderer;
 
