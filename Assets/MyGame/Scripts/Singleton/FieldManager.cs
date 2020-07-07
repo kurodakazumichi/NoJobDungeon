@@ -11,7 +11,7 @@ namespace MyGame.Singleton
   /// </summary>
   public class FieldManager : SingletonMonobehaviour<FieldManager>
   {
-    private DeprecatedFieldChip[,] fields;
+    private FieldChip[,] fields;
 
     /// <summary>
     /// メンバの初期化
@@ -19,19 +19,9 @@ namespace MyGame.Singleton
     protected override void Awake()
     {
       base.Awake();
-      this.fields = new DeprecatedFieldChip[Define.WIDTH, Define.HEIGHT];
+      this.fields = new FieldChip[Define.WIDTH, Define.HEIGHT];
     }
 
-    /// <summary>
-    /// Fieldはサイズが決まっているので一括で用意して、それを使いまわす。
-    /// </summary>
-    public void ReserveFields()
-    {
-      Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) =>
-      {
-        this.fields[x, y] = MapChipFactory.Instance.CreateFieldChip(FieldType.None);
-      });
-    }
 
     /// <summary>
     /// フィールドのマップチップを生成
@@ -40,20 +30,23 @@ namespace MyGame.Singleton
     {
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
-        var chip = this.fields[x, y];
-
+        FieldChip chip = null;
+        
         if (tile.IsAisle || tile.IsRoom)
         {
-          chip.Type = FieldType.Floor;
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Floor);
         }
 
         if (tile.IsWall)
         {
-          chip.Type = FieldType.Wall;
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Wall);
         }
 
-        chip.transform.localScale = Define.CHIP_SCALE;
-        chip.transform.position = Dungeon.Util.GetPositionBy(x, y);
+        if (chip != null) {
+          chip.transform.localScale = Define.CHIP_SCALE;
+          chip.transform.position = Dungeon.Util.GetPositionBy(x, y);
+          this.fields[x, y] = chip;
+        }
       });
     }
   }

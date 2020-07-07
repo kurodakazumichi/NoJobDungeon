@@ -66,7 +66,6 @@ namespace MyGame.Scene {
 
     private void LoadExit()
     {
-      FieldManager.Instance.ReserveFields();
     }
 
     //-------------------------------------------------------------------------
