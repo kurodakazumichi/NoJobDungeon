@@ -7,7 +7,7 @@ namespace MyGame {
   /// <summary>
   /// ChipBaseのReadOnly用インターフェース
   /// </summary>
-  public interface IReadOnlyCharChipBase : IReadOnlyChipBase {
+  public interface IReadOnlyDeprecatedCharChipBase : IReadOnlyChipBase {
     Direction Direction { get; }
     bool IsIdle { get; }
   }

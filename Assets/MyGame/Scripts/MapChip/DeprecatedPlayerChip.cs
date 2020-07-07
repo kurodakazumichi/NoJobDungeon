@@ -7,7 +7,7 @@ namespace MyGame
   /// <summary>
   /// PlayerChipのReadOnly用インターフェース
   /// </summary>
-  public interface IReadOnlyPlayerChip : IReadOnlyCharChipBase {
+  public interface IReadOnlyPlayerChip : IReadOnlyDeprecatedCharChipBase {
 
   }
 

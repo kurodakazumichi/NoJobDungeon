@@ -10,7 +10,7 @@ namespace MyGame
     EM001,
   }
 
-  public interface IReadOnlyEnemyChip : IReadOnlyCharChipBase
+  public interface IReadOnlyEnemyChip : IReadOnlyDeprecatedCharChipBase
   {
 
   }
