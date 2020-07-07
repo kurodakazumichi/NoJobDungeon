@@ -72,9 +72,9 @@ namespace MyGame
       return chip;
     }
 
-    public EnemyChip CreateEnemyChip(EnemyType type)
+    public DeprecatedEnemyChip CreateEnemyChip(EnemyType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("Enemy");
+      var chip = this.pools[MapChipGroup.Enemy].Create<DeprecatedEnemyChip>("Enemy");
       return chip;
     }
 

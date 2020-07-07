@@ -17,7 +17,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private EnemyChip chip;
+    private DeprecatedEnemyChip chip;
 
     /// <summary>
     /// ステートマシン
