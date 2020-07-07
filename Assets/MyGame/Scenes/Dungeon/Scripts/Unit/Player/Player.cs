@@ -22,7 +22,7 @@ namespace MyGame.Unit.Dungeon {
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private MapChip.PlayerChip chip;
+    private PlayerChip chip;
 
     /// <summary>
     /// ステートマシン

@@ -18,7 +18,7 @@ namespace MyGame.Unit.Dungeon
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private MapChip.EnemyChip chip;
+    private EnemyChip chip;
 
     /// <summary>
     /// ステートマシン
@@ -35,7 +35,7 @@ namespace MyGame.Unit.Dungeon
     {
       this.state = new StateMachine<Mode>();
 
-      this.chip = MapChipFactory.Instance.CreateEnemyChip(MapChip.EnemyType.EM001);
+      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyType.EM001);
       this.chip.Coord = coord;
       this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
 

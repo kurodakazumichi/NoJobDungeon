@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyGame.Singleton;
 
-namespace MyGame.MapChip
+namespace MyGame
 {
   public enum EnemyType
   {
