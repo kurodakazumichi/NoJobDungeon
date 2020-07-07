@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.Dungeon;
 
-namespace MyGame.Singleton
+namespace MyGame.Dungeon
 {
   /// <summary>
   /// フィールドの情報を管理する
