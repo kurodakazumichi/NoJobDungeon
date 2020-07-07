@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7303799850258409212}
   - component: {fileID: 7303799850258409211}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: EM001_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,5 +95,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   texture: {fileID: 2800000, guid: b903960c99d28b84bbaac3c438235560, type: 3}
-  pivot: {x: 0, y: 0}
+  pivot: {x: 0.5, y: 0.25}
   _debugShow: 0

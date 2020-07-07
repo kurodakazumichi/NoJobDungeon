@@ -19,6 +19,11 @@ namespace MyGame
     Floor,
   }
 
+  public enum EnemyType
+  {
+    EM001_0,
+  }
+
   /// <summary>
   /// マップチップ生成クラス
   /// </summary>
@@ -72,9 +77,18 @@ namespace MyGame
       return chip;
     }
 
-    public DeprecatedEnemyChip CreateEnemyChip(EnemyType type)
+    public EnemyChip CreateEnemyChip(EnemyType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<DeprecatedEnemyChip>("Enemy");
+      GameObject prefab = null;
+
+      var RM = ResourceManager.Instance;
+
+      switch(type)
+      {
+        case EnemyType.EM001_0: prefab = RM.GetResource<GameObject>("EM001_0"); break;
+        default: return null;
+      }
+      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>(prefab);
       return chip;
     }
 
