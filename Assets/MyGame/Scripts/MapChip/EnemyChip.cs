@@ -4,26 +4,12 @@ using UnityEngine;
 
 namespace MyGame
 {
-  public enum EnemyType
+  public class EnemyChip : CharChipBase
   {
-    None = -1,
-    EM001,
-  }
-
-  public interface IReadOnlyEnemyChip : IReadOnlyDeprecatedCharChipBase
-  {
-
-  }
-
-  public class EnemyChip : DeprecatedCharChipBase, IReadOnlyEnemyChip
-  {
-    /// <summary>
-    /// 敵用のリソースをロード
-    /// </summary>
-    /// <returns></returns>
-    protected override Sprite[] LoadBaseSprites()
+    protected override void Start()
     {
-      return ResourceManager.Instance.GetResources<Sprite>("em001");
+      base.Start();
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Enemy;
     }
   }
 }
