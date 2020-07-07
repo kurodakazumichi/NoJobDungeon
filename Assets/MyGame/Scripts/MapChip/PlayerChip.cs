@@ -11,7 +11,7 @@ namespace MyGame
 
   }
 
-  public class PlayerChip : CharChipBase, IReadOnlyPlayerChip
+  public class PlayerChip : DeprecatedCharChipBase, IReadOnlyPlayerChip
   {
     /// <summary>
     /// プレイヤー用のリソースをロード

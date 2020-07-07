@@ -15,7 +15,7 @@ namespace MyGame
 
   }
 
-  public class EnemyChip : CharChipBase, IReadOnlyEnemyChip
+  public class EnemyChip : DeprecatedCharChipBase, IReadOnlyEnemyChip
   {
     /// <summary>
     /// 敵用のリソースをロード

@@ -15,7 +15,7 @@ namespace MyGame {
   /// <summary>
   /// ８方向キャラクターチップのベースクラス
   /// </summary>
-  public abstract class CharChipBase : DeprecatedChipBase, IReadOnlyChipBase
+  public abstract class DeprecatedCharChipBase : DeprecatedChipBase, IReadOnlyChipBase
   {
     public enum State
     {
