@@ -50,15 +50,15 @@ namespace MyGame.Dungeon {
     // ロード
     private void LoadEnter()
     {
-      ResourceManager.Instance.LoadAsync(ResourceManager.DungeionLabel); 
+      //ResourceManager.Instance.LoadAsync(ResourceManager.DungeionLabel); 
     }
 
     private void LoadUpdate()
     {
-      if (ResourceManager.Instance.IsLoading)
-      {
-        return;
-      }
+      //if (ResourceManager.Instance.IsLoading)
+      //{
+      //  return;
+      //}
 
       this.state.SetState(Phase.CreatingStage);
     }

@@ -61,8 +61,8 @@ namespace MyGame
 
       switch(type)
       {
-        case FieldType.Wall : prefab = RM.GetResource<GameObject>("Wall"); break;
-        case FieldType.Floor: prefab = RM.GetResource<GameObject>("Floor"); break;
+        case FieldType.Wall : prefab = Resources.Load<GameObject>("Prefabs/MapChips/Fields/Wall"); break;
+        case FieldType.Floor: prefab = Resources.Load<GameObject>("Prefabs/MapChips/Fields/Floor"); break;
         default: return null;
       }
 
@@ -72,7 +72,7 @@ namespace MyGame
 
     public PlayerChip CreatePlayerChip()
     {
-      var prefab = ResourceManager.Instance.GetResource<GameObject>("Player"); 
+      var prefab = Resources.Load<GameObject>("Prefabs/MapChips/Players/Player");
       var chip   = this.pools[MapChipGroup.Player].Create<PlayerChip>(prefab);
       return chip;
     }
@@ -85,7 +85,7 @@ namespace MyGame
 
       switch(type)
       {
-        case EnemyType.EM001_0: prefab = RM.GetResource<GameObject>("EM001_0"); break;
+        case EnemyType.EM001_0: prefab = Resources.Load<GameObject>("Prefabs/MapChips/Enemies/EM001_0"); break;
         default: return null;
       }
       var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>(prefab);
