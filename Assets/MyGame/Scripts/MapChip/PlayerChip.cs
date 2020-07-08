@@ -2,25 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame 
+namespace MyGame
 {
-  /// <summary>
-  /// PlayerChipのReadOnly用インターフェース
-  /// </summary>
-  public interface IReadOnlyPlayerChip : IReadOnlyCharChipBase {
-
-  }
-
-  public class PlayerChip : CharChipBase, IReadOnlyPlayerChip
+  public class PlayerChip : CharChipBase
   {
-    /// <summary>
-    /// プレイヤー用のリソースをロード
-    /// </summary>
-    /// <returns></returns>
-    protected override Sprite[] LoadBaseSprites()
+    protected override void Start()
     {
-      //return Resources.LoadAll<Sprite>("player");
-      return ResourceManager.Instance.GetResources<Sprite>("player");
+      base.Start();
+      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Player;
     }
   }
 }

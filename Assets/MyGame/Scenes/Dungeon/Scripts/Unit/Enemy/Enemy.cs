@@ -24,6 +24,8 @@ namespace MyGame.Dungeon
     /// </summary>
     private StateMachine<Mode> state;
 
+    private Vector2Int coord = Vector2Int.zero;
+
     //-------------------------------------------------------------------------
     // 主要メソッド
 
@@ -34,8 +36,8 @@ namespace MyGame.Dungeon
     {
       this.state = new StateMachine<Mode>();
 
-      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyType.EM001);
-      this.chip.Coord = coord;
+      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyType.EM001_0);
+      this.coord = coord;
       this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
 
       // Stateを作成

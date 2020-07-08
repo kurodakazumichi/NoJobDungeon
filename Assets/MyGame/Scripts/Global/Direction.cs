@@ -159,6 +159,12 @@ namespace MyGame
       return new Vector2Int(x, y);
     }
 
+    public Vector3 ToVector3(bool yUP = true)
+    {
+      var v = ToVector(yUP);
+      return new Vector3(v.x, v.y, 0);
+    }
+
     /// <summary>
     /// 方向のNeutralをDonwに統一したDirectionを返す
     /// </summary>

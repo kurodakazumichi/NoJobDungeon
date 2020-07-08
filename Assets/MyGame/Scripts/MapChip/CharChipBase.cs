@@ -2,44 +2,80 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame {
-
+namespace MyGame
+{
   /// <summary>
-  /// ChipBaseのReadOnly用インターフェース
+  /// 8方向キャラクターチップのベースクラス
   /// </summary>
-  public interface IReadOnlyCharChipBase : IReadOnlyChipBase {
-    Direction Direction { get; }
-    bool IsIdle { get; }
-  }
-
-  /// <summary>
-  /// ８方向キャラクターチップのベースクラス
-  /// </summary>
-  public abstract class CharChipBase : DeprecatedChipBase, IReadOnlyChipBase
+  public abstract class CharChipBase : MapChipBase
   {
+    /// <summary>
+    /// 状態
+    /// </summary>
     public enum State
     {
+      Idle,
       Move,
       Attack,
     }
+
+    /// <summary>
+    /// アニメーション速度
+    /// </summary>
+    public enum AnimSpeed
+    {
+      Default,
+      Fast,
+      Slow,
+    }
+
+    //-------------------------------------------------------------------------
+    // インスペクター用
+
+    /// <summary>
+    /// 8方向のキャラクターテクスチャ
+    /// 4行6列のアトラステクスチャを設定する
+    /// </summary>
+    [SerializeField]
+    private Texture2D texture;
+
+    /// <summary>
+    /// スプライトのpivot
+    /// </summary>
+    [SerializeField]
+    private Vector2 pivot = Vector2.zero;
+
+    //-------------------------------------------------------------------------
+    // 定数
+
+    /// <summary>
+    /// X方向のスプライト分割数
+    /// </summary>
+    private const int SPRITE_X = 6;
+
+    /// <summary>
+    /// Y方向のスプライト分割数
+    /// </summary>
+    private const int SPRITE_Y = 4;
 
     //-------------------------------------------------------------------------
     // メンバ変数
 
     /// <summary>
-    /// ステートマシン
+    /// スプライトリスト
+    /// インスペクターに設定されたTextureをSprite化したもの
     /// </summary>
-    StateMachine<State> state;
-
-    /// <summary>
-    /// 基本のスプライトリソース
-    /// </summary>
-    protected Sprite[] baseSprites;
+    private Sprite[] sprites = new Sprite[SPRITE_X * SPRITE_Y];
 
     /// <summary>
     /// 方向
     /// </summary>
-    private Direction direction;
+    private Direction direction = new Direction();
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    StateMachine<State> state = new StateMachine<State>();
 
     /// <summary>
     /// 移動制御用
@@ -53,44 +89,73 @@ namespace MyGame {
     /// アニメーション用タイマー
     /// </summary>
     private float animTimer = 0;
-    private int[] animIndex = {0, 1, 2, 1};  
+
+    /// <summary>
+    /// アニメーションスピード
+    /// </summary>
+    private float animSpeed = 1f;
 
     //-------------------------------------------------------------------------
     // 主要のメソッド
 
-    /// <summary>
-    /// ベースのスプライトリソースを読み込む抽象メソッド
-    /// </summary>
-    abstract protected Sprite[] LoadBaseSprites();
-
-    /// <summary>
-    /// コンストラクタ的な処理を行う
-    /// </summary>
     protected override void Awake()
     {
       base.Awake();
-      this.baseSprites = LoadBaseSprites();
-      this.spriteRenderer.sortingOrder = SpriteSortingOrder.Charactor;
-      this.state = new StateMachine<State>();
-      this.Direction = new Direction(Direction8.Neutral);
+
+      InitSprites();
+    }
+
+    protected override void Start()
+    {
+      base.Start();
+      
+      Direction = new Direction(Direction8.Neutral);
 
       ResetWorking();
+      ResetAnimation();
+
+      this.state.Add(State.Idle);
+      this.state.Add(State.Move, null, UpdateMove);
+      this.state.Add(State.Attack, null, UpdateAttack);
+
+      this.state.SetState(State.Idle);
     }
+
 
     protected override void Update()
     {
-      this.UpdateAnimation();
+      base.Update();
+
+      UpdateAnimation();
       this.state.Update();
     }
 
+    //-------------------------------------------------------------------------
+    // 初期処理
+
     /// <summary>
-    /// アニメーション
+    /// TextureからSpriteを生成する
     /// </summary>
-    void UpdateAnimation()
+    private void InitSprites()
     {
-      this.animTimer += Time.deltaTime * 3;
-      var index = this.DirectionSpriteIndex + this.animIndex[((int)this.animTimer) % 4];
-      UpdateSpriteBy(index);
+      Util.Loop2D(SPRITE_X, SPRITE_Y, (int rx, int ry) =>
+      {
+        float w = this.texture.width / SPRITE_X;
+        float h = this.texture.height / SPRITE_Y;
+
+        var rect = new Rect(rx * w, ry * h, w, h);
+
+        var sprite = Sprite.Create(
+          this.texture,
+          rect,
+          this.pivot,
+          Mathf.Max(w, h)
+        );
+
+        var index = ry * SPRITE_X + rx;
+        sprite.name = $"{this.texture.name}_{index}"; 
+        this.sprites[ry * SPRITE_X + rx] = sprite;
+      });
     }
 
     /// <summary>
@@ -99,52 +164,30 @@ namespace MyGame {
     protected void ResetWorking()
     {
       this.specifiedTime = 0;
-      this.elapsedTime = 0;
-      this.start = Vector3.zero;
-      this.end = Vector3.zero;
+      this.elapsedTime   = 0;
+      this.start         = Vector3.zero;
+      this.end           = Vector3.zero;
+    }
+
+    /// <summary>
+    /// アニメーション用変数をリセット
+    /// </summary>
+    protected void ResetAnimation()
+    {
+      this.animTimer = 0;
+      this.animSpeed = 1f;
     }
 
     //-------------------------------------------------------------------------
-    // Direction関連
+    // 方向
 
     /// <summary>
-    /// 方向セット時にスプライトも更新
+    /// 方向のアクセッサ
     /// </summary>
     public Direction Direction
     {
       get { return this.direction; }
-      set {
-        this.direction = value;
-        UpdateSpriteBy(value);
-      }
-    }
-
-    /// <summary>
-    /// 方向に該当するスプライトのIndexを取得する
-    /// </summary>
-    /// <param name="direction"></param>
-    /// <returns></returns>
-    private int GetSpriteIndexBy(Direction direction)
-    {
-      switch(direction.value) {
-        case Direction8.Down      : return 0;
-        case Direction8.LeftDown  : return 3;
-        case Direction8.Left      : return 6;
-        case Direction8.RightDown : return 9;
-        case Direction8.Right     : return 12;
-        case Direction8.LeftUp    : return 15;
-        case Direction8.Up        : return 18;
-        case Direction8.RightUp   : return 21;
-        default: return 0;
-      }
-    }
-
-    /// <summary>
-    /// 方向に該当するスプライトのIndex
-    /// </summary>
-    private int DirectionSpriteIndex
-    {
-      get { return GetSpriteIndexBy(this.direction); }
+      set { this.direction = value; }
     }
 
     //-------------------------------------------------------------------------
@@ -165,27 +208,123 @@ namespace MyGame {
     /// <param name="index"></param>
     private void UpdateSpriteBy(int index)
     {
-      if (this.baseSprites.Length <= index) {
+      if (this.sprites.Length <= index)
+      {
         Debug.LogError("スプライトリソースが想定と異なる。");
         return;
       }
 
-      this.spriteRenderer.sprite = this.baseSprites[index];
+      this.spriteRenderer.sprite = this.sprites[index];
     }
 
     //-------------------------------------------------------------------------
-    // ステートマシン関連
+    // スプライトのIndex関連
 
     /// <summary>
-    /// ステートマシンが停止している状態です
+    /// 方向に該当するスプライトのIndexを取得する
     /// </summary>
-    public bool IsIdle
+    private int GetSpriteIndexBy(Direction direction)
     {
-      get
+      switch (direction.value)
       {
-        return this.state.IsIdle;
+        case Direction8.Up:        return 0;
+        case Direction8.RightUp:   return 3;
+        case Direction8.Right:     return 6;
+        case Direction8.LeftUp:    return 9;
+        case Direction8.Left:      return 12;
+        case Direction8.RightDown: return 15;
+        case Direction8.Down:      return 18;
+        case Direction8.LeftDown:  return 21;
+        default:                   return 18;
       }
     }
+
+    /// <summary>
+    /// 方向に該当するスプライトのIndex
+    /// </summary>
+    private int DirectionSpriteIndex
+    {
+      get { return GetSpriteIndexBy(this.direction); }
+    }
+
+    //-------------------------------------------------------------------------
+    // 表示
+
+    /// <summary>
+    /// 表示切替
+    /// </summary>
+    public void Show(bool isShow)
+    {
+      this.spriteRenderer.enabled = isShow;
+    }
+
+    /// <summary>
+    /// 表示されているかどうか
+    /// </summary>
+    public bool IsShow => (this.spriteRenderer.enabled);
+
+    //-------------------------------------------------------------------------
+    // アニメーション
+
+    /// <summary>
+    /// アニメーションの更新
+    /// </summary>
+    private void UpdateAnimation()
+    {
+      // アニメーション用Index配列
+      int[] ANIM_INDEXES = {0, 1, 2, 1};
+
+      // デフォルトのアニメーション速度
+      const float ANIM_SPEED = 3;
+
+      // アニメーションの再生時間を加算
+      this.animTimer += TimeManager.Instance.DungeonDeltaTime * this.animSpeed * ANIM_SPEED;
+
+      // 方向とアニメーションの再生時間からスプライトIndexを決定
+      var index =
+          this.DirectionSpriteIndex
+        + ANIM_INDEXES[((int)this.animTimer) % ANIM_INDEXES.Length];
+
+      UpdateSpriteBy(index);
+    }
+
+    /// <summary>
+    /// アニメーションを停止
+    /// </summary>
+    public void StopAnimation(bool isReset = true)
+    {
+      if (isReset)
+      {
+        ResetAnimation();
+      }
+      this.animSpeed = 0;
+    }
+
+    /// <summary>
+    /// アニメーション速度の設定
+    /// </summary>
+    /// <param name="type"></param>
+    public void SetAnimationSpeed(AnimSpeed type)
+    {
+      float speed = 1f;
+
+      switch (type)
+      {
+        case AnimSpeed.Fast: speed = 2;    break;
+        case AnimSpeed.Slow: speed = 0.5f; break;
+        default: break;
+      }
+
+      this.animSpeed = speed;
+    }
+
+    //-------------------------------------------------------------------------
+    // State Machine
+
+    /// <summary>
+    /// Idle状態かどうか
+    /// </summary>
+    public bool IsIdle => (this.state.StateKey == State.Idle);
 
     //-------------------------------------------------------------------------
     // 指定位置移動
@@ -193,33 +332,16 @@ namespace MyGame {
     /// <summary>
     /// 指定位置に指定された秒数で移動する
     /// </summary>
-    public void Move(float time, Vector2Int coord)
+    public void Move(float time, Vector3 end)
     {
-      System.Action enter = () =>
-      {
-        this.EnterMove(time, coord);
-      };
-
-      this.state.Add(State.Move, enter, UpdateMove);
-      this.state.SetState(State.Move);
-    }
-
-    /// <summary>
-    /// 移動開始処理
-    /// </summary>
-    private void EnterMove(float time, Vector2Int coord)
-    {
-      // ダンジョン系の座標からワールド座標を取得
-      var end = Dungeon.Util.GetPositionBy(coord);
-
       this.start = this.transform.position;
       this.end   = end;
 
       // タイマー初期化
-      this.elapsedTime         = 0;
+      this.elapsedTime = 0;
       this.specifiedTime = Mathf.Max(0.01f, time);
 
-      this.coord = coord;
+      this.state.SetState(State.Move);
     }
 
     /// <summary>
@@ -239,57 +361,117 @@ namespace MyGame {
         return;
       }
 
-      if (this.specifiedTime <= this.elapsedTime) 
+      if (this.specifiedTime <= this.elapsedTime)
       {
         this.transform.position = this.end;
 
-        this.state.SetIdle();
+        this.state.SetState(State.Idle);
       }
     }
 
     //-------------------------------------------------------------------------
     // 攻撃モーション
 
-    public void Attack(float time)
-    {
-      System.Action enter = () =>
-      {
-        AttackEnter(time);
-      };
-
-      this.state.Add(State.Attack, enter, AttackUpdate);
-      this.state.SetState(State.Attack);
-    }
-
-    public void AttackEnter(float time)
+    /// <summary>
+    /// 現在向いてる方向に攻撃の動きをする
+    /// </summary>
+    public void Attack(float time, float distance)
     {
       ResetWorking();
 
       this.specifiedTime = time;
-      this.start         = this.transform.position;
+      this.start = this.transform.position;
 
-      this.end = Dungeon.Util.GetPositionBy(coord, this.Direction.Unified);
+      var v = this.direction.Unified.ToVector3() * distance;
+      this.end   = this.start + v;
+
+      this.state.SetState(State.Attack);
     }
 
-    public void AttackUpdate()
+    private void UpdateAttack()
     {
       this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
-      
+
       var rate = this.elapsedTime / this.specifiedTime;
       rate = Mathf.Sin(rate * Mathf.PI);
 
       if (this.elapsedTime < this.specifiedTime)
       {
         this.transform.position = Vector3.Lerp(this.start, this.end, rate);
-      } 
-      
+      }
+
       else
       {
         this.transform.position = this.start;
-        this.state.SetIdle();
+        this.state.SetState(State.Idle);
       }
     }
 
+#if UNITY_EDITOR
+    //-------------------------------------------------------------------------
+    // デバッグ
+    [SerializeField]
+    private bool _debugShow = false;
+
+    void OnGUI()
+    {
+      if (!this._debugShow) return;
+
+      GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+      GUILayout.Label($"Direction:{this.direction.value.ToString()}");
+      GUILayout.Label($"State    :{this.state.StateKey.ToString()}");
+
+      // 方向の変更
+      var d = InputManager.Instance.GetDirectionKey();
+
+      if (!d.IsNeutral)
+      {
+        this.direction = d;
+      }
+
+      Show((GUILayout.Toggle(this.IsShow, "Show")));
+
+      GUILayout.Label("Animation");
+      GUILayout.BeginHorizontal();
+      {
+        if (GUILayout.Button("Stop"))
+        {
+          StopAnimation();
+        }
+
+        if (GUILayout.Button("Slow"))
+        {
+          SetAnimationSpeed(AnimSpeed.Slow);
+        }
+
+        if (GUILayout.Button("Default"))
+        {
+          SetAnimationSpeed(AnimSpeed.Default);
+        }
+
+        if (GUILayout.Button("Fast"))
+        {
+          SetAnimationSpeed(AnimSpeed.Fast);
+        }
+      }
+      GUILayout.EndHorizontal();
+
+      GUILayout.BeginHorizontal();
+      {
+        if (GUILayout.Button("Move"))
+        {
+          var v = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1));
+          Move(1f, v);
+        }
+        if (GUILayout.Button("Attack"))
+        {
+          Attack(1f, 1f);
+        }
+      }
+      GUILayout.EndHorizontal();
+      GUILayout.EndArea();
+    }
+#endif
+
   }
 }
-

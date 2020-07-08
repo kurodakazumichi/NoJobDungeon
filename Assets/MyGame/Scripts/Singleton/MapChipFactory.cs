@@ -19,6 +19,11 @@ namespace MyGame
     Floor,
   }
 
+  public enum EnemyType
+  {
+    EM001_0,
+  }
+
   /// <summary>
   /// マップチップ生成クラス
   /// </summary>
@@ -67,13 +72,23 @@ namespace MyGame
 
     public PlayerChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("Player");
+      var prefab = ResourceManager.Instance.GetResource<GameObject>("Player"); 
+      var chip   = this.pools[MapChipGroup.Player].Create<PlayerChip>(prefab);
       return chip;
     }
 
     public EnemyChip CreateEnemyChip(EnemyType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("Enemy");
+      GameObject prefab = null;
+
+      var RM = ResourceManager.Instance;
+
+      switch(type)
+      {
+        case EnemyType.EM001_0: prefab = RM.GetResource<GameObject>("EM001_0"); break;
+        default: return null;
+      }
+      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>(prefab);
       return chip;
     }
 
@@ -123,6 +138,7 @@ namespace MyGame
     /// ゲームオブジェクトを作成する。
     /// オブジェクトプールに非アクティブなオブジェクトがあれば再利用。
     /// </summary>
+    [System.Obsolete]
     public T Create<T>(string name) where T : MonoBehaviour
     {
       var chip = GetInactiveObject();

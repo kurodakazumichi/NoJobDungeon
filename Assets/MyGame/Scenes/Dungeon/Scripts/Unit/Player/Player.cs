@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyGame.Dungeon;
 
 namespace MyGame.Dungeon {
   
@@ -28,6 +27,11 @@ namespace MyGame.Dungeon {
     /// </summary>
     private StateMachine<Mode> state;
 
+    /// <summary>
+    /// プレイヤーの座標
+    /// </summary>
+    private Vector2Int coord = Vector2Int.zero;
+
     //-------------------------------------------------------------------------
     // 主要メソッド
 
@@ -36,11 +40,12 @@ namespace MyGame.Dungeon {
     /// </summary>
     public Player(Vector2Int coord)
     {
+      this.coord = coord;
+
       this.state = new StateMachine<Mode>();
 
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
-      this.chip.Coord = coord;
-      this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
+      this.chip.transform.position = Util.GetPositionBy(coord);
 
       // Stateを作成
       this.state.Add(Mode.WaitMyTurn, null, WaitMyTurnUpdate);
@@ -112,7 +117,7 @@ namespace MyGame.Dungeon {
       // プレイヤー移動待ちフェーズへ
       if (isMovable)
       {
-        var nextCoord = MyGame.Dungeon.Util.GetCoord(this.chip.Coord, direction);
+        var nextCoord = Util.GetCoord(this.coord, direction);
         SetMoveState(nextCoord);
       }
     }
@@ -126,7 +131,9 @@ namespace MyGame.Dungeon {
     /// <param name="toCoord">移動先の座標</param>
     private void SetMoveState(Vector2Int toCoord)
     {
-      this.chip.Move(Define.SEC_PER_TURN, toCoord);
+      this.coord = toCoord;
+      var pos = Util.GetPositionBy(toCoord);
+      this.chip.Move(Define.SEC_PER_TURN, pos);
       this.state.SetState(Mode.Move);
     }
 
@@ -135,7 +142,7 @@ namespace MyGame.Dungeon {
     /// </summary>
     private void MoveEnter()
     {
-      DungeonManager.Instance.UpdatePlayerCoord(this.chip.Coord);
+      DungeonManager.Instance.UpdatePlayerCoord(this.coord);
     }
 
     /// <summary>
@@ -154,7 +161,7 @@ namespace MyGame.Dungeon {
 
     private void SetAttackState()
     {
-      this.chip.Attack(Define.SEC_PER_TURN);
+      this.chip.Attack(Define.SEC_PER_TURN, 1f);
       this.state.SetState(Mode.Attack);
     }
 
@@ -213,7 +220,7 @@ namespace MyGame.Dungeon {
     {
       DungeonManager DM = DungeonManager.Instance;
 
-      var coord = this.chip.Coord;
+      var coord = this.coord;
 
       IReadOnlyTile curr = DM.GetTile(coord);
       IReadOnlyTile next = DM.GetTile(coord, direction);
