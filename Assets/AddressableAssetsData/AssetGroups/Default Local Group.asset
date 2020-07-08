@@ -17,20 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 5fbb7fc19446b824eab40f21c7b22e4b
   m_SerializeEntries:
-  - m_GUID: 537e1190a89778746b5c060c1f5ac45a
-    m_Address: player
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Dungeon
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
-  - m_GUID: 72f58667d8300c644ace8834b1622eee
-    m_Address: enemy001
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Dungeon
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
   - m_GUID: 72f69a579e1abf147887571412f67c27
     m_Address: /Prefabs/MapChips/Fields/Wall
     m_ReadOnly: 0
@@ -40,13 +26,6 @@ MonoBehaviour:
       type: 3}
     m_TargetAsset: {fileID: 3467317290387231782, guid: 72f69a579e1abf147887571412f67c27,
       type: 3}
-  - m_GUID: 90c7a8d17ffaf7c4488237141bd0d797
-    m_Address: mapchip320x240
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Dungeon
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
   - m_GUID: 9e6dc405effeca14f882c7b08efdbb1c
     m_Address: /Prefabs/MapChips/Players/Player
     m_ReadOnly: 0
