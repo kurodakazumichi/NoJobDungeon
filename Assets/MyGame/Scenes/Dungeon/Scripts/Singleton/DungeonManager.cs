@@ -89,17 +89,22 @@ namespace MyGame.Dungeon
     // デバッグ
 
     public bool _showDebug = true;
-
+    public bool _isMiniMapOnly = true;
     private void OnGUI()
     {
       if (!this._showDebug) return;
+
+      if (this._isMiniMapOnly)
+      {
+        this.stage.OnGUI();
+        return;
+      }
 
       if (GUILayout.Button("Create Stage"))
       {
         CreateStage();
       }
 
-      this.stage.OnGUI();
     }
     
 #endif

@@ -88,7 +88,7 @@ namespace MyGame {
     private Button rb3 = new Button(KeyCode.Z);
     private Button rb4 = new Button(KeyCode.A);
     private Button r   = new Button(KeyCode.LeftShift);
-
+    private Button l   = new Button(KeyCode.Space);
     /// <summary>
     /// 入力を監視
     /// </summary>
@@ -99,6 +99,7 @@ namespace MyGame {
       this.rb3.Update();
       this.rb4.Update();
       this.r.Update();
+      this.l.Update();
     }
 
     // 各種ボタンを公開
@@ -107,6 +108,7 @@ namespace MyGame {
     public IButton RB3 => (this.rb3);
     public IButton RB4 => (this.rb4);
     public IButton R   => (this.r);
+    public IButton L   => (this.l);
 
     /// <summary>
     /// 入力された方向キー(８方向)

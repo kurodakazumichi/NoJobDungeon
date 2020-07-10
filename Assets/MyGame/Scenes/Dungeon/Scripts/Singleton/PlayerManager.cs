@@ -19,7 +19,15 @@ namespace MyGame.Dungeon
     private Player player = null;
 
     //-------------------------------------------------------------------------
-    // Public
+    // Public Properity
+
+    /// <summary>
+    /// プレイヤーチップのオブジェクト
+    /// </summary>
+    public GameObject PlayerObject => ((this.player != null)? this.player.PlayerObject:null);
+
+    //-------------------------------------------------------------------------
+    // Public Method
 
     /// <summary>
     /// プレイヤーを作成し、指定された座標に置く
@@ -32,6 +40,20 @@ namespace MyGame.Dungeon
       }
     }
 
+    /// <summary>
+    /// プレイヤーの思考を監視する
+    /// </summary>
+    /// <returns></returns>
+    public Player.Behavior monitorPlayerThoughs()
+    {
+      if (this.player == null)
+      {
+        return Player.Behavior.Thinking;
+      }
+
+      return this.player.Think();
+    }
+
 #if UNITY_EDITOR
 
     [SerializeField]
@@ -41,18 +63,7 @@ namespace MyGame.Dungeon
     {
       if (!showDebug) return;
 
-      if (this.player == null && GUILayout.Button("Create Player"))
-      {
-        CreatePlayer(Vector2Int.zero);
-      }
-
-      if (this.player != null)
-      {
-        Vector2Int coord = this.player.Coord;
-        GUILayout.Label($"Player Coord:({coord.x}, {coord.y})");
-
-        GUILayout.Label($"Player Behavior:{this.player.Think()}");
-      }
+      this.player.OnGUI();
     }
 
 #endif
