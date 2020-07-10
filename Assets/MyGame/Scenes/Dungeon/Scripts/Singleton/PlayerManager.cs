@@ -19,7 +19,7 @@ namespace MyGame.Dungeon
     private Player player = null;
 
     //-------------------------------------------------------------------------
-    // プレイヤー生成
+    // Public
 
     /// <summary>
     /// プレイヤーを作成し、指定された座標に置く
@@ -32,27 +32,31 @@ namespace MyGame.Dungeon
       }
     }
 
-    /// <summary>
-    /// Player.StartのWrapper
-    /// </summary>
-    public void StartPlayer()
+#if UNITY_EDITOR
+
+    [SerializeField]
+    private bool showDebug = false;
+
+    private void OnGUI()
     {
+      if (!showDebug) return;
+
+      if (this.player == null && GUILayout.Button("Create Player"))
+      {
+        CreatePlayer(Vector2Int.zero);
+      }
+
       if (this.player != null)
       {
-        this.player.Start();
+        Vector2Int coord = this.player.Coord;
+        GUILayout.Label($"Player Coord:({coord.x}, {coord.y})");
+
+        GUILayout.Label($"Player Behavior:{this.player.Think()}");
       }
     }
 
-    /// <summary>
-    /// プレイヤーの更新
-    /// </summary>
-    public void UpdatePlayer()
-    {
-      if (this.player != null)
-      {
-        this.player.Update();
-      }
-    }
+#endif
+
   }
 
 }

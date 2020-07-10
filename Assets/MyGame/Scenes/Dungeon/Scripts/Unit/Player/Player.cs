@@ -6,16 +6,21 @@ namespace MyGame.Dungeon {
   
   public class Player
   {
-    enum Mode
+    /// <summary>
+    /// プレイヤーの行動一覧
+    /// </summary>
+    public enum Behavior
     {
-      Think,
-      Move,
-      Attack,
-      WaitMyTurn,
+      Thinking, // 考え中
+      Move,     // 移動
+      Attack1,  // 通常攻撃
+      Attack2,  // 遠距離攻撃
+      Dash,     // ダッシュ
+      Menu,     // メニューを開く
     }
 
     //-------------------------------------------------------------------------
-    // 主要メンバー
+    // メンバー
 
     /// <summary>
     /// プレイヤーチップ
@@ -23,17 +28,12 @@ namespace MyGame.Dungeon {
     private PlayerChip chip;
 
     /// <summary>
-    /// ステートマシン
-    /// </summary>
-    private StateMachine<Mode> state;
-
-    /// <summary>
     /// プレイヤーの座標
     /// </summary>
     private Vector2Int coord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
-    // 主要メソッド
+    // Public
 
     /// <summary>
     /// コンストラクタ
@@ -42,48 +42,21 @@ namespace MyGame.Dungeon {
     {
       this.coord = coord;
 
-      this.state = new StateMachine<Mode>();
-
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
       this.chip.transform.position = Util.GetPositionBy(coord);
-
-      // Stateを作成
-      this.state.Add(Mode.WaitMyTurn, null, WaitMyTurnUpdate);
-      this.state.Add(Mode.Think, null, ThinkUpdate);
-      this.state.Add(Mode.Move, MoveEnter, MoveUpdate);
-      this.state.Add(Mode.Attack, AttackEnter, AttackUpdate, AttackExit);
-
-      // カメラがプレイヤーを追従するように設定
-      CameraManager.Instance.SetTrackingMode(this.chip.gameObject);
     }
 
     /// <summary>
-    /// プレイヤーの動作開始
+    /// プレイヤーの座標
     /// </summary>
-    public void Start()
-    {
-      CameraManager.Instance.SetTrackingMode(this.chip.gameObject);
-      this.state.SetState(Mode.Think);
-    }
+    public Vector2Int Coord => (this.coord);
 
     /// <summary>
-    /// プレイヤーの更新
+    /// プレイヤーの思考処理、といっても処理の実態は入力内容から行動を決定する事になる
     /// </summary>
-    public void Update()
+    public Behavior Think()
     {
-      this.state.Update();
-    }
-
-    /// <summary>
-    /// 破棄
-    /// </summary>
-    public void Destroy()
-    {
-      MapChipFactory.Instance.Release(this.chip);
-      CameraManager.Instance.SetFreeMode();
-
-      this.chip = null;
-      this.state = null;
+       return Behavior.Thinking;
     }
 
     //-------------------------------------------------------------------------
@@ -98,7 +71,6 @@ namespace MyGame.Dungeon {
       // 攻撃の入力
       if (InputManager.Instance.Attack())
       {
-        SetAttackState();
         return;
       }
 
@@ -115,100 +87,12 @@ namespace MyGame.Dungeon {
       var isMovable = ChecksPlayerMovable(direction);
 
       // プレイヤー移動待ちフェーズへ
-      if (isMovable)
-      {
-        var nextCoord = Util.GetCoord(this.coord, direction);
-        SetMoveState(nextCoord);
-      }
+      //if (isMovable)
+      //{
+      //  var nextCoord = Util.GetCoord(this.coord, direction);
+      //  SetMoveState(nextCoord);
+      //}
     }
-
-    //-------------------------------------------------------------------------
-    // 移動
-
-    /// <summary>
-    /// Move状態を設定する
-    /// </summary>
-    /// <param name="toCoord">移動先の座標</param>
-    private void SetMoveState(Vector2Int toCoord)
-    {
-      this.coord = toCoord;
-      var pos = Util.GetPositionBy(toCoord);
-      this.chip.Move(Define.SEC_PER_TURN, pos);
-      this.state.SetState(Mode.Move);
-    }
-
-    /// <summary>
-    /// プレイヤー移動時にDungeonManagerのプレイヤー座標を更新する。
-    /// </summary>
-    private void MoveEnter()
-    {
-      DungeonManager.Instance.UpdatePlayerCoord(this.coord);
-    }
-
-    /// <summary>
-    /// プレイヤーの移動が完了するのを待つ
-    /// </summary>
-    private void MoveUpdate() 
-    {
-      if (this.chip.IsIdle)
-      {
-        this.state.SetState(Mode.Think);
-      }
-    }
-
-    //-------------------------------------------------------------------------
-    // 攻撃
-
-    private void SetAttackState()
-    {
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
-      this.state.SetState(Mode.Attack);
-    }
-
-    /// <summary>
-    /// 攻撃モーションでカメラがプレイヤーを追従しないように、カメラをロックする
-    /// </summary>
-    private void AttackEnter() 
-    { 
-      CameraManager.Instance.Lock();
-    }
-
-    /// <summary>
-    /// プレイヤーの攻撃完了を待つ
-    /// </summary>
-    private void AttackUpdate() 
-    {
-      if (this.chip.IsIdle)
-      {
-        this.state.SetState(Mode.Think);
-      }
-    }
-
-    /// <summary>
-    /// 攻撃モーションが終わったらカメラのロックを解除する
-    /// </summary>
-    private void AttackExit() 
-    { 
-      CameraManager.Instance.Unlock();
-    }
-
-    //-------------------------------------------------------------------------
-    // 順番待ち
-    private void WaitMyTurnUpdate() { }
-
-    // Memo
-    // Thinkingは入力内容から行動を決めるモード
-    // 移動だったらMoveモードへ
-    // 攻撃だったらAttackモードへ
-
-    // Moveはプレイヤーを移動させるモード
-    // まず移動できるかどうかを判断する。
-    // 移動できない場合はプレイヤーの方向だけ更新して、再びThinkingモードへ戻る
-    // 移動できる場合は移動し、移動が完了したらターンエンド通知をだしWaitモードへ
-    // ※ターンエンドに関する機能はまだないので考えないといけない
-    // DungeonManagerがプレイヤーフェーズかどうかをもっておいて
-    // ターンエンド時にDungeonManagerに通知するとか？
-    // ターン数とかはDungeonManagerではなくてシーンとかで管理したい気もする
 
     //-------------------------------------------------------------------------
     // その他

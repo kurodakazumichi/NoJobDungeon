@@ -96,13 +96,13 @@ namespace MyGame.Dungeon {
     // ステージプレイ中
     private void PlayingStageEnter()
     {
-      PlayerManager.Instance.StartPlayer();
+      //PlayerManager.Instance.StartPlayer();
       EnemyManager.Instance.StartEnemies();
     }
 
     private void PlayingStageUpdate ()
     {
-      PlayerManager.Instance.UpdatePlayer();
+      //PlayerManager.Instance.UpdatePlayer();
     }
 
 #if UNITY_EDITOR
