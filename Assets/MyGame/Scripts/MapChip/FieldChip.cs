@@ -9,9 +9,10 @@ namespace MyGame {
   /// </summary>
   public class FieldChip : MapChipBase
   {
-    override protected void Awake()
+    public void SetSprite(Sprite sprite)
     {
-      base.Awake();
+      Debug.Log(sprite);
+      this.spriteRenderer.sprite = sprite;
     }
 
     protected override void Start()

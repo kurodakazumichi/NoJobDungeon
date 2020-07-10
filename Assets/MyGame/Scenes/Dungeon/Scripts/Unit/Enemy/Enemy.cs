@@ -36,7 +36,7 @@ namespace MyGame.Dungeon
     {
       this.state = new StateMachine<Mode>();
 
-      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyType.EM001_0);
+      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       this.coord = coord;
       this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
 

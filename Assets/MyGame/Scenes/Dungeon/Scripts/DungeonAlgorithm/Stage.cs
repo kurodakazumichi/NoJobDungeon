@@ -294,7 +294,8 @@ namespace MyGame.Dungeon
         if (tile.IsEnemy) style = sEnemy;
 
         if (style != null) {
-				  GUI.Label(new Rect(x * 10, y * 10 + 30, 10, 10), "■", style);
+          const int s = 7;
+				  GUI.Label(new Rect(x * s + 10, y * s + 10, s, s), "■", style);
         }
 			});
     }

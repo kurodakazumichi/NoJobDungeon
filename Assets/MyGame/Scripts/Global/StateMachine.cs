@@ -66,6 +66,15 @@ namespace MyGame
     private T currentKey;
 
     /// <summary>
+    /// リセット
+    /// </summary>
+    public void Reset()
+    {
+      this.current = null;
+      this.currentKey = default;
+    }
+
+    /// <summary>
     /// ステートを追加
     /// </summary>
     public void Add(T key, Action enter = null, Action update = null, Action exit = null)
@@ -93,20 +102,6 @@ namespace MyGame
     /// 現在のステートのキーを返す
     /// </summary>
     public T StateKey => (this.currentKey);
-
-    /// <summary>
-    /// アイドル状態にする
-    /// </summary>
-    [Obsolete]
-    public void SetIdle()
-    {
-      if (this.current != null)
-      {
-        this.current.Exit();
-      }
-
-      this.current = null;
-    }
 
     /// <summary>
     /// ステートを更新

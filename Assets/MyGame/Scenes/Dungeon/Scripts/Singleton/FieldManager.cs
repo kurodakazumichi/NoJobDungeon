@@ -32,12 +32,12 @@ namespace MyGame.Dungeon
         
         if (tile.IsAisle || tile.IsRoom)
         {
-          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Floor);
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldChipType.Floor);
         }
 
         if (tile.IsWall)
         {
-          chip = MapChipFactory.Instance.CreateFieldChip(FieldType.Wall);
+          chip = MapChipFactory.Instance.CreateFieldChip(FieldChipType.Wall);
         }
 
         if (chip != null) {
