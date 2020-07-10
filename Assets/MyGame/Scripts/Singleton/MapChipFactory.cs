@@ -7,21 +7,22 @@ namespace MyGame
   /// <summary>
   /// マップチップの種類
   /// </summary>
-  public enum MapChipGroup {
+  public enum MapChipGroup 
+  {
     Field,
     Player,
     Enemy,
   }
 
-  public enum FieldType
+  public enum FieldChipType
   {
-    Wall,
-    Floor,
+    Wall = 234,
+    Floor = 235,
   }
 
-  public enum EnemyType
+  public enum EnemyChipType
   {
-    EM001_0,
+    Shobon,
   }
 
   /// <summary>
@@ -29,10 +30,71 @@ namespace MyGame
   /// </summary>
   public class MapChipFactory : SingletonMonobehaviour<MapChipFactory>
   {
+    //-------------------------------------------------------------------------
+    // メンバ
+
     /// <summary>
     /// オブジェクトプールリスト
     /// </summary>
     private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
+
+    //-------------------------------------------------------------------------
+    // Field Chip
+
+    // TODO: FieldChip -> AutoChipに差し替える
+    public FieldChip CreateFieldChip(FieldChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>("field");
+
+      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.SetSprite(sprites[(int)type]);
+
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Player Chip
+
+    public PlayerChip CreatePlayerChip()
+    {
+      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("player");
+      chip.Reset();
+      chip.SetSprite(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Enemy Chip
+
+    /// <summary>
+    /// EnemyChipTypeとリソースファイルのマップテーブル
+    /// </summary>
+    private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
+    {
+      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
+    };
+
+    public EnemyChip CreateEnemyChip(EnemyChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("enemy");
+
+      chip.Reset();
+
+      chip.SetSprite(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+
+      return chip;
+    }
+
+    /// <summary>
+    /// 解放する
+    /// </summary>
+    public void Release<T>(T obj) where T : MonoBehaviour
+    {
+      obj.gameObject.SetActive(false);
+    }
+
+    //-------------------------------------------------------------------------
+    // Protected, Private
 
     /// <summary>
     /// マップチップグループ用のフォルダオブジェクトとプールを作成
@@ -53,53 +115,6 @@ namespace MyGame
       this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
     }
 
-    public FieldChip CreateFieldChip(FieldType type)
-    {
-      GameObject prefab = null;
-
-      var RM = ResourceManager.Instance;
-
-      switch(type)
-      {
-        case FieldType.Wall : prefab = Resources.Load<GameObject>("Prefabs/MapChips/Fields/Wall"); break;
-        case FieldType.Floor: prefab = Resources.Load<GameObject>("Prefabs/MapChips/Fields/Floor"); break;
-        default: return null;
-      }
-
-      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>(prefab);
-      return chip;
-    }
-
-    public PlayerChip CreatePlayerChip()
-    {
-      var prefab = Resources.Load<GameObject>("Prefabs/MapChips/Players/Player");
-      var chip   = this.pools[MapChipGroup.Player].Create<PlayerChip>(prefab);
-      return chip;
-    }
-
-    public EnemyChip CreateEnemyChip(EnemyType type)
-    {
-      GameObject prefab = null;
-
-      var RM = ResourceManager.Instance;
-
-      switch(type)
-      {
-        case EnemyType.EM001_0: prefab = Resources.Load<GameObject>("Prefabs/MapChips/Enemies/EM001_0"); break;
-        default: return null;
-      }
-      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>(prefab);
-      return chip;
-    }
-
-    /// <summary>
-    /// 解放する
-    /// </summary>
-    public void Release<T>(T obj) where T : MonoBehaviour
-    {
-      obj.gameObject.SetActive(false);
-    }
-
     /// <summary>
     /// 生成した要素のフォルダーとなるオブジェクトを生成
     /// </summary>
@@ -109,6 +124,55 @@ namespace MyGame
       folder.transform.parent = this.transform;
       return folder;
     }
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool _debugDraw = false;
+
+    private void OnGUI()
+    {
+      if (!_debugDraw) return;
+
+      this.OnDebugFieldChip();
+      this.OnDebugPlayerChip();
+      this.OnDebugEnemyChip();
+    }
+
+    private void OnDebugFieldChip()
+    {
+      GUILayout.Label("Field Chip Generator");
+      GUILayout.BeginHorizontal();
+      {
+        foreach (FieldChipType value in System.Enum.GetValues(typeof(FieldChipType)))
+        {
+          if (GUILayout.Button(value.ToString()))
+          {
+            CreateFieldChip(value);
+          }
+        }
+      }
+      GUILayout.EndHorizontal();
+    }
+
+    private void OnDebugPlayerChip()
+    {
+      GUILayout.Label("Player Chip Generator");
+      if (GUILayout.Button("player"))
+      {
+        CreatePlayerChip();
+      }
+    }
+
+    private void OnDebugEnemyChip()
+    {
+      GUILayout.Label("Enemy Chip Generator");
+      GUILayout.BeginHorizontal();
+      {
+        if (GUILayout.Button("Shobon")) CreateEnemyChip(EnemyChipType.Shobon);
+      }
+      GUILayout.EndHorizontal();
+    }
+#endif
   }
 
   /// <summary>
@@ -116,6 +180,9 @@ namespace MyGame
   /// </summary>
   class ObjectPool 
   {
+    //-------------------------------------------------------------------------
+    // メンバ
+
     /// <summary>
     /// オブジェクトリスト
     /// </summary>
@@ -125,6 +192,9 @@ namespace MyGame
     /// 生成するゲームオブジェクトの親にするオブジェクト
     /// </summary>
     private GameObject parent;
+
+    //-------------------------------------------------------------------------
+    // Public 
 
     /// <summary>
     /// コンストラクタ
@@ -138,12 +208,12 @@ namespace MyGame
     /// ゲームオブジェクトを作成する。
     /// オブジェクトプールに非アクティブなオブジェクトがあれば再利用。
     /// </summary>
-    [System.Obsolete]
     public T Create<T>(string name) where T : MonoBehaviour
     {
       var chip = GetInactiveObject();
 
-      if (chip == null) {
+      if (chip == null) 
+      {
         chip = CreateNewObject<T>().gameObject;
         this.pool.Add(chip);
       }
@@ -154,34 +224,18 @@ namespace MyGame
       return chip.GetComponent<T>();
     }
 
-    /// <summary>
-    /// Prefabを元にゲームオブジェクトを生成する
-    /// </summary>
-    public T Create<T>(GameObject origin) where T : MonoBehaviour
-    {
-      var obj = GetInactiveObject(origin);
-
-      if (obj == null)
-      {
-        obj = GameObject.Instantiate(origin);
-        this.pool.Add(obj);
-      }
-
-      obj.name             = origin.name;
-      obj.transform.parent = this.parent.transform;
-      obj.gameObject.SetActive(true);
-
-      T component = obj.GetComponent<T>();
-
-      return component;
-    }
+    //-------------------------------------------------------------------------
+    // Private
 
     /// <summary>
     /// 新しくオブジェクトを生成する
     /// </summary>
-    private T CreateNewObject<T> () where T : MonoBehaviour {
+    private T CreateNewObject<T> () where T : MonoBehaviour 
+    {
       var obj = new GameObject();
+
       obj.transform.parent = this.parent.transform;
+
       return obj.gameObject.AddComponent<T>();
     }
 
@@ -190,25 +244,9 @@ namespace MyGame
     /// </summary>
     private GameObject GetInactiveObject()
     {
-      foreach(var chip in this.pool) 
+      foreach(var obj in this.pool) 
       {
-        if (chip.gameObject.activeSelf == false) 
-        {
-          chip.gameObject.SetActive(true);
-          return chip;
-        }
-      }
-      return null;
-    }
-
-    /// <summary>
-    /// 非アクティブなオブジェクトを取得する
-    /// </summary>
-    private GameObject GetInactiveObject(GameObject origin)
-    {
-      foreach(var obj in this.pool)
-      {
-        if (obj.gameObject.activeSelf == false && obj.gameObject.name == origin.name)
+        if (obj.gameObject.activeSelf == false) 
         {
           obj.gameObject.SetActive(true);
           return obj;
