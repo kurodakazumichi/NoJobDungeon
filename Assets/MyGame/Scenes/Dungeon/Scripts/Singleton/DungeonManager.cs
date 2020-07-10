@@ -88,11 +88,16 @@ namespace MyGame.Dungeon
     //-------------------------------------------------------------------------
     // デバッグ
 
-    public bool showDebug = true;
+    public bool _showDebug = true;
 
     private void OnGUI()
     {
-      if (!this.showDebug) return;
+      if (!this._showDebug) return;
+
+      if (GUILayout.Button("Create Stage"))
+      {
+        CreateStage();
+      }
 
       this.stage.OnGUI();
     }
