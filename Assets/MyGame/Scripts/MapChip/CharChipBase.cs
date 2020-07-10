@@ -101,8 +101,6 @@ namespace MyGame
     protected override void Awake()
     {
       base.Awake();
-
-      InitSprites();
     }
 
     protected override void Start()
@@ -121,7 +119,6 @@ namespace MyGame
       this.state.SetState(State.Idle);
     }
 
-
     protected override void Update()
     {
       base.Update();
@@ -134,28 +131,11 @@ namespace MyGame
     // 初期処理
 
     /// <summary>
-    /// TextureからSpriteを生成する
+    /// スプライトを設定する
     /// </summary>
-    private void InitSprites()
+    protected void SetSprite(Sprite[] sprites)
     {
-      Util.Loop2D(SPRITE_X, SPRITE_Y, (int rx, int ry) =>
-      {
-        float w = this.texture.width / SPRITE_X;
-        float h = this.texture.height / SPRITE_Y;
-
-        var rect = new Rect(rx * w, ry * h, w, h);
-
-        var sprite = Sprite.Create(
-          this.texture,
-          rect,
-          this.pivot,
-          Mathf.Max(w, h)
-        );
-
-        var index = ry * SPRITE_X + rx;
-        sprite.name = $"{this.texture.name}_{index}"; 
-        this.sprites[ry * SPRITE_X + rx] = sprite;
-      });
+      this.sprites = sprites;
     }
 
     /// <summary>
@@ -227,15 +207,15 @@ namespace MyGame
     {
       switch (direction.value)
       {
-        case Direction8.Up:        return 0;
-        case Direction8.RightUp:   return 3;
-        case Direction8.Right:     return 6;
-        case Direction8.LeftUp:    return 9;
-        case Direction8.Left:      return 12;
-        case Direction8.RightDown: return 15;
-        case Direction8.Down:      return 18;
-        case Direction8.LeftDown:  return 21;
-        default:                   return 18;
+        case Direction8.Down:      return 0;
+        case Direction8.LeftDown:  return 3;
+        case Direction8.Left:      return 6;
+        case Direction8.RightDown: return 9;
+        case Direction8.Right:     return 12;
+        case Direction8.LeftUp:    return 15;
+        case Direction8.Up:        return 18;
+        case Direction8.RightUp:   return 21;
+        default:                   return 0;
       }
     }
 

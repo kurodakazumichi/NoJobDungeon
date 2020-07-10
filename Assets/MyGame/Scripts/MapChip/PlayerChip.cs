@@ -6,6 +6,14 @@ namespace MyGame
 {
   public class PlayerChip : CharChipBase
   {
+    protected override void Awake()
+    {
+      base.Awake();
+
+      var sprites = Resources.LoadAll<Sprite>("Textures/CharChip/Nico");
+      this.SetSprite(sprites);
+    }
+
     protected override void Start()
     {
       base.Start();
