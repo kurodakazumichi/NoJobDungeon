@@ -69,13 +69,13 @@ namespace MyGame.Dungeon {
     private void ThinkUpdate() 
     {
       // 攻撃の入力
-      if (InputManager.Instance.Attack())
+      if (InputManager.Instance.RB2.IsDown)
       {
         return;
       }
 
       // 方向キーを取得
-      var direction = InputManager.Instance.GetDirectionKey();
+      var direction = InputManager.Instance.DirectionKey;
 
       // 方向キーの入力がなければ継続
       if (direction.IsNeutral) return;
