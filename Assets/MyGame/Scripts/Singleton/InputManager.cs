@@ -17,11 +17,11 @@ namespace MyGame {
   /// </summary>
   public class InputManager : SingletonMonobehaviour<InputManager>
   {
-    public class IButton
+    public interface IButton
     {
-      float Hold;
-      bool isHold;
-      bool isDown;
+      float Hold   { get; }
+      bool  IsHold { get; }
+      bool  IsDown { get; }
     }
 
     public class Button : IButton
@@ -78,7 +78,7 @@ namespace MyGame {
       /// <summary>
       /// 長押しされているかどうか
       /// </summary>
-      public bool isHold => (0.5f < hold);
+      public bool IsHold => (0 < hold);
 
     }
 
@@ -132,6 +132,29 @@ namespace MyGame {
 
       return new Direction(v);
     }
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool _showDebug = false;
+
+    private void OnGUI()
+    {
+      if (!this._showDebug) return;
+
+      GUILayout.Label($"DirectionKey:{GetDirectionKey().value}");
+      ButtonLabel("RB1", this.rb1);
+      ButtonLabel("RB2", this.rb2);
+      ButtonLabel("RB3", this.rb3);
+      ButtonLabel("RB4", this.rb4);
+      ButtonLabel("R"  , this.r);
+
+    }
+
+    private void ButtonLabel(string name, IButton btn)
+    {
+      GUILayout.Label($"{name}: IsDown={btn.IsDown}, IsHold={btn.IsHold}, Hold={btn.Hold}");
+    }
+#endif
 
   }
 }
