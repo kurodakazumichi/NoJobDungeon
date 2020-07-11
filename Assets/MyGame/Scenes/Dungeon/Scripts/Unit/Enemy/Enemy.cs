@@ -111,6 +111,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Vanish()
     {
+      DungeonManager.Instance.RemoveEnemyCoord(this.coord);
       this.chip.Vanish(Define.SEC_PER_TURN);
     }
 

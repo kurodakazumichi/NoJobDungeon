@@ -85,6 +85,14 @@ namespace MyGame.Dungeon
       this.stage.AddTileState(to, Tiles.Enemy);
     }
 
+    /// <summary>
+    /// 指定した座標から敵の情報を除去する
+    /// </summary>
+    public void RemoveEnemyCoord(Vector2Int coord)
+    {
+      this.stage.RemoveTileState(coord, Tiles.Enemy);
+    }
+
     //-------------------------------------------------------------------------
     // その他
 
