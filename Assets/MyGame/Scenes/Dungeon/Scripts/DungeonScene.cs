@@ -14,6 +14,7 @@ namespace MyGame.Dungeon {
       Load,
       CreateStage,
       PlayerThink,
+      Move,
     }
 
     private StateMachine<Phase> state;
@@ -37,6 +38,7 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
+      this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
 
       this.state.SetState(Phase.Load);
     }
@@ -99,7 +101,36 @@ namespace MyGame.Dungeon {
 
     private void PlayerThinkUpdate()
     {
-      PlayerManager.Instance.monitorPlayerThoughs();
+      // プレイヤーの行動を監視
+      var behavior = PlayerManager.Instance.monitorPlayerThoughs();
+
+      switch(behavior)
+      {
+        case Player.Behavior.Move: 
+          this.state.SetState(Phase.Move); 
+          // TODO: 敵の移動先を決定する
+          break;
+      }
+
+
+    }
+
+    //-------------------------------------------------------------------------
+    // 移動フェーズ
+
+    private void MoveEnter()
+    {
+      PlayerManager.Instance.orderToMove();
+    }
+
+    private void MoveUpdate()
+    {
+      // 移動中
+      if (PlayerManager.Instance.hasOnMovePlayer) return;
+
+      // 移動完了
+      // TODO: 本来は敵の攻撃フェーズへ遷移
+      this.state.SetState(Phase.PlayerThink);
     }
 
     //-------------------------------------------------------------------------

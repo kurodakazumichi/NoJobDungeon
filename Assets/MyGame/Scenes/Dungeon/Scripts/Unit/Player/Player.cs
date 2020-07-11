@@ -98,7 +98,7 @@ namespace MyGame.Dungeon {
       // 移動したい場合は移動できるかどうかをチェック
       if (IsWantToMove() && CanMoveTo(direction))
       {
-        this.coord += direction.ToVector(false);
+        this.nextCoord = this.coord + direction.ToVector(false);
         return Behavior.Move;
       }
 
@@ -128,7 +128,9 @@ namespace MyGame.Dungeon {
     /// </summary>
     public void Move()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.nextCoord));
+      this.coord = this.nextCoord;
+      DungeonManager.Instance.UpdatePlayerCoord(this.coord);
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
     }
 
     /// <summary>

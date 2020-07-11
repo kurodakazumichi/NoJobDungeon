@@ -26,6 +26,12 @@ namespace MyGame.Dungeon
     /// </summary>
     public GameObject PlayerObject => ((this.player != null)? this.player.PlayerObject:null);
 
+    /// <summary>
+    /// 移動しているプレイヤーがいる
+    /// </summary>
+    /// <returns></returns>
+    public bool hasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -52,6 +58,11 @@ namespace MyGame.Dungeon
       }
 
       return this.player.Think();
+    }
+
+    public void orderToMove()
+    {
+      this.player.Move();
     }
 
 #if UNITY_EDITOR
