@@ -19,6 +19,12 @@ namespace MyGame.Dungeon
     /// </summary>
     private Vector2Int coord = Vector2Int.zero;
 
+    /// <summary>
+    /// 体力
+    /// TODO: 仮実装
+    /// </summary>
+    private int hp = 10;
+
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -26,6 +32,17 @@ namespace MyGame.Dungeon
     /// アイドル状態です
     /// </summary>
     public bool IsIdle => (this.chip.IsIdle);
+
+    /// <summary>
+    /// 死んでいます
+    /// TODO: 仮実装
+    /// </summary>
+    public bool IsDead => (this.hp <= 0);
+
+    /// <summary>
+    /// 敵の座標
+    /// </summary>
+    public Vector2Int Coord => (this.coord);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -72,6 +89,15 @@ namespace MyGame.Dungeon
     public void Move()
     {
       this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+    }
+
+    /// <summary>
+    /// 攻撃を受ける
+    /// </summary>
+    public void AcceptAttack(IAttackable attacker)
+    {
+      // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
+      this.hp -= attacker.Atk;
     }
   }
 }

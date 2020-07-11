@@ -69,6 +69,23 @@ namespace MyGame.Dungeon
       Map((enemy) => { enemy.Move(); });
     }
 
+    /// <summary>
+    /// 指定された座標にいる敵さんに攻撃を与える
+    /// </summary>
+    public void AttackEnemies(IAttackable attacker, List<Vector2Int> targets)
+    {
+      targets.ForEach((coord) =>
+      {
+        Map((enemy) =>
+        {
+          if (enemy.Coord.Equals(coord))
+          {
+            enemy.AcceptAttack(attacker);
+          }
+        });
+      });
+    }
+
     //-------------------------------------------------------------------------
     // Util
 

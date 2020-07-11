@@ -162,6 +162,9 @@ namespace MyGame.Dungeon {
 
       // プレイヤーのアタッカーとしての情報下さい
       var attacker = PlayerManager.Instance.Attacker;
+
+      // 敵に攻撃を加える
+      EnemyManager.Instance.AttackEnemies(attacker, targets);
     }
 
     private void PlayerAttackStartUpdate()
