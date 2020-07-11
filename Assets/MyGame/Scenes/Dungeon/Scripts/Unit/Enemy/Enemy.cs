@@ -19,6 +19,19 @@ namespace MyGame.Dungeon
     /// </summary>
     private Vector2Int coord = Vector2Int.zero;
 
+    /// <summary>
+    /// 次の座標
+    /// </summary>
+    private Vector2Int nextCoord = Vector2Int.zero;
+
+    //-------------------------------------------------------------------------
+    // Public Properity
+
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public bool IsIdle => (this.chip.IsIdle);
+
     //-------------------------------------------------------------------------
     // Public Method
 
