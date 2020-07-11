@@ -345,6 +345,9 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // State Machine
 
+    //-------------------------------------------------------------------------
+    // State.Move: 指定位置に指定された時間をかけて等速で移動する
+
     /// <summary>
     /// 移動状態のUpdate処理
     /// </summary>
@@ -352,21 +355,18 @@ namespace MyGame
     {
       var rate = UpdateTimer();
 
-      if (this.elapsedTime < this.specifiedTime)
-      {
-        var pos = Vector3.Lerp(this.start, this.end, rate);
+      var pos = Vector3.Lerp(this.start, this.end, rate);
+      this.transform.position = pos;
 
-        this.transform.position = pos;
-        return;
-      }
-
-      if (this.specifiedTime <= this.elapsedTime)
+      if (IsTimeOver)
       {
         this.transform.position = this.end;
-
         this.state.SetState(State.Idle);
       }
     }
+
+    //-------------------------------------------------------------------------
+    // State.Attack: 現在の方向に向かって指定された時間で攻撃っぽい動きをする
 
     /// <summary>
     /// 攻撃状態のUpdate処理
@@ -376,22 +376,23 @@ namespace MyGame
       var rate = UpdateTimer();
 
       rate = Mathf.Sin(rate * Mathf.PI);
+      this.transform.position = Vector3.Lerp(this.start, this.end, rate);
 
-      if (this.elapsedTime < this.specifiedTime)
-      {
-        this.transform.position = Vector3.Lerp(this.start, this.end, rate);
-      }
-
-      else
-      {
+      if (IsTimeOver) { 
         this.transform.position = this.start;
         this.state.SetState(State.Idle);
       }
     }
 
+    //-------------------------------------------------------------------------
+    // State.Ouch: 殴られて痛い！みたいな表現をしたいがとりあえず点滅させとくか
+
+    /// <summary>
+    /// スプライトのアルファをいじって点滅させる
+    /// </summary>
     private void OuchUpdate()
     {
-
+      this.elapsedTime = TimeManager.Instance.DungeonDeltaTime;
     }
 
     //-------------------------------------------------------------------------
@@ -408,7 +409,7 @@ namespace MyGame
       color.a = Mathf.Max(0, 1f - rate);
       this.spriteRenderer.material.color = color;
 
-      if (1f <= rate)
+      if (IsTimeOver)
       {
         this.state.SetState(State.Idle);
       }
@@ -417,11 +418,20 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // State Machine でよく使う処理
 
+    /// <summary>
+    /// タイマーを更新して、時間経過割合を算出する。
+    /// </summary>
+    /// <returns></returns>
     private float UpdateTimer()
     {
       this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
       return this.elapsedTime / Mathf.Max(0.000001f, this.specifiedTime);
     }
+
+    /// <summary>
+    /// 指定時間を経過した
+    /// </summary>
+    private bool IsTimeOver => (this.specifiedTime <= this.elapsedTime);
 
 #if UNITY_EDITOR
     //-------------------------------------------------------------------------
