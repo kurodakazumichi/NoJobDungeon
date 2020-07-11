@@ -29,7 +29,10 @@ namespace MyGame {
       get { return this.timeScale * Time.deltaTime; }
     }
 
-    public float DungeonDeltaTime
+    /// <summary>
+    /// キャラクターチップ用のデルタタイム
+    /// </summary>
+    public float CharChipDeltaTime
     {
       get { return this.timeScale * this.dungeonTimeScale * Time.deltaTime; }
     }

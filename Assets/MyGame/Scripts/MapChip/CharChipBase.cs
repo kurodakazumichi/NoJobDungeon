@@ -331,7 +331,7 @@ namespace MyGame
       const float ANIM_SPEED = 3;
 
       // アニメーションの再生時間を加算
-      this.animTimer += TimeManager.Instance.DungeonDeltaTime * this.animSpeed * ANIM_SPEED;
+      this.animTimer += TimeManager.Instance.CharChipDeltaTime * this.animSpeed * ANIM_SPEED;
 
       // 方向とアニメーションの再生時間からスプライトIndexを決定
       var index =
@@ -392,7 +392,7 @@ namespace MyGame
     /// </summary>
     private void OuchUpdate()
     {
-      this.elapsedTime = TimeManager.Instance.DungeonDeltaTime;
+      this.elapsedTime = TimeManager.Instance.CharChipDeltaTime;
     }
 
     //-------------------------------------------------------------------------
@@ -424,7 +424,7 @@ namespace MyGame
     /// <returns></returns>
     private float UpdateTimer()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      this.elapsedTime += TimeManager.Instance.CharChipDeltaTime;
       return this.elapsedTime / Mathf.Max(0.000001f, this.specifiedTime);
     }
 
