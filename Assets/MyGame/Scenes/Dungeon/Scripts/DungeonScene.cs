@@ -138,7 +138,7 @@ namespace MyGame.Dungeon {
     private void PlayingStageEnter()
     {
       //PlayerManager.Instance.StartPlayer();
-      EnemyManager.Instance.StartEnemies();
+      //EnemyManager.Instance.StartEnemies();
     }
 
     private void PlayingStageUpdate ()

@@ -32,15 +32,5 @@ namespace MyGame.Dungeon
       });
     }
 
-    /// <summary>
-    /// 敵の処理を開始
-    /// </summary>
-    public void StartEnemies()
-    {
-      foreach(var em in this.enemies)
-      {
-        em.Start();
-      }
-    }
   }
 }
