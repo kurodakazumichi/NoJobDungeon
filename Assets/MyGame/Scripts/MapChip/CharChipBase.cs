@@ -392,7 +392,19 @@ namespace MyGame
     /// </summary>
     private void OuchUpdate()
     {
-      this.elapsedTime = TimeManager.Instance.CharChipDeltaTime;
+      var rate = UpdateTimer();
+
+      var color = this.spriteRenderer.material.color;
+
+      color.a = ((int)(rate * 10) % 2);
+      this.spriteRenderer.material.color = color;
+
+      if (IsTimeOver)
+      {
+        color.a = 1;
+        this.spriteRenderer.material.color = color;
+        this.state.SetState(State.Idle);
+      }
     }
 
     //-------------------------------------------------------------------------
