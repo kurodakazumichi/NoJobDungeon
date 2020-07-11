@@ -350,9 +350,7 @@ namespace MyGame
     /// </summary>
     private void MoveUpdate()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
-
-      var rate = this.elapsedTime / this.specifiedTime;
+      var rate = UpdateTimer();
 
       if (this.elapsedTime < this.specifiedTime)
       {
@@ -375,9 +373,8 @@ namespace MyGame
     /// </summary>
     private void AttackUpdate()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      var rate = UpdateTimer();
 
-      var rate = this.elapsedTime / this.specifiedTime;
       rate = Mathf.Sin(rate * Mathf.PI);
 
       if (this.elapsedTime < this.specifiedTime)
@@ -398,15 +395,14 @@ namespace MyGame
     }
 
     //-------------------------------------------------------------------------
-    // スーッっと消えていく演出
+    // State.Vanish: スーッっと消えていく演出
 
     /// <summary>
     /// スプライトのアルファを徐々に0に近づけるだけ
     /// </summary>
     private void VanishUpdate()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
-      var rate = this.elapsedTime / this.specifiedTime;
+      var rate = UpdateTimer();
 
       var color = this.spriteRenderer.material.color;
       color.a = Mathf.Max(0, 1f - rate);
@@ -418,6 +414,14 @@ namespace MyGame
       }
     }
 
+    //-------------------------------------------------------------------------
+    // State Machine でよく使う処理
+
+    private float UpdateTimer()
+    {
+      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      return this.elapsedTime / Mathf.Max(0.000001f, this.specifiedTime);
+    }
 
 #if UNITY_EDITOR
     //-------------------------------------------------------------------------
