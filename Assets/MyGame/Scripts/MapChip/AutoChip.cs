@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyGame.Dungeon;
+using MyGame.InternalAutoChip;
 
 namespace MyGame
 {
-  public class AutoChip : MonoBehaviour
+  namespace InternalAutoChip
   {
     /// <summary>
     /// 連結タイプ
     /// </summary>
-    protected enum ConnectType
+    enum ConnectType
     {
       Enclosed = 0,   // 隅っこ角
       Vertical,       // 垂直区切り
@@ -25,7 +26,7 @@ namespace MyGame
     /// <summary>
     /// セルタイプ
     /// </summary>
-    protected enum CellType
+    enum CellType
     {
       LeftTop = 0,
       RightTop,
@@ -35,103 +36,35 @@ namespace MyGame
       Count
     }
 
-
+    /// <summary>
+    /// 進入禁止フラグ
+    /// </summary>
     [Flags]
-    public enum WallFlag : short
+    public enum IsNotEntryFlag : short
     {
       LeftUp    = 1 << 0,
       Up        = 1 << 1,
       RightUp   = 1 << 2,
       Left      = 1 << 3,
-      This      = 1 << 4,
+      Self      = 1 << 4,
       Right     = 1 << 5,
       LeftDown  = 1 << 6,
       Down      = 1 << 7,
       RightDown = 1 << 8
     }
 
-    private Transform cachedTransform;
-    public Transform CachedTransform
-    {
-      get
-      {
-        if( this.cachedTransform != null ) return this.cachedTransform;
-        this.cachedTransform = this.transform;
-        return this.cachedTransform;
-      }  
-    }
-
-    public Vector2Int Coord;
-
-    public float TileSize = 1.0f;
-
-    private LeftTopCell     leftTopCell     = new LeftTopCell();
-    private RightTopCell    rightTopCell    = new RightTopCell();
-    private LefBottomCell   leftBottomCell  = new LefBottomCell();
-    private RightBottomCell rightBottomCell = new RightBottomCell();
-
-    // Start is called before the first frame update
-    void Start()
-    {
-      // スプライト読み込み
-      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/640x480/pipo-map001_at-sabaku");
-
-      // スプライト分割
-      foreach (var sprite in sprites)
-      {
-        // スプライト名末尾の数字の取得
-        var splitIndex = sprite.name.LastIndexOf('_');
-        string numText = sprite.name.Substring(splitIndex + 1);
-        int num = -1;
-        if (int.TryParse(numText, out num) == false)
-        {
-          // 数字の取得に失敗
-          continue;
-        }
-
-        // スプライト配属先指定
-        CellType cellType       = (CellType)(num % (int)CellType.Count);
-        ConnectType connectType = (ConnectType)(num / (int)CellType.Count);
-        switch (cellType)
-        {
-          case CellType.LeftTop:      leftTopCell.SetSprite(connectType, sprite);     break;
-          case CellType.RightTop:     rightTopCell.SetSprite(connectType, sprite);    break;
-          case CellType.LeftBottom:   leftBottomCell.SetSprite(connectType, sprite);  break;
-          case CellType.RightBottom:  rightBottomCell.SetSprite(connectType, sprite); break;
-        }
-
-        // 準備
-        leftTopCell.Setup(CachedTransform, this.TileSize);
-        rightTopCell.Setup(CachedTransform, this.TileSize);
-        leftBottomCell.Setup(CachedTransform, this.TileSize);
-        rightBottomCell.Setup(CachedTransform, this.TileSize);
-      }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
-    public void UpdateConnect( WallFlag wall )
-    {
-      leftTopCell.UpdateConnect(wall);
-      rightTopCell.UpdateConnect(wall);
-      leftBottomCell.UpdateConnect(wall);
-      rightBottomCell.UpdateConnect(wall);
-    }
-
-    private class ChipCellBase
+    /// <summary>
+    /// セル基底
+    /// </summary>
+    class CellBase
     {
       public ConnectType ConnectType { get; private set; }
 
-      protected virtual WallFlag EnclosedMask { get; } = 0;
-      protected virtual WallFlag VerticalMask { get; } = 0;
-      protected virtual WallFlag HorizontalMask { get; } = 0;
-      protected virtual WallFlag EncloseMask { get; } = 0;
-      protected virtual WallFlag IsolationMask { get; } = 0;
+      protected virtual IsNotEntryFlag EnclosedMask { get; } = 0;
+      protected virtual IsNotEntryFlag VerticalMask { get; } = 0;
+      protected virtual IsNotEntryFlag HorizontalMask { get; } = 0;
+      protected virtual IsNotEntryFlag EncloseMask { get; } = 0;
+      protected virtual IsNotEntryFlag IsolationMask { get; } = 0;
 
       protected Dictionary<ConnectType, Sprite> sprites = new Dictionary<ConnectType, Sprite>();
       public Transform Transform;
@@ -173,7 +106,7 @@ namespace MyGame
         }
       }
 
-      public void UpdateConnect(WallFlag wallFlag)
+      public void UpdateConnect(IsNotEntryFlag wallFlag)
       {
         if ((wallFlag & EnclosedMask) == EnclosedMask)
         {
@@ -203,59 +136,71 @@ namespace MyGame
         this.spriteRenderer.sprite = sprites[this.ConnectType];
       }
     }
-
-    private class LeftTopCell : ChipCellBase
+    
+    /// <summary>
+    /// 左上セル
+    /// </summary>
+    class LeftTopCell : CellBase
     {
-      protected override WallFlag EnclosedMask => (WallFlag.Up | WallFlag.Left);
-      protected override WallFlag VerticalMask => (WallFlag.Left);
-      protected override WallFlag HorizontalMask => (WallFlag.Up);
-      protected override WallFlag EncloseMask => (WallFlag.LeftUp );
-      protected override WallFlag IsolationMask => (WallFlag.LeftUp | WallFlag.Up | WallFlag.Left);
-      
-      public override void Setup(Transform parent, float tileSize)
-      {
-        base.Setup( parent, tileSize );
-        this.Transform.localPosition = new Vector3( -0.25f * tileSize, 0.25f * tileSize, 0f );
-      }
-    }
-
-    private class RightTopCell : ChipCellBase
-    {
-      protected override WallFlag EnclosedMask => (WallFlag.Up | WallFlag.Right);
-      protected override WallFlag VerticalMask => (WallFlag.Right);
-      protected override WallFlag HorizontalMask => (WallFlag.Up);
-      protected override WallFlag EncloseMask => (WallFlag.RightUp);
-      protected override WallFlag IsolationMask => (WallFlag.RightUp | WallFlag.Up | WallFlag.Right);
+      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Up | IsNotEntryFlag.Left);
+      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Left);
+      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Up);
+      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.LeftUp);
+      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.LeftUp | IsNotEntryFlag.Up | IsNotEntryFlag.Left);
 
       public override void Setup(Transform parent, float tileSize)
       {
         base.Setup(parent, tileSize);
-        this.Transform.localPosition = new Vector3( 0.25f * tileSize, 0.25f * tileSize, 0f);
+        this.Transform.localPosition = new Vector3(-0.25f * tileSize, 0.25f * tileSize, 0f);
       }
     }
 
-    private class LefBottomCell : ChipCellBase
+    /// <summary>
+    /// 右上セル
+    /// </summary>
+    class RightTopCell : CellBase
     {
-      protected override WallFlag EnclosedMask => (WallFlag.Down | WallFlag.Left);
-      protected override WallFlag VerticalMask => ( WallFlag.Left);
-      protected override WallFlag HorizontalMask => (WallFlag.Down);
-      protected override WallFlag EncloseMask => (WallFlag.LeftDown);
-      protected override WallFlag IsolationMask => (WallFlag.LeftDown | WallFlag.Down | WallFlag.Left);
+      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Up | IsNotEntryFlag.Right);
+      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Right);
+      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Up);
+      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.RightUp);
+      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.RightUp | IsNotEntryFlag.Up | IsNotEntryFlag.Right);
 
       public override void Setup(Transform parent, float tileSize)
       {
         base.Setup(parent, tileSize);
-        this.Transform.localPosition = new Vector3( -0.25f * tileSize, -0.25f * tileSize, 0f);
+        this.Transform.localPosition = new Vector3(0.25f * tileSize, 0.25f * tileSize, 0f);
       }
     }
 
-    private class RightBottomCell : ChipCellBase
+    /// <summary>
+    /// 左下セル
+    /// </summary>
+    class LefBottomCell : CellBase
     {
-      protected override WallFlag EnclosedMask => (WallFlag.Down | WallFlag.Right);
-      protected override WallFlag VerticalMask => (WallFlag.Right);
-      protected override WallFlag HorizontalMask => (WallFlag.Down);
-      protected override WallFlag EncloseMask => (WallFlag.RightDown);
-      protected override WallFlag IsolationMask => (WallFlag.RightDown | WallFlag.Down | WallFlag.Right);
+      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Down | IsNotEntryFlag.Left);
+      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Left);
+      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Down);
+      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.LeftDown);
+      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.LeftDown | IsNotEntryFlag.Down | IsNotEntryFlag.Left);
+
+      public override void Setup(Transform parent, float tileSize)
+      {
+        base.Setup(parent, tileSize);
+        this.Transform.localPosition = new Vector3(-0.25f * tileSize, -0.25f * tileSize, 0f);
+      }
+    }
+    
+    /// <summary>
+    /// 右下セル
+    /// </summary>
+    class RightBottomCell : CellBase
+    {
+      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Down | IsNotEntryFlag.Right);
+      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Right);
+      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Down);
+      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.RightDown);
+      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.RightDown | IsNotEntryFlag.Down | IsNotEntryFlag.Right);
 
       public override void Setup(Transform parent, float tileSize)
       {
@@ -263,11 +208,161 @@ namespace MyGame
         this.Transform.localPosition = new Vector3(0.25f * tileSize, -0.25f * tileSize, 0f);
       }
 
+    }
+  }
+
+  /// <summary>
+  /// オートチップ
+  /// </summary>
+  public class AutoChip : MonoBehaviour
+  {
+    private Transform cachedTransform;
+    public Transform CachedTransform
+    {
+      get
+      {
+        if( this.cachedTransform != null ) return this.cachedTransform;
+        this.cachedTransform = this.transform;
+        return this.cachedTransform;
+      }  
+    }
+
+    /// <summary>
+    /// フィールド座標
+    /// </summary>
+    public Vector2Int Coord;
+
+    /// <summary>
+    /// タイルサイズ
+    /// </summary>
+    public float TileSize = 1.0f;
+
+    private LeftTopCell     leftTopCell     = new LeftTopCell();
+    private RightTopCell    rightTopCell    = new RightTopCell();
+    private LefBottomCell   leftBottomCell  = new LefBottomCell();
+    private RightBottomCell rightBottomCell = new RightBottomCell();
+
+    // Start is called before the first frame update
+    public void Setup(FieldChipType chipType)
+    {
+      // スプライト読み込み
+
+      Sprite[] sprites = null;
+
+
+      //TODO: factory側からもらうようにかえたい
+      switch (chipType)
+      {
+        case FieldChipType.Sabaku:
+          sprites = Resources.LoadAll<Sprite>("Textures/MapChip/800x600/pipo-map001_at-sabaku");
+          break;
+
+        case FieldChipType.Tuchi:
+          sprites = Resources.LoadAll<Sprite>("Textures/MapChip/640x480/pipo-map001_at-tuti");
+          break;
+
+        case FieldChipType.Umi:
+          sprites = Resources.LoadAll<Sprite>("Textures/MapChip/800x600/pipo-map001_at-umi");
+          break;
+
+        case FieldChipType.Mori:
+          sprites = Resources.LoadAll<Sprite>("Textures/MapChip/640x480/pipo-map001_at-mori");
+          break;
+
       }
+
+
+      // スプライト分割
+      foreach (var sprite in sprites)
+      {
+        // スプライト名末尾の数字の取得
+        var splitIndex = sprite.name.LastIndexOf('_');
+        string numText = sprite.name.Substring(splitIndex + 1);
+        int num = -1;
+        if (int.TryParse(numText, out num) == false)
+        {
+          // 数字の取得に失敗
+          continue;
+        }
+
+        // スプライト配属先指定
+        CellType cellType       = (CellType)(num % (int)CellType.Count);
+        ConnectType connectType = (ConnectType)(num / (int)CellType.Count);
+        switch (cellType)
+        {
+          case CellType.LeftTop:      leftTopCell.SetSprite(connectType, sprite);     break;
+          case CellType.RightTop:     rightTopCell.SetSprite(connectType, sprite);    break;
+          case CellType.LeftBottom:   leftBottomCell.SetSprite(connectType, sprite);  break;
+          case CellType.RightBottom:  rightBottomCell.SetSprite(connectType, sprite); break;
+        }
+
+        // 準備
+        leftTopCell.Setup(CachedTransform, this.TileSize);
+        rightTopCell.Setup(CachedTransform, this.TileSize);
+        leftBottomCell.Setup(CachedTransform, this.TileSize);
+        rightBottomCell.Setup(CachedTransform, this.TileSize);
+      }
+    }
+
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //}
+
+    /// <summary>
+    /// 連結タイプの更新
+    /// </summary>
+    public void UpdateConnect
+      ( bool leftup, bool up, bool rightup, bool left, bool self, bool right, bool leftdown, bool down, bool rightdown )
+    {
+      IsNotEntryFlag isNotEntryFlag = 0;
+
+      isNotEntryFlag = leftup     ? (isNotEntryFlag | IsNotEntryFlag.LeftUp)    : isNotEntryFlag;
+      isNotEntryFlag = up         ? (isNotEntryFlag | IsNotEntryFlag.Up)        : isNotEntryFlag;
+      isNotEntryFlag = rightup    ? (isNotEntryFlag | IsNotEntryFlag.RightUp)   : isNotEntryFlag;
+      isNotEntryFlag = left       ? (isNotEntryFlag | IsNotEntryFlag.Left)      : isNotEntryFlag;
+      isNotEntryFlag = self       ? (isNotEntryFlag | IsNotEntryFlag.Self)      : isNotEntryFlag;
+      isNotEntryFlag = right      ? (isNotEntryFlag | IsNotEntryFlag.Right)     : isNotEntryFlag;
+      isNotEntryFlag = leftdown   ? (isNotEntryFlag | IsNotEntryFlag.LeftDown)  : isNotEntryFlag;
+      isNotEntryFlag = down       ? (isNotEntryFlag | IsNotEntryFlag.Down)      : isNotEntryFlag;
+      isNotEntryFlag = rightdown  ? (isNotEntryFlag | IsNotEntryFlag.RightDown) : isNotEntryFlag;
+
+      UpdateConnect(isNotEntryFlag);
+    }
+     
+    /// <summary>
+    /// 連結タイプの更新
+    /// </summary>
+    public void UpdateConnect( bool[] isNotEntryFlags )
+    {
+      IsNotEntryFlag isNotEntryFlag = 0;
+      
+      for( int i = 0; i < isNotEntryFlags.Length; i++ )
+      {
+        if ( isNotEntryFlags[i] )
+        {
+          isNotEntryFlag |= (IsNotEntryFlag)(1 << i);
+        }
+      }
+
+      UpdateConnect(isNotEntryFlag);
+    }
+     
+    /// <summary>
+    /// 連結タイプの更新
+    /// </summary>
+    private void UpdateConnect(IsNotEntryFlag isNotEntryFlag)
+    {
+      leftTopCell.UpdateConnect(isNotEntryFlag);
+      rightTopCell.UpdateConnect(isNotEntryFlag);
+      leftBottomCell.UpdateConnect(isNotEntryFlag);
+      rightBottomCell.UpdateConnect(isNotEntryFlag);
+    }
 
     //=======================================================================
     // Debug
-    private WallFlag dWallFlag = 0;
+#if false
+    private IsNotEntryFlag dWallFlag = 0;
 
     private void OnGUI()
     {
@@ -290,8 +385,8 @@ namespace MyGame
           if (GUILayout.Button($"{(dWallFlag & WallFlag.Left)}"))
             dWallFlag ^= WallFlag.Left;
 
-          if (GUILayout.Button($"{(dWallFlag & WallFlag.This)}"))
-            dWallFlag ^= WallFlag.This;
+          if (GUILayout.Button($"{(dWallFlag & WallFlag.Self)}"))
+            dWallFlag ^= WallFlag.Self;
 
           if (GUILayout.Button($"{(dWallFlag & WallFlag.Right)}"))
             dWallFlag ^= WallFlag.Right;
@@ -309,18 +404,17 @@ namespace MyGame
             dWallFlag ^= WallFlag.RightDown;
         }
 
-        if (GUILayout.Button(nameof(UpdateConnect)))
-        {
-          UpdateConnect(dWallFlag);
-        }
+        //if (GUILayout.Button(nameof(UpdateConnect)))
+        //{
+        //  UpdateConnect(dWallFlag);
+        //}
 
-        GUILayout.Label($"{leftTopCell.ConnectType}" );
+        GUILayout.Label($"{leftTopCell.ConnectType}");
         GUILayout.Label($"{rightTopCell.ConnectType}");
         GUILayout.Label($"{leftBottomCell.ConnectType}");
         GUILayout.Label($"{rightBottomCell.ConnectType}");
-
-
       }
-    }
+  }
+#endif
   }
 }
