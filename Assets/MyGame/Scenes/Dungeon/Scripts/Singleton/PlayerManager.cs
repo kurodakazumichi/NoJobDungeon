@@ -77,6 +77,14 @@ namespace MyGame.Dungeon
       this.player.Move();
     }
 
+    /// <summary>
+    /// プレイヤーに攻撃するように指示を出す
+    /// </summary>
+    public void OrderToAttack()
+    {
+      this.player.Attack();
+    }
+
 #if UNITY_EDITOR
 
     [SerializeField]

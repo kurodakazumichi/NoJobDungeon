@@ -70,6 +70,20 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 敵さんたちに痛がるように命じる
+    /// </summary>
+    public void OrderToOuch()
+    {
+      Map((enemy) =>
+      {
+        if (enemy.isAcceptAttack)
+        {
+          enemy.Ouch();
+        }
+      });
+    }
+
+    /// <summary>
     /// 指定された座標にいる敵さんに攻撃を与える
     /// </summary>
     public void AttackEnemies(IAttackable attacker, List<Vector2Int> targets)

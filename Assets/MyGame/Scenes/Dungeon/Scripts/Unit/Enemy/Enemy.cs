@@ -25,6 +25,12 @@ namespace MyGame.Dungeon
     /// </summary>
     private int hp = 10;
 
+    /// <summary>
+    /// 攻撃を受けたフラグ
+    /// TODO: 仮実装
+    /// </summary>
+    public bool isAcceptAttack = false;
+
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -92,12 +98,22 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// このメソッドを呼ぶと敵が痛がる
+    /// </summary>
+    public void Ouch()
+    {
+      this.chip.Oush(Define.SEC_PER_TURN);
+      this.isAcceptAttack = false;
+    }
+
+    /// <summary>
     /// 攻撃を受ける
     /// </summary>
     public void AcceptAttack(IAttackable attacker)
     {
       // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
       this.hp -= attacker.Atk;
+      this.isAcceptAttack = true;
     }
   }
 }

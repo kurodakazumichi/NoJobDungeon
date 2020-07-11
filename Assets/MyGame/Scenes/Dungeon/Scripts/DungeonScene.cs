@@ -41,7 +41,7 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
-      this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate);
+      this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
       this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate);
 
       this.state.SetState(Phase.Load);
@@ -165,11 +165,27 @@ namespace MyGame.Dungeon {
 
       // 敵に攻撃を加える
       EnemyManager.Instance.AttackEnemies(attacker, targets);
+
+      // プレイヤーは攻撃を、敵は痛がる動きをしてください
+      PlayerManager.Instance.OrderToAttack();
+      EnemyManager.Instance.OrderToOuch();
+
+      // プレイヤーの動きに合わせてカメラが動くとガクガクするので
+      // プレイヤー攻撃中はカメラが動かないようにロック(Exitと解除するのを忘れずに)
+      CameraManager.Instance.Lock();
     }
 
     private void PlayerAttackStartUpdate()
     {
+      if (PlayerManager.Instance.HasOnMovePlayer) return;
+      if (EnemyManager.Instance.HasOnMoveEnemy) return;
+
       this.state.SetState(Phase.PlayerAttackEnd);
+    }
+
+    private void PlayerAttackStartExit()
+    {
+      CameraManager.Instance.Unlock();
     }
 
     //-------------------------------------------------------------------------
