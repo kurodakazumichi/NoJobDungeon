@@ -122,6 +122,12 @@ namespace MyGame.Dungeon {
           break;
         }
 
+        // 通常攻撃
+        case Player.Behavior.Attack1:
+        {
+          this.state.SetState(Phase.PlayerAttackStart);
+          break;
+        }
       }
     }
 
@@ -156,7 +162,7 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackStartUpdate()
     {
-
+      this.state.SetState(Phase.PlayerAttackEnd);
     }
 
     //-------------------------------------------------------------------------
@@ -169,7 +175,7 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackEndUpdate()
     {
-
+      this.state.SetState(Phase.PlayerThink);
     }
 
 #if UNITY_EDITOR
