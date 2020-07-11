@@ -15,6 +15,8 @@ namespace MyGame.Dungeon {
       CreateStage,
       PlayerThink,
       Move,
+      PlayerAttackStart,
+      PlayerAttackEnd,
     }
 
     private StateMachine<Phase> state;
@@ -39,6 +41,8 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
+      this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate);
+      this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate);
 
       this.state.SetState(Phase.Load);
     }
@@ -119,8 +123,6 @@ namespace MyGame.Dungeon {
         }
 
       }
-
-
     }
 
     //-------------------------------------------------------------------------
@@ -142,6 +144,32 @@ namespace MyGame.Dungeon {
       // 動いてるやつらがいなくなったら次のフェーズへ
       // TODO: 本来は敵の攻撃フェーズへ遷移
       this.state.SetState(Phase.PlayerThink);
+    }
+
+    //-------------------------------------------------------------------------
+    // プレイヤーの攻撃開始フェーズ
+
+    private void PlayerAttackStartEnter()
+    {
+
+    }
+
+    private void PlayerAttackStartUpdate()
+    {
+
+    }
+
+    //-------------------------------------------------------------------------
+    // プレイヤーの攻撃終了フェーズ
+
+    private void PlayerAttackEndEnter()
+    {
+
+    }
+
+    private void PlayerAttackEndUpdate()
+    {
+
     }
 
 #if UNITY_EDITOR
