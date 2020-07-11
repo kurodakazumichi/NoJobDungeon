@@ -138,7 +138,7 @@ namespace MyGame.Dungeon {
     {
       // プレイヤーと敵に動けと命じる
       PlayerManager.Instance.OrderToMove();
-      EnemyManager.Instance.orderToMove();
+      EnemyManager.Instance.OrderToMove();
     }
 
     private void MoveUpdate()

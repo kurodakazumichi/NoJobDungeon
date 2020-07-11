@@ -64,7 +64,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さん達に、移動しろと命じる
     /// </summary>
-    public void orderToMove()
+    public void OrderToMove()
     {
       Map((enemy) => { enemy.Move(); });
     }
