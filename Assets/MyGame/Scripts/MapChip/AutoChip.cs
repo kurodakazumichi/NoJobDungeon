@@ -37,10 +37,10 @@ namespace MyGame
     }
 
     /// <summary>
-    /// 進入禁止フラグ
+    /// チェックフラグ
     /// </summary>
     [Flags]
-    public enum IsNotEntryFlag : short
+    public enum CheckFlag : short
     {
       LeftUp    = 1 << 0,
       Up        = 1 << 1,
@@ -60,11 +60,11 @@ namespace MyGame
     {
       public ConnectType ConnectType { get; private set; }
 
-      protected virtual IsNotEntryFlag EnclosedMask { get; } = 0;
-      protected virtual IsNotEntryFlag VerticalMask { get; } = 0;
-      protected virtual IsNotEntryFlag HorizontalMask { get; } = 0;
-      protected virtual IsNotEntryFlag EncloseMask { get; } = 0;
-      protected virtual IsNotEntryFlag IsolationMask { get; } = 0;
+      protected virtual CheckFlag EnclosedMask { get; } = 0;
+      protected virtual CheckFlag VerticalMask { get; } = 0;
+      protected virtual CheckFlag HorizontalMask { get; } = 0;
+      protected virtual CheckFlag EncloseMask { get; } = 0;
+      protected virtual CheckFlag IsolationMask { get; } = 0;
 
       protected Dictionary<ConnectType, Sprite> sprites = new Dictionary<ConnectType, Sprite>();
       public Transform Transform;
@@ -106,7 +106,7 @@ namespace MyGame
         }
       }
 
-      public void UpdateConnect(IsNotEntryFlag wallFlag)
+      public void UpdateConnect(CheckFlag wallFlag)
       {
         if ((wallFlag & EnclosedMask) == EnclosedMask)
         {
@@ -142,11 +142,11 @@ namespace MyGame
     /// </summary>
     class LeftTopCell : CellBase
     {
-      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Up | IsNotEntryFlag.Left);
-      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Left);
-      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Up);
-      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.LeftUp);
-      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.LeftUp | IsNotEntryFlag.Up | IsNotEntryFlag.Left);
+      protected override CheckFlag EnclosedMask => (CheckFlag.Up | CheckFlag.Left);
+      protected override CheckFlag VerticalMask => (CheckFlag.Left);
+      protected override CheckFlag HorizontalMask => (CheckFlag.Up);
+      protected override CheckFlag EncloseMask => (CheckFlag.LeftUp);
+      protected override CheckFlag IsolationMask => (CheckFlag.LeftUp | CheckFlag.Up | CheckFlag.Left);
 
       public override void Setup(Transform parent, float tileSize)
       {
@@ -160,11 +160,11 @@ namespace MyGame
     /// </summary>
     class RightTopCell : CellBase
     {
-      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Up | IsNotEntryFlag.Right);
-      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Right);
-      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Up);
-      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.RightUp);
-      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.RightUp | IsNotEntryFlag.Up | IsNotEntryFlag.Right);
+      protected override CheckFlag EnclosedMask => (CheckFlag.Up | CheckFlag.Right);
+      protected override CheckFlag VerticalMask => (CheckFlag.Right);
+      protected override CheckFlag HorizontalMask => (CheckFlag.Up);
+      protected override CheckFlag EncloseMask => (CheckFlag.RightUp);
+      protected override CheckFlag IsolationMask => (CheckFlag.RightUp | CheckFlag.Up | CheckFlag.Right);
 
       public override void Setup(Transform parent, float tileSize)
       {
@@ -178,11 +178,11 @@ namespace MyGame
     /// </summary>
     class LefBottomCell : CellBase
     {
-      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Down | IsNotEntryFlag.Left);
-      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Left);
-      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Down);
-      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.LeftDown);
-      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.LeftDown | IsNotEntryFlag.Down | IsNotEntryFlag.Left);
+      protected override CheckFlag EnclosedMask => (CheckFlag.Down | CheckFlag.Left);
+      protected override CheckFlag VerticalMask => (CheckFlag.Left);
+      protected override CheckFlag HorizontalMask => (CheckFlag.Down);
+      protected override CheckFlag EncloseMask => (CheckFlag.LeftDown);
+      protected override CheckFlag IsolationMask => (CheckFlag.LeftDown | CheckFlag.Down | CheckFlag.Left);
 
       public override void Setup(Transform parent, float tileSize)
       {
@@ -196,11 +196,11 @@ namespace MyGame
     /// </summary>
     class RightBottomCell : CellBase
     {
-      protected override IsNotEntryFlag EnclosedMask => (IsNotEntryFlag.Down | IsNotEntryFlag.Right);
-      protected override IsNotEntryFlag VerticalMask => (IsNotEntryFlag.Right);
-      protected override IsNotEntryFlag HorizontalMask => (IsNotEntryFlag.Down);
-      protected override IsNotEntryFlag EncloseMask => (IsNotEntryFlag.RightDown);
-      protected override IsNotEntryFlag IsolationMask => (IsNotEntryFlag.RightDown | IsNotEntryFlag.Down | IsNotEntryFlag.Right);
+      protected override CheckFlag EnclosedMask => (CheckFlag.Down | CheckFlag.Right);
+      protected override CheckFlag VerticalMask => (CheckFlag.Right);
+      protected override CheckFlag HorizontalMask => (CheckFlag.Down);
+      protected override CheckFlag EncloseMask => (CheckFlag.RightDown);
+      protected override CheckFlag IsolationMask => (CheckFlag.RightDown | CheckFlag.Down | CheckFlag.Right);
 
       public override void Setup(Transform parent, float tileSize)
       {
@@ -315,17 +315,17 @@ namespace MyGame
     public void UpdateConnect
       ( bool leftup, bool up, bool rightup, bool left, bool self, bool right, bool leftdown, bool down, bool rightdown )
     {
-      IsNotEntryFlag isNotEntryFlag = 0;
+      CheckFlag isNotEntryFlag = 0;
 
-      isNotEntryFlag = leftup     ? (isNotEntryFlag | IsNotEntryFlag.LeftUp)    : isNotEntryFlag;
-      isNotEntryFlag = up         ? (isNotEntryFlag | IsNotEntryFlag.Up)        : isNotEntryFlag;
-      isNotEntryFlag = rightup    ? (isNotEntryFlag | IsNotEntryFlag.RightUp)   : isNotEntryFlag;
-      isNotEntryFlag = left       ? (isNotEntryFlag | IsNotEntryFlag.Left)      : isNotEntryFlag;
-      isNotEntryFlag = self       ? (isNotEntryFlag | IsNotEntryFlag.Self)      : isNotEntryFlag;
-      isNotEntryFlag = right      ? (isNotEntryFlag | IsNotEntryFlag.Right)     : isNotEntryFlag;
-      isNotEntryFlag = leftdown   ? (isNotEntryFlag | IsNotEntryFlag.LeftDown)  : isNotEntryFlag;
-      isNotEntryFlag = down       ? (isNotEntryFlag | IsNotEntryFlag.Down)      : isNotEntryFlag;
-      isNotEntryFlag = rightdown  ? (isNotEntryFlag | IsNotEntryFlag.RightDown) : isNotEntryFlag;
+      isNotEntryFlag = leftup     ? (isNotEntryFlag | CheckFlag.LeftUp)    : isNotEntryFlag;
+      isNotEntryFlag = up         ? (isNotEntryFlag | CheckFlag.Up)        : isNotEntryFlag;
+      isNotEntryFlag = rightup    ? (isNotEntryFlag | CheckFlag.RightUp)   : isNotEntryFlag;
+      isNotEntryFlag = left       ? (isNotEntryFlag | CheckFlag.Left)      : isNotEntryFlag;
+      isNotEntryFlag = self       ? (isNotEntryFlag | CheckFlag.Self)      : isNotEntryFlag;
+      isNotEntryFlag = right      ? (isNotEntryFlag | CheckFlag.Right)     : isNotEntryFlag;
+      isNotEntryFlag = leftdown   ? (isNotEntryFlag | CheckFlag.LeftDown)  : isNotEntryFlag;
+      isNotEntryFlag = down       ? (isNotEntryFlag | CheckFlag.Down)      : isNotEntryFlag;
+      isNotEntryFlag = rightdown  ? (isNotEntryFlag | CheckFlag.RightDown) : isNotEntryFlag;
 
       UpdateConnect(isNotEntryFlag);
     }
@@ -335,13 +335,13 @@ namespace MyGame
     /// </summary>
     public void UpdateConnect( bool[] isNotEntryFlags )
     {
-      IsNotEntryFlag isNotEntryFlag = 0;
+      CheckFlag isNotEntryFlag = 0;
       
       for( int i = 0; i < isNotEntryFlags.Length; i++ )
       {
         if ( isNotEntryFlags[i] )
         {
-          isNotEntryFlag |= (IsNotEntryFlag)(1 << i);
+          isNotEntryFlag |= (CheckFlag)(1 << i);
         }
       }
 
@@ -351,7 +351,7 @@ namespace MyGame
     /// <summary>
     /// 連結タイプの更新
     /// </summary>
-    private void UpdateConnect(IsNotEntryFlag isNotEntryFlag)
+    private void UpdateConnect(CheckFlag isNotEntryFlag)
     {
       leftTopCell.UpdateConnect(isNotEntryFlag);
       rightTopCell.UpdateConnect(isNotEntryFlag);
