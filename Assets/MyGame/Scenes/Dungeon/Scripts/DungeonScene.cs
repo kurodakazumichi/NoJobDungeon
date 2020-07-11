@@ -144,8 +144,8 @@ namespace MyGame.Dungeon {
     private void MoveUpdate()
     {
       // 動いてるプレイヤーと敵がいる間は待機
-      if (PlayerManager.Instance.HasOnMovePlayer) return;
-      if (EnemyManager.Instance.HasOnMoveEnemy) return;
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+      if (EnemyManager.Instance.HasActiveEnemy) return;
 
       // 動いてるやつらがいなくなったら次のフェーズへ
       // TODO: 本来は敵の攻撃フェーズへ遷移
@@ -177,8 +177,8 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackStartUpdate()
     {
-      if (PlayerManager.Instance.HasOnMovePlayer) return;
-      if (EnemyManager.Instance.HasOnMoveEnemy) return;
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+      if (EnemyManager.Instance.HasActiveEnemy) return;
 
       this.state.SetState(Phase.PlayerAttackEnd);
     }
@@ -199,7 +199,7 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackEndUpdate()
     {
-      if (EnemyManager.Instance.HasOnMoveEnemy) return;
+      if (EnemyManager.Instance.HasActiveEnemy) return;
       this.state.SetState(Phase.PlayerThink);
     }
 

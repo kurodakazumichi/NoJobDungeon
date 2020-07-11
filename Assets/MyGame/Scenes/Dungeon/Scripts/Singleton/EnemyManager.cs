@@ -21,9 +21,9 @@ namespace MyGame.Dungeon
     // Public Properity
 
     /// <summary>
-    /// 動いてる敵がいたらtrueを返す
+    /// Activeな(何かしら活動している)敵がいるかどうか
     /// </summary>
-    public bool HasOnMoveEnemy
+    public bool HasActiveEnemy
     {
       get
       {

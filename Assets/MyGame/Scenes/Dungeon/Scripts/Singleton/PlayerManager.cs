@@ -27,10 +27,10 @@ namespace MyGame.Dungeon
     public GameObject PlayerObject => ((this.player != null)? this.player.PlayerObject:null);
 
     /// <summary>
-    /// 移動しているプレイヤーがいる
+    /// Activeな(何かしら活動している)プレイヤーがいるかどうか
     /// </summary>
     /// <returns></returns>
-    public bool HasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
+    public bool HasnActivePlayer => ((this.player != null && !this.player.IsIdle));
 
     /// <summary>
     /// 通常攻撃の対象となる座標リスト
