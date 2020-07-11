@@ -106,7 +106,7 @@ namespace MyGame
 
       this.direction.value = Direction8.Neutral;
       this.state.Reset();
-      this.ResetWorking();
+      this.ResetForStateMachine();
       this.ResetAnimation();
     }
 
@@ -176,7 +176,7 @@ namespace MyGame
     /// </summary>
     public void Attack(float time, float distance)
     {
-      ResetWorking();
+      ResetForStateMachine();
 
       this.specifiedTime = time;
       this.start = this.transform.position;
@@ -189,14 +189,14 @@ namespace MyGame
 
     public void Oush(float time)
     {
-      ResetWorking();
+      ResetForStateMachine();
       this.specifiedTime = time;
       this.state.SetState(State.Ouch);
     }
 
     public void Vanish(float time)
     {
-      ResetWorking();
+      ResetForStateMachine();
       this.specifiedTime = time;
       this.state.SetState(State.Vanish);
     }
@@ -210,7 +210,7 @@ namespace MyGame
       
       Direction = new Direction(Direction8.Neutral);
 
-      ResetWorking();
+      ResetForStateMachine();
       ResetAnimation();
 
       this.state.Add(State.Idle);
@@ -234,14 +234,19 @@ namespace MyGame
     // 初期化処理
 
     /// <summary>
-    /// 作業用変数をリセット
+    /// State Machineの処理に入る前に、作業用変数などの値をリセットする。
     /// </summary>
-    protected void ResetWorking()
+    protected void ResetForStateMachine()
     {
       this.specifiedTime = 0;
       this.elapsedTime   = 0;
       this.start         = Vector3.zero;
       this.end           = Vector3.zero;
+
+      // State.Vanishでmaterial.color.aが0になるので1に戻す。
+      var color = this.spriteRenderer.material.color;
+      color.a = 1;
+      this.spriteRenderer.material.color = color;
     }
 
     /// <summary>
