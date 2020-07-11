@@ -87,8 +87,8 @@ namespace MyGame {
     private Button rb2 = new Button(KeyCode.X);
     private Button rb3 = new Button(KeyCode.Z);
     private Button rb4 = new Button(KeyCode.A);
-    private Button r   = new Button(KeyCode.LeftShift);
-    private Button l   = new Button(KeyCode.Space);
+    private Button r   = new Button(KeyCode.Space);
+    private Button l   = new Button(KeyCode.LeftShift);
     /// <summary>
     /// 入力を監視
     /// </summary>
