@@ -21,9 +21,9 @@ namespace MyGame.Dungeon
     // Public Properity
 
     /// <summary>
-    /// 動いてる敵がいたらtrueを返す
+    /// Activeな(何かしら活動している)敵がいるかどうか
     /// </summary>
-    public bool hasOnMoveEnemy
+    public bool HasActiveEnemy
     {
       get
       {
@@ -56,7 +56,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さんたちに、移動について考えるように命じる
     /// </summary>
-    public void orderToThinkAboutMoving()
+    public void OrderToThinkAboutMoving()
     {
       Map((enemy) => { enemy.ThinkAboutMoving(); });
     }
@@ -64,9 +64,78 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さん達に、移動しろと命じる
     /// </summary>
-    public void orderToMove()
+    public void OrderToMove()
     {
       Map((enemy) => { enemy.Move(); });
+    }
+
+    /// <summary>
+    /// 敵さんたちに痛がるように命じる
+    /// </summary>
+    public void OrderToOuch()
+    {
+      Map((enemy) =>
+      {
+        if (enemy.isAcceptAttack)
+        {
+          enemy.Ouch();
+        }
+      });
+    }
+
+    /// <summary>
+    /// 敵さんたちに消滅するように命じる
+    /// </summary>
+    public void OrderToVanish()
+    {
+      Map((enemy) =>
+      {
+        if (enemy.IsDead)
+        {
+          enemy.Vanish();
+        }
+      });
+    }
+
+    /// <summary>
+    /// 死んだ敵は破棄する
+    /// </summary>
+    public void DestoryDeadEnemies()
+    {
+      List<Enemy> newList = new List<Enemy>(this.enemies.Count);
+
+      Map((enemy) =>
+      {
+        if (enemy.IsDead)
+        {
+          enemy.Destory();
+        }
+        
+        else
+        {
+          newList.Add(enemy);
+        }
+      });
+
+      this.enemies.Clear();
+      this.enemies = newList;
+    }
+
+    /// <summary>
+    /// 指定された座標にいる敵さんに攻撃を与える
+    /// </summary>
+    public void AttackEnemies(IAttackable attacker, List<Vector2Int> targets)
+    {
+      targets.ForEach((coord) =>
+      {
+        Map((enemy) =>
+        {
+          if (enemy.Coord.Equals(coord))
+          {
+            enemy.AcceptAttack(attacker);
+          }
+        });
+      });
     }
 
     //-------------------------------------------------------------------------

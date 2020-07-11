@@ -15,6 +15,8 @@ namespace MyGame.Dungeon {
       CreateStage,
       PlayerThink,
       Move,
+      PlayerAttackStart,
+      PlayerAttackEnd,
     }
 
     private StateMachine<Phase> state;
@@ -39,6 +41,8 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
+      this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
+      this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
 
       this.state.SetState(Phase.Load);
     }
@@ -102,7 +106,7 @@ namespace MyGame.Dungeon {
     private void PlayerThinkUpdate()
     {
       // プレイヤーの行動を監視
-      var behavior = PlayerManager.Instance.monitorPlayerThoughs();
+      var behavior = PlayerManager.Instance.MonitorPlayerThoughs();
 
       switch(behavior)
       {
@@ -111,16 +115,20 @@ namespace MyGame.Dungeon {
         case Player.Behavior.Move:
         {
           // 敵に移動について考えるように命じる
-          EnemyManager.Instance.orderToThinkAboutMoving();
+          EnemyManager.Instance.OrderToThinkAboutMoving();
 
           // 移動フェーズへ
           this.state.SetState(Phase.Move);
           break;
         }
 
+        // 通常攻撃
+        case Player.Behavior.Attack:
+        {
+          this.state.SetState(Phase.PlayerAttackStart);
+          break;
+        }
       }
-
-
     }
 
     //-------------------------------------------------------------------------
@@ -129,19 +137,76 @@ namespace MyGame.Dungeon {
     private void MoveEnter()
     {
       // プレイヤーと敵に動けと命じる
-      PlayerManager.Instance.orderToMove();
-      EnemyManager.Instance.orderToMove();
+      PlayerManager.Instance.OrderToMove();
+      EnemyManager.Instance.OrderToMove();
     }
 
     private void MoveUpdate()
     {
       // 動いてるプレイヤーと敵がいる間は待機
-      if (PlayerManager.Instance.hasOnMovePlayer) return;
-      if (EnemyManager.Instance.hasOnMoveEnemy) return;
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+      if (EnemyManager.Instance.HasActiveEnemy) return;
 
       // 動いてるやつらがいなくなったら次のフェーズへ
       // TODO: 本来は敵の攻撃フェーズへ遷移
       this.state.SetState(Phase.PlayerThink);
+    }
+
+    //-------------------------------------------------------------------------
+    // プレイヤーの攻撃開始フェーズ
+
+    private void PlayerAttackStartEnter()
+    {
+      // 攻撃対象となる座標一覧をください
+      var targets = PlayerManager.Instance.AttackTargets;
+
+      // プレイヤーのアタッカーとしての情報下さい
+      var attacker = PlayerManager.Instance.Attacker;
+
+      // 敵に攻撃を加える
+      EnemyManager.Instance.AttackEnemies(attacker, targets);
+
+      // プレイヤーは攻撃を、敵は痛がる動きをしてください
+      PlayerManager.Instance.OrderToAttack();
+      EnemyManager.Instance.OrderToOuch();
+
+      // プレイヤーの動きに合わせてカメラが動くとガクガクするので
+      // プレイヤー攻撃中はカメラが動かないようにロック(Exitと解除するのを忘れずに)
+      CameraManager.Instance.Lock();
+    }
+
+    private void PlayerAttackStartUpdate()
+    {
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+      if (EnemyManager.Instance.HasActiveEnemy) return;
+
+      this.state.SetState(Phase.PlayerAttackEnd);
+    }
+
+    private void PlayerAttackStartExit()
+    {
+      CameraManager.Instance.Unlock();
+    }
+
+    //-------------------------------------------------------------------------
+    // プレイヤーの攻撃終了フェーズ
+
+    private void PlayerAttackEndEnter()
+    {
+      // 死んだ敵は消滅して下さい
+      EnemyManager.Instance.OrderToVanish();
+    }
+
+    private void PlayerAttackEndUpdate()
+    {
+      if (EnemyManager.Instance.HasActiveEnemy) return;
+      this.state.SetState(Phase.PlayerThink);
+    }
+
+    private void PlayerAttackEndExit()
+    {
+      // 死んだ敵を破棄します
+      EnemyManager.Instance.DestoryDeadEnemies();
     }
 
 #if UNITY_EDITOR

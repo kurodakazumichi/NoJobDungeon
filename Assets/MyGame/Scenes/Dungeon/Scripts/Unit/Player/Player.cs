@@ -9,19 +9,19 @@ namespace MyGame.Dungeon
   /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
   /// またプレイヤーチップの制御を行う。
   /// </summary>
-  public class Player
+  public class Player : IAttackable
   {
     /// <summary>
     /// プレイヤーの行動一覧
     /// </summary>
     public enum Behavior
     {
-      Thinking, // 考え中
-      Move,     // 移動
-      Attack1,  // 通常攻撃
-      Attack2,  // 遠距離攻撃
-      Dash,     // ダッシュ
-      Menu,     // メニューを開く
+      Thinking,  // 考え中
+      Move,      // 移動
+      Attack,    // 通常攻撃
+      SubAttack, // 遠距離攻撃
+      Dash,      // ダッシュ
+      Menu,      // メニューを開く
     }
 
     //-------------------------------------------------------------------------
@@ -59,6 +59,12 @@ namespace MyGame.Dungeon
     /// アイドル状態です
     /// </summary>
     public bool IsIdle => (this.chip.IsIdle);
+
+    /// <summary>
+    /// 攻撃力
+    /// TODO: 仮実装
+    /// </summary>
+    public int Atk => (10);
 
     //-------------------------------------------------------------------------
     // Public
@@ -111,13 +117,13 @@ namespace MyGame.Dungeon
       // 通常攻撃(RB2)
       if (InputManager.Instance.RB2.IsHold)
       {
-        return Behavior.Attack1;
+        return Behavior.Attack;
       }
 
       // 遠距離攻撃(R)
       if (InputManager.Instance.R.IsHold)
       {
-        return Behavior.Attack2;
+        return Behavior.SubAttack;
       }
 
       // メニュー(RB1)
@@ -127,6 +133,19 @@ namespace MyGame.Dungeon
       }
 
        return Behavior.Thinking;
+    }
+
+    /// <summary>
+    /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
+    /// </summary>
+    public List<Vector2Int> GetAttackTargets()
+    {
+      var area = new List<Vector2Int>()
+      {
+        this.coord + this.chip.Direction.ToVector(false)
+      };
+
+      return area;
     }
 
     /// <summary>
@@ -250,6 +269,11 @@ namespace MyGame.Dungeon
       {
         GUILayout.Label($"Current Coord: ({this.Coord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
+
+        GetAttackTargets().ForEach((coord) => {
+          GUILayout.Label($"Attack Targets:{coord}");
+        });
+
       }
       GUILayout.EndArea();
     }
