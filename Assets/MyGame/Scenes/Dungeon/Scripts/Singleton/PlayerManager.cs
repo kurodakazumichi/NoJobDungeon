@@ -32,6 +32,11 @@ namespace MyGame.Dungeon
     /// <returns></returns>
     public bool hasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
 
+    /// <summary>
+    /// 通常攻撃の対象となる座標リスト
+    /// </summary>
+    public List<Vector2Int> AttackTargets => (this.player.GetAttackTargets());
+
     //-------------------------------------------------------------------------
     // Public Method
 

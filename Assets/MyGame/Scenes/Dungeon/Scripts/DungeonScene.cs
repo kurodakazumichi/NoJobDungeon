@@ -157,6 +157,8 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackStartEnter()
     {
+      // 攻撃対象となる座標一覧をください
+      var targets = PlayerManager.Instance.AttackTargets;
 
     }
 
