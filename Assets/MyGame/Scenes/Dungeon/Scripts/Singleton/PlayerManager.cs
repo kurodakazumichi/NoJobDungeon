@@ -30,7 +30,7 @@ namespace MyGame.Dungeon
     /// 移動しているプレイヤーがいる
     /// </summary>
     /// <returns></returns>
-    public bool hasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
+    public bool HasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
 
     /// <summary>
     /// 通常攻撃の対象となる座標リスト
@@ -59,7 +59,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーの思考を監視する
     /// </summary>
-    public Player.Behavior monitorPlayerThoughs()
+    public Player.Behavior MonitorPlayerThoughs()
     {
       if (this.player == null)
       {
@@ -72,7 +72,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーに移動するように指示をだす
     /// </summary>
-    public void orderToMove()
+    public void OrderToMove()
     {
       this.player.Move();
     }

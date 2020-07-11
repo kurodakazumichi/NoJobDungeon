@@ -106,7 +106,7 @@ namespace MyGame.Dungeon {
     private void PlayerThinkUpdate()
     {
       // プレイヤーの行動を監視
-      var behavior = PlayerManager.Instance.monitorPlayerThoughs();
+      var behavior = PlayerManager.Instance.MonitorPlayerThoughs();
 
       switch(behavior)
       {
@@ -115,7 +115,7 @@ namespace MyGame.Dungeon {
         case Player.Behavior.Move:
         {
           // 敵に移動について考えるように命じる
-          EnemyManager.Instance.orderToThinkAboutMoving();
+          EnemyManager.Instance.OrderToThinkAboutMoving();
 
           // 移動フェーズへ
           this.state.SetState(Phase.Move);
@@ -137,15 +137,15 @@ namespace MyGame.Dungeon {
     private void MoveEnter()
     {
       // プレイヤーと敵に動けと命じる
-      PlayerManager.Instance.orderToMove();
+      PlayerManager.Instance.OrderToMove();
       EnemyManager.Instance.orderToMove();
     }
 
     private void MoveUpdate()
     {
       // 動いてるプレイヤーと敵がいる間は待機
-      if (PlayerManager.Instance.hasOnMovePlayer) return;
-      if (EnemyManager.Instance.hasOnMoveEnemy) return;
+      if (PlayerManager.Instance.HasOnMovePlayer) return;
+      if (EnemyManager.Instance.HasOnMoveEnemy) return;
 
       // 動いてるやつらがいなくなったら次のフェーズへ
       // TODO: 本来は敵の攻撃フェーズへ遷移

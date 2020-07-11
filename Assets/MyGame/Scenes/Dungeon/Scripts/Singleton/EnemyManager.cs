@@ -23,7 +23,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 動いてる敵がいたらtrueを返す
     /// </summary>
-    public bool hasOnMoveEnemy
+    public bool HasOnMoveEnemy
     {
       get
       {
@@ -56,7 +56,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さんたちに、移動について考えるように命じる
     /// </summary>
-    public void orderToThinkAboutMoving()
+    public void OrderToThinkAboutMoving()
     {
       Map((enemy) => { enemy.ThinkAboutMoving(); });
     }
