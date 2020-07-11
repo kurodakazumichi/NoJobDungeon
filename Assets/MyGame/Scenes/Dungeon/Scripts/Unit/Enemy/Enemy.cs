@@ -107,6 +107,23 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// このメソッドを呼ぶと敵が消滅する
+    /// </summary>
+    public void Vanish()
+    {
+      this.chip.Vanish(Define.SEC_PER_TURN);
+    }
+
+    /// <summary>
+    /// 破棄
+    /// </summary>
+    public void Destory()
+    {
+      MapChipFactory.Instance.Release(this.chip);
+      this.chip = null;
+    }
+
+    /// <summary>
     /// 攻撃を受ける
     /// </summary>
     public void AcceptAttack(IAttackable attacker)

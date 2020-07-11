@@ -42,7 +42,7 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
       this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
-      this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate);
+      this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
 
       this.state.SetState(Phase.Load);
     }
@@ -193,12 +193,20 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackEndEnter()
     {
-
+      // 死んだ敵は消滅して下さい
+      EnemyManager.Instance.OrderToVanish();
     }
 
     private void PlayerAttackEndUpdate()
     {
+      if (EnemyManager.Instance.HasOnMoveEnemy) return;
       this.state.SetState(Phase.PlayerThink);
+    }
+
+    private void PlayerAttackEndExit()
+    {
+      // 死んだ敵を破棄します
+      EnemyManager.Instance.DestoryDeadEnemies();
     }
 
 #if UNITY_EDITOR

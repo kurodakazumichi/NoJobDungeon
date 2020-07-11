@@ -84,6 +84,44 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 敵さんたちに消滅するように命じる
+    /// </summary>
+    public void OrderToVanish()
+    {
+      Map((enemy) =>
+      {
+        if (enemy.IsDead)
+        {
+          enemy.Vanish();
+        }
+      });
+    }
+
+    /// <summary>
+    /// 死んだ敵は破棄する
+    /// </summary>
+    public void DestoryDeadEnemies()
+    {
+      List<Enemy> newList = new List<Enemy>(this.enemies.Count);
+
+      Map((enemy) =>
+      {
+        if (enemy.IsDead)
+        {
+          enemy.Destory();
+        }
+        
+        else
+        {
+          newList.Add(enemy);
+        }
+      });
+
+      this.enemies.Clear();
+      this.enemies = newList;
+    }
+
+    /// <summary>
     /// 指定された座標にいる敵さんに攻撃を与える
     /// </summary>
     public void AttackEnemies(IAttackable attacker, List<Vector2Int> targets)
