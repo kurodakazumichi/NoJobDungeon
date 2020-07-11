@@ -9,7 +9,7 @@ namespace MyGame.Dungeon
   /// </summary>
   public class FieldManager : SingletonMonobehaviour<FieldManager>
   {
-    private FieldChip[,] fields;
+    private AutoChip[,] fields;
 
     /// <summary>
     /// メンバの初期化
@@ -17,10 +17,9 @@ namespace MyGame.Dungeon
     protected override void Awake()
     {
       base.Awake();
-      this.fields = new FieldChip[Define.WIDTH, Define.HEIGHT];
+      this.fields = new AutoChip[Define.WIDTH, Define.HEIGHT];
     }
-
-
+    
     /// <summary>
     /// フィールドのマップチップを生成
     /// </summary>
@@ -28,23 +27,42 @@ namespace MyGame.Dungeon
     {
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
-        FieldChip chip = null;
-        
-        if (tile.IsAisle || tile.IsRoom)
-        {
-          chip = MapChipFactory.Instance.CreateFieldChip(FieldChipType.Floor);
-        }
+        bool[] flags = new bool[9];
+        MyGame.Util.LoopByRect(new RectInt(x - 1, y - 1, 3, 3),
+          (_x, _y, index) =>
+          {
+            var DM = DungeonManager.Instance;
 
-        if (tile.IsWall)
-        {
-          chip = MapChipFactory.Instance.CreateFieldChip(FieldChipType.Wall);
-        }
+            bool isNotEntry = false;
+            if (x <= 0 || x >= Define.WIDTH - 1 || y <= 0 || y >= Define.HEIGHT - 1)
+            {
+              // 範囲外
+              isNotEntry = true;
+            }
+            else
+            {
+              isNotEntry = DM.GetTile(new Vector2Int(_x, _y)).IsWall;
+            }
 
-        if (chip != null) {
-          chip.transform.localScale = Define.CHIP_SCALE;
-          chip.transform.position = Dungeon.Util.GetPositionBy(x, y);
-          this.fields[x, y] = chip;
-        }
+            if (tile.IsWall)
+            {
+              isNotEntry = !isNotEntry;
+            }
+
+            flags[index] = isNotEntry;
+          }
+        );
+
+        FieldChipType chipType = tile.IsWall ? FieldChipType.Umi : FieldChipType.Sabaku;  //:TODO 仮
+        AutoChip chip = MapChipFactory.Instance.CreateAutoChip(chipType);
+        chip.Coord    = new Vector2Int(x,y);
+        chip.TileSize = Define.CHIP_SCALE.x;
+        chip.CachedTransform.position = Dungeon.Util.GetPositionBy(x, y);
+
+        // スプライトの更新
+        chip.UpdateConnect(flags);
+
+        this.fields[x, y] = chip;
       });
     }
   }

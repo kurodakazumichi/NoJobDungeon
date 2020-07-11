@@ -17,13 +17,20 @@ namespace MyGame
   public enum FieldChipType
   {
     Wall = 234,
-    Floor = 235,
+    Floor = 74,
+
+    //:TODO 仮
+    Sabaku,
+    Tuchi,
+    Mori,
+    Umi,
   }
 
   public enum EnemyChipType
   {
     Shobon,
   }
+
 
   /// <summary>
   /// マップチップ生成クラス
@@ -49,6 +56,16 @@ namespace MyGame
       var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
       chip.SetSprite(sprites[(int)type]);
 
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Auto Chip
+
+    public AutoChip CreateAutoChip(FieldChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Field].Create<AutoChip>("field");
+      chip.Setup(type);
       return chip;
     }
 

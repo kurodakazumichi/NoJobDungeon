@@ -78,6 +78,22 @@ namespace MyGame
     }
 
     /// <summary>
+    /// Rectを元にした二次元ループ処理(Action版)
+    /// </summary>
+    static public void LoopByRect(RectInt rect, System.Action<int, int, int> cb)
+    {
+      int index = 0;
+      for (int y = rect.y; y < rect.y + rect.height; ++y)
+      {
+        for (int x = rect.x; x < rect.x + rect.width; ++x)
+        {
+          cb(x, y, index);
+          ++index;
+        }
+      }
+    }
+
+    /// <summary>
     /// Rectを元にした二次元ループ処理(Func版)
     /// 
     /// </summary>
