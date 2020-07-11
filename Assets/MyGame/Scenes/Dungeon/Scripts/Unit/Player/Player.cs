@@ -38,11 +38,6 @@ namespace MyGame.Dungeon
     private Vector2Int coord = Vector2Int.zero;
 
     /// <summary>
-    /// 次の座標
-    /// </summary>
-    private Vector2Int nextCoord = Vector2Int.zero;
-
-    /// <summary>
     /// ダッシュの方向
     /// </summary>
     private Direction dashDirection = new Direction();
@@ -80,7 +75,7 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// プレイヤーの思考処理、といっても処理の実態は入力内容から行動を決定する事になる
+    /// 入力内容からプレイヤーがどんな行動をするかを決める処理
     /// </summary>
     public Behavior Think()
     {
@@ -100,10 +95,16 @@ namespace MyGame.Dungeon
         return Behavior.Dash;
       }
 
-      // 移動したい場合は移動できるかどうかをチェック
+      // 移動したい場合は移動できるかどうかをチェックしてDungeon情報を更新
       if (IsWantToMove() && CanMoveTo(direction))
       {
-        this.nextCoord = this.coord + direction.ToVector(false);
+        // 移動先の座標を算出
+        var next = this.coord + direction.ToVector(false);
+
+        // 座標の更新
+        DungeonManager.Instance.UpdatePlayerCoord(this.coord, next);
+        this.coord = next;
+
         return Behavior.Move;
       }
 
@@ -129,17 +130,15 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// 移動
+    /// このメソッドを呼ぶとプレイヤーが移動する
     /// </summary>
     public void Move()
     {
-      this.coord = this.nextCoord;
-      DungeonManager.Instance.UpdatePlayerCoord(this.coord);
       this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
     }
 
     /// <summary>
-    /// 攻撃
+    /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
     /// </summary>
     public void Attack()
     {
@@ -250,7 +249,6 @@ namespace MyGame.Dungeon
       GUILayout.BeginArea(new Rect(500, 0, 500, 500));
       {
         GUILayout.Label($"Current Coord: ({this.Coord})");
-        GUILayout.Label($"Next    Coord: ({this.nextCoord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
       }
       GUILayout.EndArea();

@@ -39,8 +39,14 @@ namespace MyGame
     /// <summary>
     ///  Vector2からDirectionへ
     /// </summary>
-    public Direction(Vector2Int v)
+    public Direction(Vector2Int v, bool yUp = true)
     {
+      // y座標のプラス方向を下にしたい場合
+      if (yUp == false)
+      {
+        v.y *= -1;
+      }
+
       v.x = Mathf.Min(v.x, 1);
       v.x = Mathf.Max(v.x, -1);
       v.y = Mathf.Min(v.y, 1);

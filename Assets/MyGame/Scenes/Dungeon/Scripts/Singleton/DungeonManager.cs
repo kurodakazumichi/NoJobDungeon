@@ -68,12 +68,21 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// プレイヤーの座標を取得する
+    /// プレイヤーの座標を更新する
     /// </summary>
-    /// <param name="coord"></param>
-    public void UpdatePlayerCoord(Vector2Int coord)
+    public void UpdatePlayerCoord(Vector2Int from, Vector2Int to)
     {
-      this.stage.UpdatePlayerCoord(coord);
+      this.stage.RemoveTileState(from, Tiles.Player);
+      this.stage.AddTileState(to, Tiles.Player);
+    }
+
+    /// <summary>
+    /// 敵の座標を更新する
+    /// </summary>
+    public void UpdateEnemyCoord(Vector2Int from, Vector2Int to)
+    {
+      this.stage.RemoveTileState(from, Tiles.Enemy);
+      this.stage.AddTileState(to, Tiles.Enemy);
     }
 
     //-------------------------------------------------------------------------

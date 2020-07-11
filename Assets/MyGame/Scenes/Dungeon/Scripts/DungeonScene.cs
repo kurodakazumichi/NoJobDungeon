@@ -106,10 +106,18 @@ namespace MyGame.Dungeon {
 
       switch(behavior)
       {
-        case Player.Behavior.Move: 
-          this.state.SetState(Phase.Move); 
-          // TODO: 敵の移動先を決定する
+        // 移動：このケースに来た時
+        // ダンジョン情報は既にプレイヤーが移動した後の状態になっている。
+        case Player.Behavior.Move:
+        {
+          // 敵に移動について考えるように命じる
+          EnemyManager.Instance.orderToThinkAboutMoving();
+
+          // 移動フェーズへ
+          this.state.SetState(Phase.Move);
           break;
+        }
+
       }
 
 
@@ -120,30 +128,20 @@ namespace MyGame.Dungeon {
 
     private void MoveEnter()
     {
+      // プレイヤーと敵に動けと命じる
       PlayerManager.Instance.orderToMove();
+      EnemyManager.Instance.orderToMove();
     }
 
     private void MoveUpdate()
     {
-      // 移動中
+      // 動いてるプレイヤーと敵がいる間は待機
       if (PlayerManager.Instance.hasOnMovePlayer) return;
+      if (EnemyManager.Instance.hasOnMoveEnemy) return;
 
-      // 移動完了
+      // 動いてるやつらがいなくなったら次のフェーズへ
       // TODO: 本来は敵の攻撃フェーズへ遷移
       this.state.SetState(Phase.PlayerThink);
-    }
-
-    //-------------------------------------------------------------------------
-    // ステージプレイ中
-    private void PlayingStageEnter()
-    {
-      //PlayerManager.Instance.StartPlayer();
-      //EnemyManager.Instance.StartEnemies();
-    }
-
-    private void PlayingStageUpdate ()
-    {
-      //PlayerManager.Instance.UpdatePlayer();
     }
 
 #if UNITY_EDITOR

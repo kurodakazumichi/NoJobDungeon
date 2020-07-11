@@ -236,15 +236,6 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // 更新
-    public void UpdatePlayerCoord(Vector2Int newCoord)
-    {
-      var oldCoord = Find(Dungeon.Tiles.Player)[0];
-      RemoveTileState(oldCoord, Dungeon.Tiles.Player);
-      AddTileState(newCoord, Dungeon.Tiles.Player);
-    }
-
-    //-------------------------------------------------------------------------
     // その他
 		public void Map(System.Action<int, int, Tile> cb)
 		{
