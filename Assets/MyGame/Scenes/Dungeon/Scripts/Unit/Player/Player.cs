@@ -130,6 +130,19 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
+    /// </summary>
+    public List<Vector2Int> GetAttackTargets()
+    {
+      var area = new List<Vector2Int>()
+      {
+        this.coord + this.chip.Direction.ToVector(false)
+      };
+
+      return area;
+    }
+
+    /// <summary>
     /// このメソッドを呼ぶとプレイヤーが移動する
     /// </summary>
     public void Move()
@@ -250,6 +263,11 @@ namespace MyGame.Dungeon
       {
         GUILayout.Label($"Current Coord: ({this.Coord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
+
+        GetAttackTargets().ForEach((coord) => {
+          GUILayout.Label($"Attack Targets:{coord}");
+        });
+
       }
       GUILayout.EndArea();
     }
