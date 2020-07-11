@@ -49,7 +49,6 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーの思考を監視する
     /// </summary>
-    /// <returns></returns>
     public Player.Behavior monitorPlayerThoughs()
     {
       if (this.player == null)
@@ -60,6 +59,9 @@ namespace MyGame.Dungeon
       return this.player.Think();
     }
 
+    /// <summary>
+    /// プレイヤーに移動するように指示をだす
+    /// </summary>
     public void orderToMove()
     {
       this.player.Move();

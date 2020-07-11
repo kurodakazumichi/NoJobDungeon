@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame.Dungeon {
-  
+namespace MyGame.Dungeon 
+{
+  /// <summary>
+  /// ダンジョン内のプレイヤーに該当するクラス
+  /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
+  /// またプレイヤーチップの制御を行う。
+  /// </summary>
   public class Player
   {
     /// <summary>
@@ -172,6 +177,10 @@ namespace MyGame.Dungeon {
       return true;
     }
 
+    /// <summary>
+    /// ダッシュしたがっている
+    /// </summary>
+    /// <returns></returns>
     private bool IsWantToDash()
     {
       var direction = InputManager.Instance.DirectionKey;
@@ -243,7 +252,6 @@ namespace MyGame.Dungeon {
         GUILayout.Label($"Current Coord: ({this.Coord})");
         GUILayout.Label($"Next    Coord: ({this.nextCoord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
-        GUILayout.Label($"Behavior:{this.Think()}");
       }
       GUILayout.EndArea();
     }
