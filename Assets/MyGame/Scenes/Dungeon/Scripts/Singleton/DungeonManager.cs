@@ -101,6 +101,8 @@ namespace MyGame.Dungeon
     public bool _isMiniMapOnly = true;
     private void OnGUI()
     {
+      this._showDebug = (Input.GetKey(KeyCode.Alpha0));
+      
       if (!this._showDebug) return;
 
       if (this._isMiniMapOnly)
