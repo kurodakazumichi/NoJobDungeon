@@ -374,7 +374,7 @@ namespace MyGame
       if (!this._debugShow) return;
 
       // 方向の変更
-      var d = InputManager.Instance.GetDirectionKey();
+      var d = InputManager.Instance.DirectionKey;
 
       if (!d.IsNeutral)
       {

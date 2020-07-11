@@ -19,7 +19,21 @@ namespace MyGame.Dungeon
     private Player player = null;
 
     //-------------------------------------------------------------------------
-    // プレイヤー生成
+    // Public Properity
+
+    /// <summary>
+    /// プレイヤーチップのオブジェクト
+    /// </summary>
+    public GameObject PlayerObject => ((this.player != null)? this.player.PlayerObject:null);
+
+    /// <summary>
+    /// 移動しているプレイヤーがいる
+    /// </summary>
+    /// <returns></returns>
+    public bool hasOnMovePlayer => ((this.player != null && !this.player.IsIdle));
+
+    //-------------------------------------------------------------------------
+    // Public Method
 
     /// <summary>
     /// プレイヤーを作成し、指定された座標に置く
@@ -33,26 +47,40 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// Player.StartのWrapper
+    /// プレイヤーの思考を監視する
     /// </summary>
-    public void StartPlayer()
+    public Player.Behavior monitorPlayerThoughs()
     {
-      if (this.player != null)
+      if (this.player == null)
       {
-        this.player.Start();
+        return Player.Behavior.Thinking;
       }
+
+      return this.player.Think();
     }
 
     /// <summary>
-    /// プレイヤーの更新
+    /// プレイヤーに移動するように指示をだす
     /// </summary>
-    public void UpdatePlayer()
+    public void orderToMove()
     {
-      if (this.player != null)
-      {
-        this.player.Update();
-      }
+      this.player.Move();
     }
+
+#if UNITY_EDITOR
+
+    [SerializeField]
+    private bool showDebug = false;
+
+    private void OnGUI()
+    {
+      if (!showDebug) return;
+
+      this.player.OnGUI();
+    }
+
+#endif
+
   }
 
 }

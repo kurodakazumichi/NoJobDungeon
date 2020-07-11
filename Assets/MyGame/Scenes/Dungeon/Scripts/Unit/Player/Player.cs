@@ -2,20 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyGame.Dungeon {
-  
+namespace MyGame.Dungeon 
+{
+  /// <summary>
+  /// ダンジョン内のプレイヤーに該当するクラス
+  /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
+  /// またプレイヤーチップの制御を行う。
+  /// </summary>
   public class Player
   {
-    enum Mode
+    /// <summary>
+    /// プレイヤーの行動一覧
+    /// </summary>
+    public enum Behavior
     {
-      Think,
-      Move,
-      Attack,
-      WaitMyTurn,
+      Thinking, // 考え中
+      Move,     // 移動
+      Attack1,  // 通常攻撃
+      Attack2,  // 遠距離攻撃
+      Dash,     // ダッシュ
+      Menu,     // メニューを開く
     }
 
     //-------------------------------------------------------------------------
-    // 主要メンバー
+    // メンバー
 
     /// <summary>
     /// プレイヤーチップ
@@ -23,17 +33,35 @@ namespace MyGame.Dungeon {
     private PlayerChip chip;
 
     /// <summary>
-    /// ステートマシン
-    /// </summary>
-    private StateMachine<Mode> state;
-
-    /// <summary>
     /// プレイヤーの座標
     /// </summary>
     private Vector2Int coord = Vector2Int.zero;
 
+    /// <summary>
+    /// ダッシュの方向
+    /// </summary>
+    private Direction dashDirection = new Direction();
+
     //-------------------------------------------------------------------------
-    // 主要メソッド
+    // Public Properity
+
+    /// <summary>
+    /// Player Chipのゲームオブジェクト
+    /// </summary>
+    public GameObject PlayerObject => (this.chip.gameObject);
+
+    /// <summary>
+    /// プレイヤーの座標
+    /// </summary>
+    public Vector2Int Coord => (this.coord);
+
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public bool IsIdle => (this.chip.IsIdle);
+
+    //-------------------------------------------------------------------------
+    // Public
 
     /// <summary>
     /// コンストラクタ
@@ -42,181 +70,139 @@ namespace MyGame.Dungeon {
     {
       this.coord = coord;
 
-      this.state = new StateMachine<Mode>();
-
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
       this.chip.transform.position = Util.GetPositionBy(coord);
-
-      // Stateを作成
-      this.state.Add(Mode.WaitMyTurn, null, WaitMyTurnUpdate);
-      this.state.Add(Mode.Think, null, ThinkUpdate);
-      this.state.Add(Mode.Move, MoveEnter, MoveUpdate);
-      this.state.Add(Mode.Attack, AttackEnter, AttackUpdate, AttackExit);
-
-      // カメラがプレイヤーを追従するように設定
-      CameraManager.Instance.SetTrackingMode(this.chip.gameObject);
     }
 
     /// <summary>
-    /// プレイヤーの動作開始
+    /// 入力内容からプレイヤーがどんな行動をするかを決める処理
     /// </summary>
-    public void Start()
+    public Behavior Think()
     {
-      CameraManager.Instance.SetTrackingMode(this.chip.gameObject);
-      this.state.SetState(Mode.Think);
-    }
+      var direction = InputManager.Instance.DirectionKey;
 
-    /// <summary>
-    /// プレイヤーの更新
-    /// </summary>
-    public void Update()
-    {
-      this.state.Update();
-    }
-
-    /// <summary>
-    /// 破棄
-    /// </summary>
-    public void Destroy()
-    {
-      MapChipFactory.Instance.Release(this.chip);
-      CameraManager.Instance.SetFreeMode();
-
-      this.chip = null;
-      this.state = null;
-    }
-
-    //-------------------------------------------------------------------------
-    // 思考
-
-    /// <summary>
-    /// 入力を調べて移動や攻撃の場合はそれぞれのステートへ遷移
-    /// 方向転換は状態遷移しないなど入力＝状態遷移ではない
-    /// </summary>
-    private void ThinkUpdate() 
-    {
-      // 攻撃の入力
-      if (InputManager.Instance.Attack())
+      // 方向キー入力があったらプレイヤーの向きを更新
+      if (!direction.IsNeutral)
       {
-        SetAttackState();
-        return;
+        this.chip.Direction = direction;
       }
 
-      // 方向キーを取得
-      var direction = InputManager.Instance.GetDirectionKey();
-
-      // 方向キーの入力がなければ継続
-      if (direction.IsNeutral) return;
-
-      // プレイヤーの方向を更新
-      this.chip.Direction = direction;
-
-      // プレイヤーが移動可能
-      var isMovable = ChecksPlayerMovable(direction);
-
-      // プレイヤー移動待ちフェーズへ
-      if (isMovable)
+      // ダッシュしたい場合はダッシュできるかどうかをチェック
+      // TODO: ダッシュチェック未実装
+      if (IsWantToDash())
       {
-        var nextCoord = Util.GetCoord(this.coord, direction);
-        SetMoveState(nextCoord);
+        this.dashDirection = direction;
+        return Behavior.Dash;
       }
-    }
 
-    //-------------------------------------------------------------------------
-    // 移動
-
-    /// <summary>
-    /// Move状態を設定する
-    /// </summary>
-    /// <param name="toCoord">移動先の座標</param>
-    private void SetMoveState(Vector2Int toCoord)
-    {
-      this.coord = toCoord;
-      var pos = Util.GetPositionBy(toCoord);
-      this.chip.Move(Define.SEC_PER_TURN, pos);
-      this.state.SetState(Mode.Move);
-    }
-
-    /// <summary>
-    /// プレイヤー移動時にDungeonManagerのプレイヤー座標を更新する。
-    /// </summary>
-    private void MoveEnter()
-    {
-      DungeonManager.Instance.UpdatePlayerCoord(this.coord);
-    }
-
-    /// <summary>
-    /// プレイヤーの移動が完了するのを待つ
-    /// </summary>
-    private void MoveUpdate() 
-    {
-      if (this.chip.IsIdle)
+      // 移動したい場合は移動できるかどうかをチェックしてDungeon情報を更新
+      if (IsWantToMove() && CanMoveTo(direction))
       {
-        this.state.SetState(Mode.Think);
+        // 移動先の座標を算出
+        var next = this.coord + direction.ToVector(false);
+
+        // 座標の更新
+        DungeonManager.Instance.UpdatePlayerCoord(this.coord, next);
+        this.coord = next;
+
+        return Behavior.Move;
       }
+
+      // 通常攻撃(RB2)
+      if (InputManager.Instance.RB2.IsHold)
+      {
+        return Behavior.Attack1;
+      }
+
+      // 遠距離攻撃(R)
+      if (InputManager.Instance.R.IsHold)
+      {
+        return Behavior.Attack2;
+      }
+
+      // メニュー(RB1)
+      if (InputManager.Instance.RB1.IsDown)
+      {
+        return Behavior.Menu;
+      }
+
+       return Behavior.Thinking;
     }
 
-    //-------------------------------------------------------------------------
-    // 攻撃
+    /// <summary>
+    /// このメソッドを呼ぶとプレイヤーが移動する
+    /// </summary>
+    public void Move()
+    {
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+    }
 
-    private void SetAttackState()
+    /// <summary>
+    /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
+    /// </summary>
+    public void Attack()
     {
       this.chip.Attack(Define.SEC_PER_TURN, 1f);
-      this.state.SetState(Mode.Attack);
     }
 
-    /// <summary>
-    /// 攻撃モーションでカメラがプレイヤーを追従しないように、カメラをロックする
-    /// </summary>
-    private void AttackEnter() 
-    { 
-      CameraManager.Instance.Lock();
-    }
+    //-------------------------------------------------------------------------
+    // 移動に関するUtil
 
     /// <summary>
-    /// プレイヤーの攻撃完了を待つ
+    /// 移動したがっている
     /// </summary>
-    private void AttackUpdate() 
+    private bool IsWantToMove()
     {
-      if (this.chip.IsIdle)
+      var direction = InputManager.Instance.DirectionKey;
+
+      // 方向キー入力がなければ移動なし
+      if (direction.IsNeutral)
       {
-        this.state.SetState(Mode.Think);
+        return false;
       }
+
+      // 斜めモードで、斜め入力じゃない場合も移動なし
+      if (InputManager.Instance.L.IsHold && !direction.IsDiagonal)
+      {
+        return false;
+      }
+
+      // 方向転換モードだったら移動なし
+      if (InputManager.Instance.RB4.IsHold)
+      {
+        return false;
+      }
+
+      return true;
     }
 
     /// <summary>
-    /// 攻撃モーションが終わったらカメラのロックを解除する
+    /// ダッシュしたがっている
     /// </summary>
-    private void AttackExit() 
-    { 
-      CameraManager.Instance.Unlock();
+    /// <returns></returns>
+    private bool IsWantToDash()
+    {
+      var direction = InputManager.Instance.DirectionKey;
+
+      // ダッシュキーが押されてなければダッシュしない
+      if (!InputManager.Instance.RB3.IsHold)
+      {
+        return false;
+      }
+
+      // 方向入力がなければダッシュしたくない
+      if (direction.IsNeutral)
+      {
+        return false;
+      }
+
+      return true;
     }
-
-    //-------------------------------------------------------------------------
-    // 順番待ち
-    private void WaitMyTurnUpdate() { }
-
-    // Memo
-    // Thinkingは入力内容から行動を決めるモード
-    // 移動だったらMoveモードへ
-    // 攻撃だったらAttackモードへ
-
-    // Moveはプレイヤーを移動させるモード
-    // まず移動できるかどうかを判断する。
-    // 移動できない場合はプレイヤーの方向だけ更新して、再びThinkingモードへ戻る
-    // 移動できる場合は移動し、移動が完了したらターンエンド通知をだしWaitモードへ
-    // ※ターンエンドに関する機能はまだないので考えないといけない
-    // DungeonManagerがプレイヤーフェーズかどうかをもっておいて
-    // ターンエンド時にDungeonManagerに通知するとか？
-    // ターン数とかはDungeonManagerではなくてシーンとかで管理したい気もする
-
-    //-------------------------------------------------------------------------
-    // その他
 
     /// <summary>
     /// 指定した方向にプレイヤーが動けるかを確認
     /// </summary>
-    public bool ChecksPlayerMovable(Direction direction)
+    public bool CanMoveTo(Direction direction)
     {
       DungeonManager DM = DungeonManager.Instance;
 
@@ -255,6 +241,20 @@ namespace MyGame.Dungeon {
       // その他のケースはタイルが障害物でなければ進める
       return !next.IsObstacle;
     }
+
+#if UNITY_EDITOR
+
+    public void OnGUI()
+    {
+      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      {
+        GUILayout.Label($"Current Coord: ({this.Coord})");
+        GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
+      }
+      GUILayout.EndArea();
+    }
+
+#endif
   }
 
 }

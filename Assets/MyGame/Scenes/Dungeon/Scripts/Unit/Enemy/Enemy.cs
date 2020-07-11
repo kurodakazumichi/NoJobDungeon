@@ -6,73 +6,72 @@ namespace MyGame.Dungeon
 {
   public class Enemy
   {
-    enum Mode
-    {
-      WaitMyTurn,
-    }
-
     //-------------------------------------------------------------------------
-    // 主要メンバー
+    // メンバー
 
     /// <summary>
-    /// プレイヤーチップ
+    /// 敵チップ
     /// </summary>
     private EnemyChip chip;
 
     /// <summary>
-    /// ステートマシン
+    /// 敵の座標
     /// </summary>
-    private StateMachine<Mode> state;
-
     private Vector2Int coord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
-    // 主要メソッド
+    // Public Properity
+
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public bool IsIdle => (this.chip.IsIdle);
+
+    //-------------------------------------------------------------------------
+    // Public Method
 
     /// <summary>
     /// コンストラクタ
     /// </summary>
     public Enemy(Vector2Int coord)
     {
-      this.state = new StateMachine<Mode>();
-
       this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       this.coord = coord;
-      this.chip.transform.position = MyGame.Dungeon.Util.GetPositionBy(coord);
-
-      // Stateを作成
-      this.state.Add(Mode.WaitMyTurn, null, WaitMyTurnUpdate);
+      this.chip.transform.position = Util.GetPositionBy(coord);
     }
 
     /// <summary>
-    /// 敵の動作開始
+    /// 移動について考える
     /// </summary>
-    public void Start()
+    public void ThinkAboutMoving()
     {
-      this.state.SetState(Mode.WaitMyTurn);
+      // ランダムで移動方向を決める
+      var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
+
+      // おそらく移動するであろう次の座標
+      var maybeNext = this.coord + dir;
+
+      // 移動先のタイル情報を見て移動するかどうかを決める
+      var tile = DungeonManager.Instance.GetTile(maybeNext);
+
+      // 移動先に障害物はないね、移動しよう。
+      if (!tile.IsObstacle)
+      {
+        // ダンジョンの情報を書き換え
+        DungeonManager.Instance.UpdateEnemyCoord(this.coord, maybeNext);
+
+        // 座標と方向を更新
+        this.chip.Direction = new Direction(dir, false);
+        this.coord = maybeNext;
+      }
     }
 
     /// <summary>
-    /// 敵の更新
+    /// このメソッドを呼ぶと敵が動き始める
     /// </summary>
-    public void Update()
+    public void Move()
     {
-      this.state.Update();
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
     }
-
-    /// <summary>
-    /// 破棄
-    /// </summary>
-    public void Destroy()
-    {
-      MapChipFactory.Instance.Release(this.chip);
-      this.chip = null;
-      this.state = null;
-    }
-
-    //-------------------------------------------------------------------------
-    // 順番待ち
-    private void WaitMyTurnUpdate() { }
-
   }
 }

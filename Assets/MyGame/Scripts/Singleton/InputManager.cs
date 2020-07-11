@@ -87,19 +87,20 @@ namespace MyGame {
     private Button rb2 = new Button(KeyCode.X);
     private Button rb3 = new Button(KeyCode.Z);
     private Button rb4 = new Button(KeyCode.A);
-    private Button r   = new Button(KeyCode.LeftShift);
+    private Button r   = new Button(KeyCode.Space);
+    private Button l   = new Button(KeyCode.LeftShift);
 
     /// <summary>
     /// 入力を監視
     /// </summary>
     void Update()
     {
-      GetDirectionKey();
       this.rb1.Update();
       this.rb2.Update();
       this.rb3.Update();
       this.rb4.Update();
       this.r.Update();
+      this.l.Update();
     }
 
     // 各種ボタンを公開
@@ -108,29 +109,25 @@ namespace MyGame {
     public IButton RB3 => (this.rb3);
     public IButton RB4 => (this.rb4);
     public IButton R   => (this.r);
-
-    /// <summary>
-    /// 攻撃ボタンが押された
-    /// </summary>
-    public bool Attack()
-    {
-      return Input.GetKeyDown(KeyCode.A);
-    }
+    public IButton L   => (this.l);
 
     /// <summary>
     /// 入力された方向キー(８方向)
     /// </summary>
     /// <returns></returns>
-    public Direction GetDirectionKey()
+    public Direction DirectionKey
     {
-      Vector2Int v = Vector2Int.zero;
+      get
+      {
+        Vector2Int v = Vector2Int.zero;
 
-      if (Input.GetKey(KeyCode.LeftArrow))  v += Vector2Int.left; 
-      if (Input.GetKey(KeyCode.RightArrow)) v += Vector2Int.right;
-      if (Input.GetKey(KeyCode.UpArrow))    v += Vector2Int.up;
-      if (Input.GetKey(KeyCode.DownArrow))  v += Vector2Int.down;
+        if (Input.GetKey(KeyCode.LeftArrow)) v += Vector2Int.left;
+        if (Input.GetKey(KeyCode.RightArrow)) v += Vector2Int.right;
+        if (Input.GetKey(KeyCode.UpArrow)) v += Vector2Int.up;
+        if (Input.GetKey(KeyCode.DownArrow)) v += Vector2Int.down;
 
-      return new Direction(v);
+        return new Direction(v);
+      }
     }
 
 #if UNITY_EDITOR
@@ -141,7 +138,7 @@ namespace MyGame {
     {
       if (!this._showDebug) return;
 
-      GUILayout.Label($"DirectionKey:{GetDirectionKey().value}");
+      GUILayout.Label($"DirectionKey:{DirectionKey.value}");
       ButtonLabel("RB1", this.rb1);
       ButtonLabel("RB2", this.rb2);
       ButtonLabel("RB3", this.rb3);

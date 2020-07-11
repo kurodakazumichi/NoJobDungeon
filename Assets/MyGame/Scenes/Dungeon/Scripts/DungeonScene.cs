@@ -12,8 +12,9 @@ namespace MyGame.Dungeon {
     public enum Phase
     {
       Load,
-      CreatingStage,
-      PlayingStage,
+      CreateStage,
+      PlayerThink,
+      Move,
     }
 
     private StateMachine<Phase> state;
@@ -35,8 +36,9 @@ namespace MyGame.Dungeon {
       this.state = new StateMachine<Phase>();
 
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
-      this.state.Add(Phase.CreatingStage, CreateStageEnter);
-      this.state.Add(Phase.PlayingStage, PlayingStageEnter, PlayingStageUpdate);
+      this.state.Add(Phase.CreateStage, CreateStageEnter);
+      this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
+      this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
 
       this.state.SetState(Phase.Load);
     }
@@ -60,7 +62,7 @@ namespace MyGame.Dungeon {
       //  return;
       //}
 
-      this.state.SetState(Phase.CreatingStage);
+      this.state.SetState(Phase.CreateStage);
     }
 
     private void LoadExit()
@@ -86,23 +88,60 @@ namespace MyGame.Dungeon {
 
       // カメラをダンジョン設定にする
       CameraManager.Instance.SetDungeonSettings();
+      CameraManager.Instance.SetTrackingMode(PlayerManager.Instance.PlayerObject);
 
       // 入力待ちフェーズへ
-      this.state.SetState(Phase.PlayingStage);
+      this.state.SetState(Phase.PlayerThink);
+
+    }
+
+
+    //-------------------------------------------------------------------------
+    // プレイヤー思考フェーズ
+
+    private void PlayerThinkUpdate()
+    {
+      // プレイヤーの行動を監視
+      var behavior = PlayerManager.Instance.monitorPlayerThoughs();
+
+      switch(behavior)
+      {
+        // 移動：このケースに来た時
+        // ダンジョン情報は既にプレイヤーが移動した後の状態になっている。
+        case Player.Behavior.Move:
+        {
+          // 敵に移動について考えるように命じる
+          EnemyManager.Instance.orderToThinkAboutMoving();
+
+          // 移動フェーズへ
+          this.state.SetState(Phase.Move);
+          break;
+        }
+
+      }
+
 
     }
 
     //-------------------------------------------------------------------------
-    // ステージプレイ中
-    private void PlayingStageEnter()
+    // 移動フェーズ
+
+    private void MoveEnter()
     {
-      PlayerManager.Instance.StartPlayer();
-      EnemyManager.Instance.StartEnemies();
+      // プレイヤーと敵に動けと命じる
+      PlayerManager.Instance.orderToMove();
+      EnemyManager.Instance.orderToMove();
     }
 
-    private void PlayingStageUpdate ()
+    private void MoveUpdate()
     {
-      PlayerManager.Instance.UpdatePlayer();
+      // 動いてるプレイヤーと敵がいる間は待機
+      if (PlayerManager.Instance.hasOnMovePlayer) return;
+      if (EnemyManager.Instance.hasOnMoveEnemy) return;
+
+      // 動いてるやつらがいなくなったら次のフェーズへ
+      // TODO: 本来は敵の攻撃フェーズへ遷移
+      this.state.SetState(Phase.PlayerThink);
     }
 
 #if UNITY_EDITOR
@@ -114,7 +153,7 @@ namespace MyGame.Dungeon {
       if (!this.showDebug) return;
       if (GUI.Button(new Rect(10, 10, 100, 20), "Create"))
       {
-        this.state.SetState(Phase.CreatingStage);
+        this.state.SetState(Phase.CreateStage);
       }
     }
 #endif
