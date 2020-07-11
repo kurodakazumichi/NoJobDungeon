@@ -9,6 +9,9 @@ namespace MyGame
   /// </summary>
   public abstract class CharChipBase : MapChipBase
   {
+    //-------------------------------------------------------------------------
+    // Enum
+
     /// <summary>
     /// 状態
     /// </summary>
@@ -17,6 +20,8 @@ namespace MyGame
       Idle,
       Move,
       Attack,
+      Ouch,
+      Vanish
     }
 
     /// <summary>
@@ -66,18 +71,42 @@ namespace MyGame
     private float animSpeed = 1f;
 
     //-------------------------------------------------------------------------
-    // Public
+    // Public Properity
+
+    /// <summary>
+    /// 方向のアクセッサ
+    /// </summary>
+    public Direction Direction
+    {
+      get { return this.direction; }
+      set { this.direction = value; }
+    }
+
+    /// <summary>
+    /// 表示されているかどうか
+    /// </summary>
+    public bool IsShow => (this.spriteRenderer.enabled);
+
+    /// <summary>
+    /// Idle状態かどうか
+    /// </summary>
+    public bool IsIdle => (this.state.StateKey == State.Idle);
+
+    //-------------------------------------------------------------------------
+    // Public Method 
 
     /// <summary>
     /// リセット
     /// </summary>
     public void Reset()
-    { 
+    {
+      this.spriteRenderer.material.color = Color.white;
       this.spriteRenderer.sprite = null;
       this.sprites = null;
+
       this.direction.value = Direction8.Neutral;
       this.state.Reset();
-      this.ResetWorking();
+      this.ResetForStateMachine();
       this.ResetAnimation();
     }
 
@@ -90,26 +119,12 @@ namespace MyGame
     }
 
     /// <summary>
-    /// 方向のアクセッサ
-    /// </summary>
-    public Direction Direction
-    {
-      get { return this.direction; }
-      set { this.direction = value; }
-    }
-
-    /// <summary>
     /// 表示切替
     /// </summary>
     public void Show(bool isShow)
     {
       this.spriteRenderer.enabled = isShow;
     }
-
-    /// <summary>
-    /// 表示されているかどうか
-    /// </summary>
-    public bool IsShow => (this.spriteRenderer.enabled);
 
     /// <summary>
     /// アニメーションを停止
@@ -142,11 +157,6 @@ namespace MyGame
     }
 
     /// <summary>
-    /// Idle状態かどうか
-    /// </summary>
-    public bool IsIdle => (this.state.StateKey == State.Idle);
-
-    /// <summary>
     /// 指定位置に指定された秒数で移動する
     /// </summary>
     public void Move(float time, Vector3 end)
@@ -166,7 +176,7 @@ namespace MyGame
     /// </summary>
     public void Attack(float time, float distance)
     {
-      ResetWorking();
+      ResetForStateMachine();
 
       this.specifiedTime = time;
       this.start = this.transform.position;
@@ -177,9 +187,22 @@ namespace MyGame
       this.state.SetState(State.Attack);
     }
 
+    public void Oush(float time)
+    {
+      ResetForStateMachine();
+      this.specifiedTime = time;
+      this.state.SetState(State.Ouch);
+    }
+
+    public void Vanish(float time)
+    {
+      ResetForStateMachine();
+      this.specifiedTime = time;
+      this.state.SetState(State.Vanish);
+    }
 
     //-------------------------------------------------------------------------
-    // 主要のメソッド
+    // Protected, Private
 
     protected override void Start()
     {
@@ -187,12 +210,14 @@ namespace MyGame
       
       Direction = new Direction(Direction8.Neutral);
 
-      ResetWorking();
+      ResetForStateMachine();
       ResetAnimation();
 
       this.state.Add(State.Idle);
-      this.state.Add(State.Move, null, UpdateMove);
-      this.state.Add(State.Attack, null, UpdateAttack);
+      this.state.Add(State.Move  , null, MoveUpdate);
+      this.state.Add(State.Attack, null, AttackUpdate);
+      this.state.Add(State.Ouch  , null, OuchUpdate);
+      this.state.Add(State.Vanish, null, VanishUpdate);
 
       this.state.SetState(State.Idle);
     }
@@ -209,14 +234,19 @@ namespace MyGame
     // 初期化処理
 
     /// <summary>
-    /// 作業用変数をリセット
+    /// State Machineの処理に入る前に、作業用変数などの値をリセットする。
     /// </summary>
-    protected void ResetWorking()
+    protected void ResetForStateMachine()
     {
       this.specifiedTime = 0;
       this.elapsedTime   = 0;
       this.start         = Vector3.zero;
       this.end           = Vector3.zero;
+
+      // State.Vanishでmaterial.color.aが0になるので1に戻す。
+      var color = this.spriteRenderer.material.color;
+      color.a = 1;
+      this.spriteRenderer.material.color = color;
     }
 
     /// <summary>
@@ -301,7 +331,7 @@ namespace MyGame
       const float ANIM_SPEED = 3;
 
       // アニメーションの再生時間を加算
-      this.animTimer += TimeManager.Instance.DungeonDeltaTime * this.animSpeed * ANIM_SPEED;
+      this.animTimer += TimeManager.Instance.CharChipDeltaTime * this.animSpeed * ANIM_SPEED;
 
       // 方向とアニメーションの再生時間からスプライトIndexを決定
       var index =
@@ -315,52 +345,105 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // State Machine
 
+    //-------------------------------------------------------------------------
+    // State.Move: 指定位置に指定された時間をかけて等速で移動する
+
     /// <summary>
     /// 移動状態のUpdate処理
     /// </summary>
-    private void UpdateMove()
+    private void MoveUpdate()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      var rate = UpdateTimer();
 
-      var rate = this.elapsedTime / this.specifiedTime;
+      var pos = Vector3.Lerp(this.start, this.end, rate);
+      this.transform.position = pos;
 
-      if (this.elapsedTime < this.specifiedTime)
-      {
-        var pos = Vector3.Lerp(this.start, this.end, rate);
-
-        this.transform.position = pos;
-        return;
-      }
-
-      if (this.specifiedTime <= this.elapsedTime)
+      if (IsTimeOver)
       {
         this.transform.position = this.end;
-
         this.state.SetState(State.Idle);
       }
     }
+
+    //-------------------------------------------------------------------------
+    // State.Attack: 現在の方向に向かって指定された時間で攻撃っぽい動きをする
 
     /// <summary>
     /// 攻撃状態のUpdate処理
     /// </summary>
-    private void UpdateAttack()
+    private void AttackUpdate()
     {
-      this.elapsedTime += TimeManager.Instance.DungeonDeltaTime;
+      var rate = UpdateTimer();
 
-      var rate = this.elapsedTime / this.specifiedTime;
       rate = Mathf.Sin(rate * Mathf.PI);
+      this.transform.position = Vector3.Lerp(this.start, this.end, rate);
 
-      if (this.elapsedTime < this.specifiedTime)
-      {
-        this.transform.position = Vector3.Lerp(this.start, this.end, rate);
-      }
-
-      else
-      {
+      if (IsTimeOver) { 
         this.transform.position = this.start;
         this.state.SetState(State.Idle);
       }
     }
+
+    //-------------------------------------------------------------------------
+    // State.Ouch: 殴られて痛い！みたいな表現をしたいがとりあえず点滅させとくか
+
+    /// <summary>
+    /// スプライトのアルファをいじって点滅させる
+    /// </summary>
+    private void OuchUpdate()
+    {
+      var rate = UpdateTimer();
+
+      var color = this.spriteRenderer.material.color;
+
+      color.a = ((int)(rate * 10) % 2);
+      this.spriteRenderer.material.color = color;
+
+      if (IsTimeOver)
+      {
+        color.a = 1;
+        this.spriteRenderer.material.color = color;
+        this.state.SetState(State.Idle);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    // State.Vanish: スーッっと消えていく演出
+
+    /// <summary>
+    /// スプライトのアルファを徐々に0に近づけるだけ
+    /// </summary>
+    private void VanishUpdate()
+    {
+      var rate = UpdateTimer();
+
+      var color = this.spriteRenderer.material.color;
+      color.a = Mathf.Max(0, 1f - rate);
+      this.spriteRenderer.material.color = color;
+
+      if (IsTimeOver)
+      {
+        this.state.SetState(State.Idle);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    // State Machine でよく使う処理
+
+    /// <summary>
+    /// タイマーを更新して、時間経過割合を算出する。
+    /// </summary>
+    /// <returns></returns>
+    private float UpdateTimer()
+    {
+      this.elapsedTime += TimeManager.Instance.CharChipDeltaTime;
+      return this.elapsedTime / Mathf.Max(0.000001f, this.specifiedTime);
+    }
+
+    /// <summary>
+    /// 指定時間を経過した
+    /// </summary>
+    private bool IsTimeOver => (this.specifiedTime <= this.elapsedTime);
 
 #if UNITY_EDITOR
     //-------------------------------------------------------------------------
@@ -455,6 +538,14 @@ namespace MyGame
         if (GUILayout.Button("Attack"))
         {
           Attack(1f, 1f);
+        }
+        if (GUILayout.Button("Ouch"))
+        {
+          Oush(1f);
+        }
+        if (GUILayout.Button("Vanish"))
+        {
+          Vanish(1f);
         }
       }
       GUILayout.EndHorizontal();
