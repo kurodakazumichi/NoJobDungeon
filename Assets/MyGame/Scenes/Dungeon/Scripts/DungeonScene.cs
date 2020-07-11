@@ -160,6 +160,8 @@ namespace MyGame.Dungeon {
       // 攻撃対象となる座標一覧をください
       var targets = PlayerManager.Instance.AttackTargets;
 
+      // プレイヤーのアタッカーとしての情報下さい
+      var attacker = PlayerManager.Instance.Attacker;
     }
 
     private void PlayerAttackStartUpdate()

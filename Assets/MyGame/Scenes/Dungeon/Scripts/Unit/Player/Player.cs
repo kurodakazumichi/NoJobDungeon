@@ -9,7 +9,7 @@ namespace MyGame.Dungeon
   /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
   /// またプレイヤーチップの制御を行う。
   /// </summary>
-  public class Player
+  public class Player : IAttackable
   {
     /// <summary>
     /// プレイヤーの行動一覧
@@ -59,6 +59,12 @@ namespace MyGame.Dungeon
     /// アイドル状態です
     /// </summary>
     public bool IsIdle => (this.chip.IsIdle);
+
+    /// <summary>
+    /// 攻撃力
+    /// TODO: 仮実装
+    /// </summary>
+    public int Atk => (10);
 
     //-------------------------------------------------------------------------
     // Public

@@ -37,6 +37,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public List<Vector2Int> AttackTargets => (this.player.GetAttackTargets());
 
+    /// <summary>
+    /// プレイヤーのアタッカーとしての能力
+    /// </summary>
+    public IAttackable Attacker => (this.player);
+
     //-------------------------------------------------------------------------
     // Public Method
 
