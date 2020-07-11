@@ -25,7 +25,6 @@ namespace MyGame {
         case nameof(CameraManager)          : go.AddComponent<CameraManager>(); break;
         case nameof(TimeManager)            : go.AddComponent<TimeManager>(); break;
         case nameof(InputManager)           : go.AddComponent<InputManager>(); break;
-        case nameof(ResourceManager)        : go.AddComponent<ResourceManager>(); break;
         case nameof(Dungeon.PlayerManager)  : go.AddComponent<Dungeon.PlayerManager>(); break;
         case nameof(Dungeon.DungeonManager) : go.AddComponent<Dungeon.DungeonManager>(); break;
         case nameof(Dungeon.FieldManager)   : go.AddComponent<Dungeon.FieldManager>(); break;

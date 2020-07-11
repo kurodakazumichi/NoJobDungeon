@@ -24,8 +24,7 @@ public class Boot : MonoBehaviour {
     SingletonManager.Instance
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
-      .Setup(nameof(InputManager), system)
-      .Setup(nameof(ResourceManager), system);
+      .Setup(nameof(InputManager), system);
   }
 
 }
