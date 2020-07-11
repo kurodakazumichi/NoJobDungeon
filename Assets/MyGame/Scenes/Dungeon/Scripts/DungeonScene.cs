@@ -123,7 +123,7 @@ namespace MyGame.Dungeon {
         }
 
         // 通常攻撃
-        case Player.Behavior.Attack1:
+        case Player.Behavior.Attack:
         {
           this.state.SetState(Phase.PlayerAttackStart);
           break;
