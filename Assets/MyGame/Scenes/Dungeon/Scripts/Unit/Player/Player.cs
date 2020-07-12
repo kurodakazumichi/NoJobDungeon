@@ -179,7 +179,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Attack()
     {
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      this.chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
 
     /// <summary>
