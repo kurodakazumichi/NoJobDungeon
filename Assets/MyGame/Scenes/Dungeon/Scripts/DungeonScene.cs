@@ -17,6 +17,8 @@ namespace MyGame.Dungeon {
       Move,
       PlayerAttackStart,
       PlayerAttackEnd,
+      EnemyAttackStart,
+      EnemyAttackEnd,
     }
 
     private StateMachine<Phase> state;
@@ -43,7 +45,8 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
       this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
       this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
-
+      this.state.Add(Phase.EnemyAttackStart, EnemyAttackStartEnter, EnemyAttackStartUpdate);
+      this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
       this.state.SetState(Phase.Load);
     }
 
@@ -114,8 +117,8 @@ namespace MyGame.Dungeon {
         // ダンジョン情報は既にプレイヤーが移動した後の状態になっている。
         case Player.Behavior.Move:
         {
-          // 敵に移動について考えるように命じる
-          EnemyManager.Instance.OrderToThinkAboutMoving();
+          // 敵に行動を考えるように命じる
+          EnemyManager.Instance.OrderToThink();
 
           // 移動フェーズへ
           this.state.SetState(Phase.Move);
@@ -125,6 +128,10 @@ namespace MyGame.Dungeon {
         // 通常攻撃
         case Player.Behavior.Attack:
         {
+          // 敵に行動を考えるように命じる
+          EnemyManager.Instance.OrderToThink();
+
+          // プレイヤー攻撃開始フェーズへ
           this.state.SetState(Phase.PlayerAttackStart);
           break;
         }
@@ -148,8 +155,7 @@ namespace MyGame.Dungeon {
       if (EnemyManager.Instance.HasActiveEnemy) return;
 
       // 動いてるやつらがいなくなったら次のフェーズへ
-      // TODO: 本来は敵の攻撃フェーズへ遷移
-      this.state.SetState(Phase.PlayerThink);
+      this.state.SetState(Phase.EnemyAttackStart);
     }
 
     //-------------------------------------------------------------------------
@@ -200,13 +206,48 @@ namespace MyGame.Dungeon {
     private void PlayerAttackEndUpdate()
     {
       if (EnemyManager.Instance.HasActiveEnemy) return;
-      this.state.SetState(Phase.PlayerThink);
+      this.state.SetState(Phase.Move);
     }
 
     private void PlayerAttackEndExit()
     {
       // 死んだ敵を破棄します
       EnemyManager.Instance.DestoryDeadEnemies();
+    }
+
+    //-------------------------------------------------------------------------
+    // 敵の攻撃開始フェーズ
+    private void EnemyAttackStartEnter()
+    {
+      IAttackable attacker = EnemyManager.Instance.OrderToAttack();
+      PlayerManager.Instance.AttackPlayer(attacker);
+    }
+
+    private void EnemyAttackStartUpdate()
+    {
+      if (EnemyManager.Instance.HasActiveEnemy) return;
+
+      this.state.SetState(Phase.EnemyAttackEnd);
+    }
+
+    //-------------------------------------------------------------------------
+    // 敵の攻撃終了フェーズ
+
+    private void EnemyAttackEndEnter()
+    {
+      PlayerManager.Instance.OrderToOuch();
+    }
+
+    private void EnemyAttackEndUpdate()
+    {
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+
+      if (EnemyManager.Instance.HasAttacker)
+      {
+        this.state.SetState(Phase.EnemyAttackStart);
+        return;
+      }
+      this.state.SetState(Phase.PlayerThink);
     }
 
 #if UNITY_EDITOR

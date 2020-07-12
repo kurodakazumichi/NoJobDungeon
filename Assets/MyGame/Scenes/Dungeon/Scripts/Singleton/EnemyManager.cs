@@ -35,6 +35,21 @@ namespace MyGame.Dungeon
       }
     }
 
+    public bool HasAttacker
+    {
+      get
+      {
+        bool hasAttacker = false;
+        MyGame.Util.Loop(this.enemies, (enemy) =>
+        {
+          hasAttacker = enemy.Behavior == Enemy.BehaviorType.Attack;
+          return !hasAttacker;
+        });
+
+        return hasAttacker;
+      }
+    }
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -54,11 +69,19 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 敵さんたちにどう行動するか考えてもらう
+    /// </summary>
+    public void OrderToThink()
+    {
+      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Think(); });
+    }
+
+    /// <summary>
     /// 敵さんたちに、移動について考えるように命じる
     /// </summary>
     public void OrderToThinkAboutMoving()
     {
-      Map((enemy) => { enemy.ThinkAboutMoving(); });
+      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.ThinkAboutMoving(); });
     }
 
     /// <summary>
@@ -66,7 +89,30 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToMove()
     {
-      Map((enemy) => { enemy.Move(); });
+      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Move(); });
+    }
+
+    /// <summary>
+    /// 敵さんに、攻撃しろと命じる
+    /// 一気に攻撃するとおかしいので、この処理では
+    /// 一度に１人だけ攻撃を命じる
+    /// </summary>
+    public IAttackable OrderToAttack()
+    {
+      IAttackable attacker = null;
+      MyGame.Util.Loop(this.enemies, (enemy) =>
+      {
+        var attacked = enemy.Attack();
+
+        if (attacked)
+        {
+          attacker = enemy;
+          return false;
+        }
+
+        return true;
+      });
+      return attacker;
     }
 
     /// <summary>
@@ -74,7 +120,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      Map((enemy) =>
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.isAcceptAttack)
         {
@@ -88,7 +134,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToVanish()
     {
-      Map((enemy) =>
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.IsDead)
         {
@@ -104,7 +150,7 @@ namespace MyGame.Dungeon
     {
       List<Enemy> newList = new List<Enemy>(this.enemies.Count);
 
-      Map((enemy) =>
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.IsDead)
         {
@@ -128,27 +174,13 @@ namespace MyGame.Dungeon
     {
       targets.ForEach((coord) =>
       {
-        Map((enemy) =>
+        MyGame.Util.Loop(this.enemies, (enemy) =>
         {
           if (enemy.Coord.Equals(coord))
           {
             enemy.AcceptAttack(attacker);
           }
         });
-      });
-    }
-
-    //-------------------------------------------------------------------------
-    // Util
-
-    /// <summary>
-    /// 管理してる敵のリストを全ループする
-    /// </summary>
-    private void Map(System.Action<Enemy> cb)
-    {
-      this.enemies.ForEach((e) =>
-      {
-        cb(e);
       });
     }
   }

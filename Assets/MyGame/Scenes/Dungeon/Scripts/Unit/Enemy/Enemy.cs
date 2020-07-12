@@ -4,8 +4,17 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class Enemy
+  public class Enemy : IAttackable
   {
+    /// <summary>
+    /// 敵の行動一覧
+    /// </summary>
+    public enum BehaviorType { 
+      None,
+      Move,
+      Attack,
+    }
+
     //-------------------------------------------------------------------------
     // メンバー
 
@@ -20,6 +29,11 @@ namespace MyGame.Dungeon
     private Vector2Int coord = Vector2Int.zero;
 
     /// <summary>
+    /// 行動
+    /// </summary>
+    private BehaviorType behavior = BehaviorType.None;
+
+    /// <summary>
     /// 体力
     /// TODO: 仮実装
     /// </summary>
@@ -30,6 +44,11 @@ namespace MyGame.Dungeon
     /// TODO: 仮実装
     /// </summary>
     public bool isAcceptAttack = false;
+
+    /// <summary>
+    /// 移動予定の座標
+    /// </summary>
+    public Vector2Int nextCoord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -50,6 +69,17 @@ namespace MyGame.Dungeon
     /// </summary>
     public Vector2Int Coord => (this.coord);
 
+    /// <summary>
+    /// 行動
+    /// </summary>
+    public BehaviorType Behavior => (this.behavior);
+
+    /// <summary>
+    /// 攻撃力
+    /// TODO: 仮実装
+    /// </summary>
+    public int Atk => (10);
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -61,6 +91,31 @@ namespace MyGame.Dungeon
       this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       this.coord = coord;
       this.chip.transform.position = Util.GetPositionBy(coord);
+    }
+
+    /// <summary>
+    /// AI: どんな行動をするか決定する処理
+    /// </summary>
+    public void Think()
+    {
+      // 自分の周囲１マスにプレイヤーがいるかどうか
+      var player = DungeonManager.Instance.PlayerCoord;
+      var v = player - this.coord;
+      
+      // 周囲１マスにプレイヤーがいるならプレイヤーを攻撃
+      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
+      {
+        this.behavior = BehaviorType.Attack;
+        this.chip.Direction = new Direction(v, false);
+        Debug.Log(this.chip.Direction.value);
+      }
+
+      // プレイヤーがいないなら移動を考える
+      else
+      {
+        ThinkAboutMoving();
+      }
+
     }
 
     /// <summary>
@@ -80,12 +135,10 @@ namespace MyGame.Dungeon
       // 移動先に障害物はないね、移動しよう。
       if (!tile.IsObstacle)
       {
-        // ダンジョンの情報を書き換え
-        DungeonManager.Instance.UpdateEnemyCoord(this.coord, maybeNext);
-
         // 座標と方向を更新
         this.chip.Direction = new Direction(dir, false);
-        this.coord = maybeNext;
+        this.nextCoord = maybeNext;
+        this.behavior = BehaviorType.Move;
       }
     }
 
@@ -94,7 +147,25 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Move()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      if (this.behavior == BehaviorType.Move)
+      {
+        // ダンジョンの情報を書き換え
+        DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
+        this.coord = this.nextCoord;
+        this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      }
+    }
+
+    /// <summary>
+    /// 攻撃予定の敵がこのメソッドを呼ばれると、攻撃の動きを開始する
+    /// </summary>
+    public bool Attack()
+    {
+      if (this.behavior != BehaviorType.Attack) return false;
+      this.behavior = BehaviorType.None;
+      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+
+      return true;
     }
 
     /// <summary>
@@ -133,5 +204,26 @@ namespace MyGame.Dungeon
       this.hp -= attacker.Atk;
       this.isAcceptAttack = true;
     }
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool _showDebug = false;
+    public void OnGUI()
+    {
+      if (!_showDebug) return;
+
+      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      {
+        GUILayout.Label($"Current Coord: ({this.Coord})");
+        GUILayout.Label($"Behavior:{this.behavior}" );;
+        if(GUILayout.Button("Think"))
+        {
+          Think();
+        }
+      }
+      GUILayout.EndArea();
+    }
+
+#endif
   }
 }

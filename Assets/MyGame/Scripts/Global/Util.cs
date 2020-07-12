@@ -95,7 +95,6 @@ namespace MyGame
 
     /// <summary>
     /// Rectを元にした二次元ループ処理(Func版)
-    /// 
     /// </summary>
     static public void LoopByRect(RectInt rect, System.Func<int, int, bool> cb)
     {
@@ -111,6 +110,25 @@ namespace MyGame
         }
 
         if (isBreak) break;
+      }
+    }
+
+    /// <summary>
+    /// リストをもとにしたループ
+    /// </summary>
+    static public void Loop<T>(List<T> list, System.Action<T> cb)
+    {
+      list.ForEach(cb);
+    }
+
+    /// <summary>
+    /// リストをもとにしたループ(Func版)
+    /// </summary>
+    static public void Loop<T>(List<T> list, System.Func<T, bool> cb)
+    {
+      for (int i = 0; i < list.Count; ++i)
+      {
+        if (!cb(list[i])) break;
       }
     }
   }
