@@ -27,14 +27,15 @@ namespace MyGame.Dungeon
     private int floor = 1;
 
     //-------------------------------------------------------------------------
-    // 主要なメソッド
+    // Public Properity
 
     /// <summary>
-    /// メンバの初期化
+    /// 現在の階層
     /// </summary>
+    public int Floor => (this.floor);
 
     //-------------------------------------------------------------------------
-    // 生成
+    // Public Method
 
     /// <summary>
     /// このメソッドを実行するたびに、新しくダンジョンデータが作成される。
@@ -45,9 +46,14 @@ namespace MyGame.Dungeon
       this.stage.Make(this.algorithm);
     }
 
+    /// <summary>
+    /// プレイヤーの座標
+    /// </summary>
     public Vector2Int PlayerCoord
     {
-      get { return this.stage.Find(Tiles.Player)[0]; }
+      get { 
+        return this.stage.Find(Tiles.Player)[0]; 
+      }
     }
 
     /// <summary>
@@ -147,6 +153,8 @@ namespace MyGame.Dungeon
 #if _DEBUG
     public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
+      GUILayout.Label($"Floor:{this.floor}");
+
       this.stage.DrawDebugMenu(menuWindow);
 
       if (GUILayout.Button("Algorithm"))
