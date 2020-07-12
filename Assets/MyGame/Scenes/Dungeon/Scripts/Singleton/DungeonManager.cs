@@ -32,6 +32,10 @@ namespace MyGame.Dungeon
       base.Awake();
       this.algorithm = new Algorithm();
       this.stage     = new Stage();
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonManager));
+#endif
     }
 
     //-------------------------------------------------------------------------
@@ -125,7 +129,17 @@ namespace MyGame.Dungeon
       }
 
     }
-    
+
+#endif
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow )
+    {
+      if (GUILayout.Button("Create Stage"))
+      {
+        CreateStage();
+      }
+    }
 #endif
   }
 

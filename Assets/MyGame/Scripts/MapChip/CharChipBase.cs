@@ -552,5 +552,28 @@ namespace MyGame
     }
 #endif
 
+#if _DEBUG
+    public void DrawDebugMenu()
+    {
+      // 方向の変更
+      var d = InputManager.Instance.DirectionKey;
+
+      if (!d.IsNeutral)
+      {
+        this.direction = d;
+      }
+
+
+      GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+      {
+        OnDebugReseource();
+        OnDebugProperity();
+        OnDebugAnimation();
+        OnDebugState();
+      }
+      GUILayout.EndArea();
+    }
+#endif
+
   }
 }

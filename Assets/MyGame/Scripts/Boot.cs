@@ -22,6 +22,9 @@ public class Boot : MonoBehaviour {
 
     // 常駐させたいシステムがあればここで生成
     SingletonManager.Instance
+#if _DEBUG
+      .Setup(nameof(DebugMenuManager), system)
+#endif
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
       .Setup(nameof(InputManager), system);

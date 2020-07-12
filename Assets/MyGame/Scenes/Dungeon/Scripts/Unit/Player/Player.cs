@@ -279,6 +279,23 @@ namespace MyGame.Dungeon
     }
 
 #endif
+
+#if _DEBUG
+    public void DrawDebugMenu()
+    {
+      //GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      {
+        GUILayout.Label($"Current Coord: ({this.Coord})");
+        GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
+
+        GetAttackTargets().ForEach((coord) => {
+          GUILayout.Label($"Attack Targets:{coord}");
+        });
+
+      }
+      //GUILayout.EndArea();
+    }
+#endif
   }
 
 }
