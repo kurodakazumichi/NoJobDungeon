@@ -42,6 +42,18 @@ namespace MyGame.Dungeon
     /// </summary>
     private Direction dashDirection = new Direction();
 
+    /// <summary>
+    /// 体力
+    /// TODO: 仮実装
+    /// </summary>
+    private int hp = 10;
+
+    /// <summary>
+    /// 攻撃を受けたフラグ
+    /// TODO: 仮実装
+    /// </summary>
+    public bool isAcceptAttack = false;
+
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -65,6 +77,12 @@ namespace MyGame.Dungeon
     /// TODO: 仮実装
     /// </summary>
     public int Atk => (10);
+
+    /// <summary>
+    /// 死んでいます
+    /// TODO: 仮実装
+    /// </summary>
+    public bool IsDead => (this.hp <= 0);
 
     //-------------------------------------------------------------------------
     // Public
@@ -161,9 +179,27 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Attack()
     {
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      this.chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
 
+    /// <summary>
+    /// このメソッドを呼ぶと敵が痛がる
+    /// </summary>
+    public void Ouch()
+    {
+      this.chip.Oush(Define.SEC_PER_TURN);
+      this.isAcceptAttack = false;
+    }
+
+    /// <summary>
+    /// 攻撃を受ける
+    /// </summary>
+    public void AcceptAttack(IAttackable attacker)
+    {
+      // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
+      this.hp -= attacker.Atk;
+      this.isAcceptAttack = true;
+    }
     //-------------------------------------------------------------------------
     // 移動に関するUtil
 

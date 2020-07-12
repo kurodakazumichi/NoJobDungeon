@@ -9,6 +9,9 @@ namespace MyGame.Dungeon {
   /// </summary>
   public class DungeonScene : SceneBase
   {
+    /// <summary>
+    /// シーンの流れを定義
+    /// </summary>
     public enum Phase
     {
       Load,
@@ -17,9 +20,20 @@ namespace MyGame.Dungeon {
       Move,
       PlayerAttackStart,
       PlayerAttackEnd,
+      EnemyAttackStart,
+      EnemyAttackEnd,
     }
 
-    private StateMachine<Phase> state;
+    //-------------------------------------------------------------------------
+    // メンバー
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    private StateMachine<Phase> state = new StateMachine<Phase>();
+
+    //-------------------------------------------------------------------------
+    // 主要メソッド
 
     /// <summary>
     /// 開始処理
@@ -35,14 +49,14 @@ namespace MyGame.Dungeon {
         .Setup(nameof(FieldManager)  , system)
         .Setup(nameof(EnemyManager)  , system);
 
-      this.state = new StateMachine<Phase>();
-
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
       this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
       this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
       this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
+      this.state.Add(Phase.EnemyAttackStart, EnemyAttackStartEnter, EnemyAttackStartUpdate);
+      this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
 
       this.state.SetState(Phase.Load);
 
@@ -118,8 +132,8 @@ namespace MyGame.Dungeon {
         // ダンジョン情報は既にプレイヤーが移動した後の状態になっている。
         case Player.Behavior.Move:
         {
-          // 敵に移動について考えるように命じる
-          EnemyManager.Instance.OrderToThinkAboutMoving();
+          // 敵に行動を考えるように命じる
+          EnemyManager.Instance.OrderToThink();
 
           // 移動フェーズへ
           this.state.SetState(Phase.Move);
@@ -129,6 +143,10 @@ namespace MyGame.Dungeon {
         // 通常攻撃
         case Player.Behavior.Attack:
         {
+          // 敵に行動を考えるように命じる
+          EnemyManager.Instance.OrderToThink();
+
+          // プレイヤー攻撃開始フェーズへ
           this.state.SetState(Phase.PlayerAttackStart);
           break;
         }
@@ -152,8 +170,7 @@ namespace MyGame.Dungeon {
       if (EnemyManager.Instance.HasActiveEnemy) return;
 
       // 動いてるやつらがいなくなったら次のフェーズへ
-      // TODO: 本来は敵の攻撃フェーズへ遷移
-      this.state.SetState(Phase.PlayerThink);
+      this.state.SetState(Phase.EnemyAttackStart);
     }
 
     //-------------------------------------------------------------------------
@@ -204,13 +221,58 @@ namespace MyGame.Dungeon {
     private void PlayerAttackEndUpdate()
     {
       if (EnemyManager.Instance.HasActiveEnemy) return;
-      this.state.SetState(Phase.PlayerThink);
+      this.state.SetState(Phase.Move);
     }
 
     private void PlayerAttackEndExit()
     {
       // 死んだ敵を破棄します
       EnemyManager.Instance.DestoryDeadEnemies();
+    }
+
+    //-------------------------------------------------------------------------
+    // 敵の攻撃開始フェーズ
+    // 敵の攻撃は一体ずつ処理していく。
+
+    private void EnemyAttackStartEnter()
+    {
+      // 敵に攻撃の動きをするように命じるとともに、攻撃した敵の情報を取得
+      IAttackable attacker = EnemyManager.Instance.OrderToAttack();
+
+      // プレイヤーに対して攻撃を行う
+      PlayerManager.Instance.AttackPlayer(attacker);
+    }
+
+    private void EnemyAttackStartUpdate()
+    {
+      // 動いてる敵がいなくなったら攻撃終了フェーズへ
+      if (EnemyManager.Instance.HasActiveEnemy) return;
+
+      this.state.SetState(Phase.EnemyAttackEnd);
+    }
+
+    //-------------------------------------------------------------------------
+    // 敵の攻撃終了フェーズ
+
+    private void EnemyAttackEndEnter()
+    {
+      // プレイヤーに痛がるよう命じる
+      PlayerManager.Instance.OrderToOuch();
+    }
+
+    private void EnemyAttackEndUpdate()
+    {
+      // プレイヤーが痛がっている間は待機
+      if (PlayerManager.Instance.HasnActivePlayer) return;
+
+      // まだ攻撃をする敵が残っている場合は敵の攻撃開始フェーズへ
+      if (EnemyManager.Instance.HasAttacker)
+      {
+        this.state.SetState(Phase.EnemyAttackStart);
+        return;
+      }
+
+      this.state.SetState(Phase.PlayerThink);
     }
 
 #if UNITY_EDITOR

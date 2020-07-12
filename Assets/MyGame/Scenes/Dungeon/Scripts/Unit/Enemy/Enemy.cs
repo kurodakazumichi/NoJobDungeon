@@ -4,8 +4,17 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class Enemy
+  public class Enemy : IAttackable
   {
+    /// <summary>
+    /// 敵の行動一覧
+    /// </summary>
+    public enum BehaviorType { 
+      None,
+      Move,
+      Attack,
+    }
+
     //-------------------------------------------------------------------------
     // メンバー
 
@@ -20,6 +29,11 @@ namespace MyGame.Dungeon
     private Vector2Int coord = Vector2Int.zero;
 
     /// <summary>
+    /// 行動
+    /// </summary>
+    private BehaviorType behavior = BehaviorType.None;
+
+    /// <summary>
     /// 体力
     /// TODO: 仮実装
     /// </summary>
@@ -30,6 +44,11 @@ namespace MyGame.Dungeon
     /// TODO: 仮実装
     /// </summary>
     public bool isAcceptAttack = false;
+
+    /// <summary>
+    /// 移動予定の座標
+    /// </summary>
+    public Vector2Int nextCoord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -50,6 +69,17 @@ namespace MyGame.Dungeon
     /// </summary>
     public Vector2Int Coord => (this.coord);
 
+    /// <summary>
+    /// 行動
+    /// </summary>
+    public BehaviorType Behavior => (this.behavior);
+
+    /// <summary>
+    /// 攻撃力
+    /// TODO: 仮実装
+    /// </summary>
+    public int Atk => (10);
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -64,28 +94,42 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// 移動について考える
+    /// AI: どんな行動をするか決定する処理
     /// </summary>
-    public void ThinkAboutMoving()
+    public void Think()
     {
-      // ランダムで移動方向を決める
-      var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
-
-      // おそらく移動するであろう次の座標
-      var maybeNext = this.coord + dir;
-
-      // 移動先のタイル情報を見て移動するかどうかを決める
-      var tile = DungeonManager.Instance.GetTile(maybeNext);
-
-      // 移動先に障害物はないね、移動しよう。
-      if (!tile.IsObstacle)
+      // 自分の周囲１マスにプレイヤーがいるかどうか
+      var player = DungeonManager.Instance.PlayerCoord;
+      var v = player - this.coord;
+      
+      // 周囲１マスにプレイヤーがいるならプレイヤーを攻撃
+      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
       {
-        // ダンジョンの情報を書き換え
-        DungeonManager.Instance.UpdateEnemyCoord(this.coord, maybeNext);
+        this.behavior = BehaviorType.Attack;
+        this.chip.Direction = new Direction(v, false);
+        Debug.Log(this.chip.Direction.value);
+      }
 
-        // 座標と方向を更新
-        this.chip.Direction = new Direction(dir, false);
-        this.coord = maybeNext;
+      // プレイヤーがいないなら移動を考える
+      else
+      {
+        // ランダムで移動方向を決める
+        var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
+
+        // おそらく移動するであろう次の座標
+        var maybeNext = this.coord + dir;
+
+        // 移動先のタイル情報を見て移動するかどうかを決める
+        var tile = DungeonManager.Instance.GetTile(maybeNext);
+
+        // 移動先に障害物はないね、移動しよう。
+        if (!tile.IsObstacle)
+        {
+          // 座標と方向を更新
+          this.chip.Direction = new Direction(dir, false);
+          this.nextCoord = maybeNext;
+          this.behavior = BehaviorType.Move;
+        }
       }
     }
 
@@ -94,7 +138,27 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Move()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      if (this.behavior == BehaviorType.Move)
+      {
+        // ダンジョンの情報を書き換え
+        DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
+        this.coord = this.nextCoord;
+        this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+        this.behavior = BehaviorType.None;
+      }
+    }
+
+    /// <summary>
+    /// 攻撃予定の敵がこのメソッドを呼ばれると、攻撃の動きを開始する
+    /// </summary>
+    public void Attack()
+    {
+      // アタッカーじゃなければ何もしない
+      if (this.behavior != BehaviorType.Attack) return;
+
+      // 攻撃の動きを開始
+      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      this.behavior = BehaviorType.None;
     }
 
     /// <summary>
@@ -134,12 +198,21 @@ namespace MyGame.Dungeon
       this.isAcceptAttack = true;
     }
 
+
 #if _DEBUG
     public void DrawDebugMenu()
     {
-      chip.DrawDebugMenu();
+      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      {
+        GUILayout.Label($"Current Coord: ({this.Coord})");
+        GUILayout.Label($"Behavior:{this.behavior}" );;
+        if(GUILayout.Button("Think"))
+        {
+          Think();
+        }
+      }
+      GUILayout.EndArea();
     }
 #endif
-
   }
 }

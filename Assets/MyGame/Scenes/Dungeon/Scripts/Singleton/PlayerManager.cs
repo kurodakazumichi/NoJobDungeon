@@ -42,6 +42,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public IAttackable Attacker => (this.player);
 
+    /// <summary>
+    /// プレイヤーは死んでいます
+    /// </summary>
+    public bool IsPlayerDead => (this.player.IsDead);
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -83,6 +88,29 @@ namespace MyGame.Dungeon
     public void OrderToAttack()
     {
       this.player.Attack();
+    }
+
+
+    /// <summary>
+    /// プレイヤーが攻撃を受けていたら「いてぇっ！」って演出するように指示を出す
+    /// </summary>
+    public void OrderToOuch()
+    {
+      if (this.player.isAcceptAttack)
+      {
+        this.player.Ouch();
+      }
+    }
+
+    /// <summary>
+    /// 攻撃をうける
+    /// </summary>
+    public void AttackPlayer(IAttackable attacker)
+    {
+      if (attacker != null)
+      {
+        this.player.AcceptAttack(attacker);
+      }
     }
 
     //-------------------------------------------------------------------------

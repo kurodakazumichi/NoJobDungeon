@@ -35,6 +35,28 @@ namespace MyGame.Dungeon
       }
     }
 
+    /// <summary>
+    /// アタッカーがいる
+    /// </summary>
+    public bool HasAttacker
+    {
+      get
+      {
+        bool hasAttacker = false;
+
+        // 敵さんループ
+        MyGame.Util.Loop(this.enemies, (enemy) =>
+        {
+          hasAttacker = enemy.Behavior == Enemy.BehaviorType.Attack;
+          
+          // アタッカーがいたらループを抜ける
+          return hasAttacker;
+        });
+
+        return hasAttacker;
+      }
+    }
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -54,11 +76,11 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// 敵さんたちに、移動について考えるように命じる
+    /// 敵さんたちにどう行動するか考えてもらう
     /// </summary>
-    public void OrderToThinkAboutMoving()
+    public void OrderToThink()
     {
-      Map((enemy) => { enemy.ThinkAboutMoving(); });
+      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Think(); });
     }
 
     /// <summary>
@@ -66,7 +88,33 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToMove()
     {
-      Map((enemy) => { enemy.Move(); });
+      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Move(); });
+    }
+
+    /// <summary>
+    /// 敵さんに、攻撃しろと命じる
+    /// 一気に攻撃するとおかしいので、この処理では
+    /// 一度に１人だけ攻撃を命じる
+    /// </summary>
+    public IAttackable OrderToAttack()
+    {
+      Enemy enemy = null;
+
+      // アタッカーを探すために敵さんをループ
+      MyGame.Util.Loop(this.enemies, (e) =>
+      {
+        // アタッカーじゃなければスキップ
+        if (e.Behavior != Enemy.BehaviorType.Attack) return false;
+
+        // 敵に攻撃の動きを命じる
+        e.Attack();
+        enemy = e;
+
+        // ループを抜ける
+        return true;
+      });
+
+      return enemy;
     }
 
     /// <summary>
@@ -74,7 +122,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      Map((enemy) =>
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.isAcceptAttack)
         {
@@ -88,7 +136,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToVanish()
     {
-      Map((enemy) =>
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.IsDead)
         {
@@ -102,9 +150,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DestoryDeadEnemies()
     {
+      // 新しく敵リストを用意する
       List<Enemy> newList = new List<Enemy>(this.enemies.Count);
 
-      Map((enemy) =>
+      // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
+      MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.IsDead)
         {
@@ -117,6 +167,7 @@ namespace MyGame.Dungeon
         }
       });
 
+      // 敵リストを更新
       this.enemies.Clear();
       this.enemies = newList;
     }
@@ -128,7 +179,7 @@ namespace MyGame.Dungeon
     {
       targets.ForEach((coord) =>
       {
-        Map((enemy) =>
+        MyGame.Util.Loop(this.enemies, (enemy) =>
         {
           if (enemy.Coord.Equals(coord))
           {
@@ -137,7 +188,6 @@ namespace MyGame.Dungeon
         });
       });
     }
-
 
     //-------------------------------------------------------------------------
     // Protected Method
@@ -149,21 +199,6 @@ namespace MyGame.Dungeon
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Enemy, DrawDebugMenu, nameof(EnemyManager));
 #endif
     }
-
-    //-------------------------------------------------------------------------
-    // Util
-
-    /// <summary>
-    /// 管理してる敵のリストを全ループする
-    /// </summary>
-    private void Map(System.Action<Enemy> cb)
-    {
-      this.enemies.ForEach((e) =>
-      {
-        cb(e);
-      });
-    }
-
 
 #if _DEBUG
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
