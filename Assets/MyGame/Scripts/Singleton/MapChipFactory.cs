@@ -130,6 +130,11 @@ namespace MyGame
 
       folder = CreateFolderObject("Enemy");
       this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
+#endif
+
     }
 
     /// <summary>
@@ -190,6 +195,16 @@ namespace MyGame
       GUILayout.EndHorizontal();
     }
 #endif
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    {
+      this.OnDebugFieldChip();
+      this.OnDebugPlayerChip();
+      this.OnDebugEnemyChip();
+    }
+#endif
+
   }
 
   /// <summary>

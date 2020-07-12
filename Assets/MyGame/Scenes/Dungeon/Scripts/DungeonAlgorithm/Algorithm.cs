@@ -82,6 +82,10 @@ namespace MyGame.Dungeon {
       this.aisleCreationFlag = false;
 
       SetConfig();
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Algorithm, DrawDebugMenu, "Map");
+#endif
     }
 
     //-------------------------------------------------------------------------
@@ -824,6 +828,60 @@ namespace MyGame.Dungeon {
         }
 
       });
+    }
+#endif
+
+#if _DEBUG
+    private void DrawDebugMenu( DebugMenu.MenuWindow menuWindow, object[] args )
+    {
+      GUIStyle sWall = new GUIStyle();
+      GUIStyle sRoom = new GUIStyle();
+      GUIStyle sAisle = new GUIStyle();
+      GUIStyle sReservedAisle = new GUIStyle();
+      GUIStyle sConfluence = new GUIStyle();
+      GUIStyle sCross = new GUIStyle();
+
+      sWall.normal.textColor = Color.black;
+      sRoom.normal.textColor = Color.blue;
+      sAisle.normal.textColor = Color.white;
+      sReservedAisle.normal.textColor = Color.gray;
+      sConfluence.normal.textColor = Color.magenta;
+      sCross.normal.textColor = Color.cyan;
+
+      using (var h = new GUILayout.HorizontalScope())
+      {
+        MapForChip((int x, int y, BitFlag chip) =>
+        {
+          GUIStyle style = null;
+
+          if (chip.Contain((uint)Flags.Wall)) style = sWall;
+          if (chip.Contain((uint)Flags.Room)) style = sRoom;
+          if (chip.Contain((uint)Flags.ReservedAisle)) style = sReservedAisle;
+          if (chip.Contain((uint)Flags.Aisle)) style = sAisle;
+          if (chip.Contain((uint)Flags.Confluence)) style = sConfluence;
+          if (chip.Contain((uint)Flags.Cross)) style = sCross;
+
+          if (style != null)
+          {
+            bool isNewColumn = (y % Define.HEIGHT == 0);
+            bool isEndColumn = (y != 0 && y % (Define.HEIGHT - 1) == 0);
+
+            if (isNewColumn)
+            {
+              GUILayout.BeginVertical();
+            }
+
+            const float s = 7;
+            GUILayout.Label("■", style, GUILayout.Width(s), GUILayout.Height(s));
+
+            if (isEndColumn)
+            {
+              GUILayout.EndVertical();
+            }
+          }
+
+        });
+      }
     }
 #endif
 

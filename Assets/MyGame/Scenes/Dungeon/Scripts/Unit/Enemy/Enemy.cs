@@ -133,5 +133,13 @@ namespace MyGame.Dungeon
       this.hp -= attacker.Atk;
       this.isAcceptAttack = true;
     }
+
+#if _DEBUG
+    public void DrawDebugMenu()
+    {
+      chip.DrawDebugMenu();
+    }
+#endif
+
   }
 }

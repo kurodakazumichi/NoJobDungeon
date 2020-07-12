@@ -34,7 +34,7 @@ namespace MyGame.Dungeon
       this.Reset();
 
 #if _DEBUG
-      DebugMenuManager.Instance.JoinMenu(DebugMenu.Page.Stage, DrawDebugMenu);
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Stage, DrawDebugMenu, "MiniMap");
 #endif
     }
 
@@ -298,7 +298,8 @@ namespace MyGame.Dungeon
 
 #endif
 
-    private void DrawDebugMenu()
+#if _DEBUG
+    private void DrawDebugMenu( DebugMenu.MenuWindow menuWindow, object[] args)
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sAisle = new GUIStyle();
@@ -336,8 +337,9 @@ namespace MyGame.Dungeon
           {
             GUILayout.BeginHorizontal();
           }
-          
-          GUILayout.Label( "■", style, GUILayout.Width(7), GUILayout.Height(7));
+
+          const int s = 7;
+          GUILayout.Label( "■", style, GUILayout.Width(s), GUILayout.Height(s));
 
           if (isEndLine)
           {
@@ -347,5 +349,6 @@ namespace MyGame.Dungeon
       });
 
     }
+#endif
   }
 }

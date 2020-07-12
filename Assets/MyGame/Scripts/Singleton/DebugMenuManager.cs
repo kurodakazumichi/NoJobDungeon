@@ -13,243 +13,192 @@ namespace MyGame
       None,
       Back,
 
+      PageStart, // ページの追加はここより↓
       Top,
-
+      Input,
+      Algorithm,
       Stage,
+      MapChip,
+      Dungeon,
+      Player,
+      Enemy,
+      
+      PageChild, // トップ画面に表示しないものはここより↓
+      EnemyDetail,
+
+      PageEnd, // ページの追加はここより↑
     }
 
+    public delegate void DrawMenu( MenuWindow menuWindow, params object[] args );
   }
 
   public class DebugMenuManager : SingletonMonobehaviour<DebugMenuManager>
   {
-    /// <summary>
-    /// 表示フラグ
-    /// </summary>
-    private bool isShow = false;
 
-    private Page currentPage = Page.None;
+    private Dictionary<Page, List<MenuContent>> pageContents = new Dictionary<Page, List<MenuContent>>();
 
-    private Page nextPage = Page.None;
-
-    private Stack<Page> pageStack = new Stack<Page>();
-
-    private Dictionary<Page, DrawDebugMenu> pages = new Dictionary<Page, DrawDebugMenu>();
+    public IEnumerable<Page> Pages => (pageContents.Keys);
 
     private DebugMenuTop topMenu;
 
-    public delegate void DrawDebugMenu();
+    private List<MenuWindow> menuWindows = new List<MenuWindow>();
 
-    /// <summary>
-    /// ページ在庫があるか
-    /// </summary>
-    private bool hasPageStock => (pageStack.Count > 0);
+    private int windowNumber = 0;
 
-
+    public readonly Vector2 DefaultWindowSize = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f );
 
     //=========================================================================
+
+    public List<MenuContent> GetMenuContent(Page page)
+    {
+      if (pageContents.ContainsKey(page))
+      {
+        return pageContents[page];
+      }
+      return null;
+    }
 
     protected override void Awake()
     {
       base.Awake();
 
       // Key登録
-      var pageArray = System.Enum.GetValues(typeof(Page));
-      foreach (var page in pageArray)
+      for (int i = (int)Page.PageStart + 1; i < (int)Page.PageEnd; i++)
       {
-        Page castedPage = (Page)page;
-        if( castedPage < Page.Top ) continue;       // 対象外
-        if (pages.ContainsKey(castedPage)) continue;  // 登録済み
-        pages.Add(castedPage, null);
+        Page page = (Page)i; 
+        if(page == Page.PageChild ) continue;          // 対象外 
+        if (pageContents.ContainsKey(page)) continue;  // 登録済み
+        pageContents.Add(page, new List<MenuContent>());
       }
 
       // トップ画面生成
       this.topMenu = new DebugMenuTop();
+
+      // 初期化
+      this.windowNumber = 0;
     }
 
 
     private void Update()
     {
-      // メニュー表示切替
       if (Input.GetMouseButtonDown(1))
       {
-        this.isShow = !this.isShow;
+        if (menuWindows.Count > 0)
+        {
+          // 全て閉じる
+          menuWindows.Clear();
+          windowNumber = 0;
+        }
+        else
+        {
+          // 新規ウィンドウ
 
-        // トップページ表示
-        RequestOpenPage(Page.Top);
+          // Y座標の原点が違うので調整
+          Vector2 pos = new Vector2(Input.mousePosition.x, Screen.height- Input.mousePosition.y);
+          OpenWindow(Page.Top, new Rect(pos, DefaultWindowSize));
+        }
       }
 
-      // ページ遷移チェック
-      if (this.nextPage != Page.None)
+      // ウィンドウ更新
+      for( int i = menuWindows.Count-1; i >=0;i-- )
       {
-        OpenNextPage();
+        var window = menuWindows[i];
+        window.Update();
+        if (window.IsClosed)
+        {
+          menuWindows.RemoveAt(i);
+        }
       }
+    }
+
+    /// <summary>
+    /// ウィンドウを開く
+    /// </summary>
+    public void OpenWindow(Page page, params object[] args)
+    {
+      var newWindow = new MenuWindow();
+      newWindow.Open(windowNumber++, page, args);
+      menuWindows.Add(newWindow);
+    }
+
+    /// <summary>
+    /// ウィンドウを開く(Rect指定あり）
+    /// </summary>
+    public void OpenWindow(Page page, Rect rect, params object[] args)
+    {
+      var newWindow = new MenuWindow();
+      newWindow.Open(windowNumber++, rect, page, args);
+      menuWindows.Add(newWindow);
     }
 
     /// <summary>
     /// デバッグメニューに登録する
     /// </summary>
-    public void JoinMenu(Page page, DrawDebugMenu callback)
+    public void RegisterMenu(Page page, DrawMenu callback, string title = "")
     {
-      if (this.pages.ContainsKey(page) == false)
+      if (this.pageContents.ContainsKey(page) == false)
       {
-        this.pages.Add(page, callback);
+        // 新規追加
+        var content = new MenuContent
+        {
+          Title     = title,
+          DrawMenu  = callback
+        };
+        this.pageContents.Add(page, new List<MenuContent>() { content });
       }
       else
       {
-        this.pages[page] += callback;
-      }
-    }
-
-
-    /// <summary>
-    /// ページ遷移要求
-    /// </summary>
-    /// <param name="page"></param>
-    public void RequestOpenPage(Page page)
-    {
-      if(this.currentPage == page ) return;
-      this.nextPage = page;
-    }
-
-    /// <summary>
-    /// 次のページ遷移
-    /// </summary>
-    /// <param name="page"></param>
-    private void OpenNextPage()
-    {
-      if (this.nextPage == Page.Back)
-      {
-        // 戻るだった場合はスタックから取得
-        this.nextPage = (hasPageStock) ? pageStack.Pop() : Page.None;
-      }
-      else 
-      {
-        if (this.currentPage != Page.None)
+        // 同一タイトルものを探す
+        var content = this.pageContents[page].Find( x => x.Title == title );
+        if (content != null)
         {
-          // 遷移前のページを記録
-          pageStack.Push(this.currentPage);
+          // コールバック追加
+          content.DrawMenu += callback;
+        }
+        else
+        {
+          // 新規タイトル
+          content = new MenuContent
+          {
+            Title = title,
+            DrawMenu = callback
+          };
+          this.pageContents[page].Add(content);
         }
       }
-
-      if(this.nextPage == Page.None ) return;
-
-      // ページ更新
-      this.currentPage  = this.nextPage;
-      this.nextPage     = Page.None;
     }
 
 
     //=========================================================================
     // OnGUI
 
-    private Rect windowRect = new Rect(0, 0, (int)(Screen.width*0.5), (int)(Screen.height* 0.5));
-
-    private Vector2 contentScrollViewPosition = Vector2.zero;
-
-    private const int MainWindowId = 0;
+    /// <summary>
+    /// タイトルラベル用スタイル
+    /// </summary>
+    public GUIStyle ContentTitleStyle;
 
     private void OnGUI()
     {
-      if (this.isShow == false) return;
+      // スタイルの初期化
+      InitGUIStyle();
 
-      this.windowRect = GUILayout.Window(MainWindowId, this.windowRect, MainWindowCallBack, nameof(DebugMenuManager));
-
-    }
-
-    /// <summary>
-    /// ウィンドウコールバック
-    /// </summary>
-    /// <param name="windowId"></param>
-    private void MainWindowCallBack(int windowId)
-    {
-      // ヘッダー
-      DrawHeader();
-
-      // コンテンツ
-      DrawContent();
-
-      // ドラッグ可能
-      GUI.DragWindow();
-
-    }
-
-    /// <summary>
-    /// ヘッダー描画
-    /// </summary>
-    private void DrawHeader()
-    {
-      using (var v = new GUILayout.VerticalScope())
+      foreach (var window in menuWindows)
       {
-        // ページタイトル
-        GUILayout.Label(this.currentPage.ToString());
-
-        // ボタン一覧
-        using (var h = new GUILayout.HorizontalScope())
-        {
-          // 戻る
-          {
-            if (hasPageStock)
-            {
-              if (GUILayout.Button("戻る"))
-              {
-                RequestOpenPage( Page.Back );
-              }
-            }
-            else
-            {
-              if (GUILayout.Button("閉じる"))
-              {
-                this.isShow = false;
-              }
-            }
-            
-          }
-        }
-      }
-
-    }
-
-    /// <summary>
-    /// 内容描画
-    /// </summary>
-    private void DrawContent()
-    {
-      using (var sv = new GUILayout.ScrollViewScope(contentScrollViewPosition))
-      {
-        var menu = pages[currentPage];
-        if (menu != null)
-        {
-          menu.Invoke();
-        }
-        else
-        {
-          GUILayout.Label($"{currentPage}のメニューはまだ登録されてないよ！");
-        }
+        window.DrawDebugMenu();
       }
     }
 
-    
     /// <summary>
-    /// トップメニュー
+    /// スタイル初期化
     /// </summary>
-    private class DebugMenuTop
+    private void InitGUIStyle()
     {
-      public DebugMenuTop()
+      if (ContentTitleStyle == null)
       {
-        DebugMenuManager.Instance.JoinMenu(Page.Top, DrawDebug);
-      }
-
-      private void DrawDebug()
-      {
-        var pages = DebugMenuManager.Instance.pages;
-        foreach (var page in pages)
+        ContentTitleStyle = new GUIStyle(GUI.skin.label)
         {
-          if( page.Key == Page.Top ) continue;
-          if (GUILayout.Button($"{page.Key}"))
-          {
-            DebugMenuManager.Instance.RequestOpenPage( page.Key );
-          }
-        }
+          alignment = TextAnchor.MiddleCenter
+        };
       }
     }
   }

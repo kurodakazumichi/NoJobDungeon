@@ -90,6 +90,15 @@ namespace MyGame {
     private Button r   = new Button(KeyCode.Space);
     private Button l   = new Button(KeyCode.LeftShift);
 
+
+    protected override void Awake()
+    {
+      base.Awake();
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Input, DrawDebugMenu, nameof(InputManager));
+#endif
+    }
+
     /// <summary>
     /// 入力を監視
     /// </summary>
@@ -150,6 +159,19 @@ namespace MyGame {
     private void ButtonLabel(string name, IButton btn)
     {
       GUILayout.Label($"{name}: IsDown={btn.IsDown}, IsHold={btn.IsHold}, Hold={btn.Hold}");
+    }
+#endif
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    {
+      GUILayout.Label($"DirectionKey:{DirectionKey.value}");
+      ButtonLabel("RB1", this.rb1);
+      ButtonLabel("RB2", this.rb2);
+      ButtonLabel("RB3", this.rb3);
+      ButtonLabel("RB4", this.rb4);
+      ButtonLabel("R", this.r);
+
     }
 #endif
 

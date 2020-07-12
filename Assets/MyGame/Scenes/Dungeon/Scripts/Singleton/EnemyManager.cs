@@ -138,6 +138,19 @@ namespace MyGame.Dungeon
       });
     }
 
+
+    //-------------------------------------------------------------------------
+    // Protected Method
+
+    protected override void Awake()
+    {
+      base.Awake();
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Enemy, DrawDebugMenu, nameof(EnemyManager));
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.EnemyDetail, DrawDebugMenuDetaile, nameof(EnemyManager));
+#endif
+    }
+
     //-------------------------------------------------------------------------
     // Util
 
@@ -151,5 +164,29 @@ namespace MyGame.Dungeon
         cb(e);
       });
     }
+
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, params object[] args)
+    {
+      this.enemies.ForEach((e) =>
+      {
+        if (GUILayout.Button($"{e.Coord} 詳細"))
+        {
+          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyDetail, e );
+        }
+      });
+    }
+
+    private void DrawDebugMenuDetaile(DebugMenu.MenuWindow menuWindow, params object[] args)
+    {
+      if (args != null && args.Length >= 1)
+      {
+        var e = args[0] as Enemy;
+        e.DrawDebugMenu();
+      }
+    }
+#endif
+
   }
 }

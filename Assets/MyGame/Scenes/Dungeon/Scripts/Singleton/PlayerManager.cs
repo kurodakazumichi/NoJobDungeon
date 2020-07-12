@@ -85,6 +85,17 @@ namespace MyGame.Dungeon
       this.player.Attack();
     }
 
+    //-------------------------------------------------------------------------
+    // Protected Method
+
+    protected override void Awake()
+    {
+      base.Awake();
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Player, DrawDebugMenu, nameof(PlayerManager));
+#endif
+    }
+
 #if UNITY_EDITOR
 
     [SerializeField]
@@ -97,6 +108,13 @@ namespace MyGame.Dungeon
       this.player.OnGUI();
     }
 
+#endif
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    {
+      this.player.DrawDebugMenu();
+    }
 #endif
 
   }
