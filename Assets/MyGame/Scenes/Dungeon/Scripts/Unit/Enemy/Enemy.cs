@@ -144,19 +144,21 @@ namespace MyGame.Dungeon
         DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
         this.coord = this.nextCoord;
         this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+        this.behavior = BehaviorType.None;
       }
     }
 
     /// <summary>
     /// 攻撃予定の敵がこのメソッドを呼ばれると、攻撃の動きを開始する
     /// </summary>
-    public bool Attack()
+    public void Attack()
     {
-      if (this.behavior != BehaviorType.Attack) return false;
-      this.behavior = BehaviorType.None;
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      // アタッカーじゃなければ何もしない
+      if (this.behavior != BehaviorType.Attack) return;
 
-      return true;
+      // 攻撃の動きを開始
+      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      this.behavior = BehaviorType.None;
     }
 
     /// <summary>

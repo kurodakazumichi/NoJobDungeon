@@ -9,6 +9,9 @@ namespace MyGame.Dungeon {
   /// </summary>
   public class DungeonScene : SceneBase
   {
+    /// <summary>
+    /// シーンの流れを定義
+    /// </summary>
     public enum Phase
     {
       Load,
@@ -21,7 +24,16 @@ namespace MyGame.Dungeon {
       EnemyAttackEnd,
     }
 
-    private StateMachine<Phase> state;
+    //-------------------------------------------------------------------------
+    // メンバー
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    private StateMachine<Phase> state = new StateMachine<Phase>();
+
+    //-------------------------------------------------------------------------
+    // 主要メソッド
 
     /// <summary>
     /// 開始処理
@@ -37,8 +49,6 @@ namespace MyGame.Dungeon {
         .Setup(nameof(FieldManager)  , system)
         .Setup(nameof(EnemyManager)  , system);
 
-      this.state = new StateMachine<Phase>();
-
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
@@ -47,6 +57,7 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
       this.state.Add(Phase.EnemyAttackStart, EnemyAttackStartEnter, EnemyAttackStartUpdate);
       this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
+
       this.state.SetState(Phase.Load);
     }
 
@@ -217,14 +228,20 @@ namespace MyGame.Dungeon {
 
     //-------------------------------------------------------------------------
     // 敵の攻撃開始フェーズ
+    // 敵の攻撃は一体ずつ処理していく。
+
     private void EnemyAttackStartEnter()
     {
+      // 敵に攻撃の動きをするように命じるとともに、攻撃した敵の情報を取得
       IAttackable attacker = EnemyManager.Instance.OrderToAttack();
+
+      // プレイヤーに対して攻撃を行う
       PlayerManager.Instance.AttackPlayer(attacker);
     }
 
     private void EnemyAttackStartUpdate()
     {
+      // 動いてる敵がいなくなったら攻撃終了フェーズへ
       if (EnemyManager.Instance.HasActiveEnemy) return;
 
       this.state.SetState(Phase.EnemyAttackEnd);
@@ -235,18 +252,22 @@ namespace MyGame.Dungeon {
 
     private void EnemyAttackEndEnter()
     {
+      // プレイヤーに痛がるよう命じる
       PlayerManager.Instance.OrderToOuch();
     }
 
     private void EnemyAttackEndUpdate()
     {
+      // プレイヤーが痛がっている間は待機
       if (PlayerManager.Instance.HasnActivePlayer) return;
 
+      // まだ攻撃をする敵が残っている場合は敵の攻撃開始フェーズへ
       if (EnemyManager.Instance.HasAttacker)
       {
         this.state.SetState(Phase.EnemyAttackStart);
         return;
       }
+
       this.state.SetState(Phase.PlayerThink);
     }
 

@@ -150,8 +150,10 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DestoryDeadEnemies()
     {
+      // 新しく敵リストを用意する
       List<Enemy> newList = new List<Enemy>(this.enemies.Count);
 
+      // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
       MyGame.Util.Loop(this.enemies, (enemy) =>
       {
         if (enemy.IsDead)
@@ -165,6 +167,7 @@ namespace MyGame.Dungeon
         }
       });
 
+      // 敵リストを更新
       this.enemies.Clear();
       this.enemies = newList;
     }
