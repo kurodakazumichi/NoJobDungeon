@@ -275,20 +275,6 @@ namespace MyGame.Dungeon {
       this.state.SetState(Phase.PlayerThink);
     }
 
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool showDebug = false;
-
-    private void OnGUI()
-    {
-      if (!this.showDebug) return;
-      if (GUI.Button(new Rect(10, 10, 100, 20), "Create"))
-      {
-        this.state.SetState(Phase.CreateStage);
-      }
-    }
-#endif
-
 #if _DEBUG
     public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
