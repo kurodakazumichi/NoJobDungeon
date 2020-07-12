@@ -124,20 +124,6 @@ namespace MyGame.Dungeon
 #endif
     }
 
-#if UNITY_EDITOR
-
-    [SerializeField]
-    private bool showDebug = false;
-
-    private void OnGUI()
-    {
-      if (!showDebug) return;
-
-      this.player.OnGUI();
-    }
-
-#endif
-
 #if _DEBUG
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {

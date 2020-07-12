@@ -32,10 +32,6 @@ namespace MyGame.Dungeon
       base.Awake();
       this.algorithm = new Algorithm();
       this.stage     = new Stage();
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonManager));
-#endif
     }
 
     //-------------------------------------------------------------------------
@@ -104,43 +100,6 @@ namespace MyGame.Dungeon
     {
       this.stage.Map(cb);
     }
-
-#if UNITY_EDITOR
-    //-------------------------------------------------------------------------
-    // デバッグ
-
-    public bool _showDebug = true;
-    public bool _isMiniMapOnly = true;
-    private void OnGUI()
-    {
-      this._showDebug = (Input.GetKey(KeyCode.Alpha0));
-      
-      if (!this._showDebug) return;
-
-      if (this._isMiniMapOnly)
-      {
-        this.stage.OnGUI();
-        return;
-      }
-
-      if (GUILayout.Button("Create Stage"))
-      {
-        CreateStage();
-      }
-
-    }
-
-#endif
-
-#if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow )
-    {
-      if (GUILayout.Button("Create Stage"))
-      {
-        CreateStage();
-      }
-    }
-#endif
   }
 
 }
