@@ -84,14 +84,6 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// 敵さんたちに、移動について考えるように命じる
-    /// </summary>
-    public void OrderToThinkAboutMoving()
-    {
-      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.ThinkAboutMoving(); });
-    }
-
-    /// <summary>
     /// 敵さん達に、移動しろと命じる
     /// </summary>
     public void OrderToMove()

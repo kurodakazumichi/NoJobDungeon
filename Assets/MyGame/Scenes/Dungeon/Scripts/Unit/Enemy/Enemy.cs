@@ -113,32 +113,23 @@ namespace MyGame.Dungeon
       // プレイヤーがいないなら移動を考える
       else
       {
-        ThinkAboutMoving();
-      }
+        // ランダムで移動方向を決める
+        var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
 
-    }
+        // おそらく移動するであろう次の座標
+        var maybeNext = this.coord + dir;
 
-    /// <summary>
-    /// 移動について考える
-    /// </summary>
-    public void ThinkAboutMoving()
-    {
-      // ランダムで移動方向を決める
-      var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
+        // 移動先のタイル情報を見て移動するかどうかを決める
+        var tile = DungeonManager.Instance.GetTile(maybeNext);
 
-      // おそらく移動するであろう次の座標
-      var maybeNext = this.coord + dir;
-
-      // 移動先のタイル情報を見て移動するかどうかを決める
-      var tile = DungeonManager.Instance.GetTile(maybeNext);
-
-      // 移動先に障害物はないね、移動しよう。
-      if (!tile.IsObstacle)
-      {
-        // 座標と方向を更新
-        this.chip.Direction = new Direction(dir, false);
-        this.nextCoord = maybeNext;
-        this.behavior = BehaviorType.Move;
+        // 移動先に障害物はないね、移動しよう。
+        if (!tile.IsObstacle)
+        {
+          // 座標と方向を更新
+          this.chip.Direction = new Direction(dir, false);
+          this.nextCoord = maybeNext;
+          this.behavior = BehaviorType.Move;
+        }
       }
     }
 
