@@ -168,6 +168,14 @@ namespace MyGame.Dungeon {
       if (PlayerManager.Instance.HasnActivePlayer) return;
       if (EnemyManager.Instance.HasActiveEnemy) return;
 
+      // プレイヤーがゴールにたどり着いてたら次のフロアへ
+      if (DungeonManager.Instance.CanGoNextFloor)
+      {
+        DungeonManager.Instance.upFloor();
+        this.state.SetState(Phase.CreateStage);
+        return;
+      }
+
       // 動いてるやつらがいなくなったら次のフェーズへ
       this.state.SetState(Phase.EnemyAttackStart);
     }

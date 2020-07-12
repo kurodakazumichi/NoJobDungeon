@@ -21,22 +21,17 @@ namespace MyGame.Dungeon
     /// </summary>
     private Stage stage;
 
+    /// <summary>
+    /// ダンジョンの階数
+    /// </summary>
+    private int floor = 1;
+
     //-------------------------------------------------------------------------
     // 主要なメソッド
 
     /// <summary>
     /// メンバの初期化
     /// </summary>
-    protected override void Awake()
-    {
-      base.Awake();
-      this.algorithm = new Algorithm();
-      this.stage     = new Stage();
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
-#endif
-    }
 
     //-------------------------------------------------------------------------
     // 生成
@@ -55,6 +50,16 @@ namespace MyGame.Dungeon
       get { return this.stage.Find(Tiles.Player)[0]; }
     }
 
+    /// <summary>
+    /// 次のフロアへ行ける
+    /// </summary>
+    public bool CanGoNextFloor
+    {
+      get
+      {
+        return this.stage.Find(Tiles.Goal)[0].Equals(PlayerCoord);
+      }
+    }
     //-------------------------------------------------------------------------
     // 取得
 
@@ -97,12 +102,46 @@ namespace MyGame.Dungeon
       this.stage.RemoveTileState(coord, Tiles.Enemy);
     }
 
+    /// <summary>
+    /// フロアを上る
+    /// </summary>
+    public void upFloor()
+    {
+      ++this.floor;
+    }
+
+    /// <summary>
+    /// フロア数を減らす
+    /// </summary>
+    public void downFloor()
+    {
+      this.floor = Mathf.Max(1, --this.floor);
+    }
+
     //-------------------------------------------------------------------------
     // その他
 
     public void Map(System.Action<int, int, IReadOnlyTile> cb)
     {
       this.stage.Map(cb);
+    }
+
+    //-------------------------------------------------------------------------
+    // 主要なメソッド
+
+    /// <summary>
+    /// メンバの初期化
+    /// </summary>
+    protected override void Awake()
+    {
+      base.Awake();
+      this.algorithm = new Algorithm();
+      this.stage = new Stage();
+      this.floor = 1;
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
+#endif
     }
 
 #if _DEBUG
