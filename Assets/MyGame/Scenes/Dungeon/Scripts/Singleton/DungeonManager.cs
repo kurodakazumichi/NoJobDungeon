@@ -42,7 +42,7 @@ namespace MyGame.Dungeon
     // 生成
 
     /// <summary>
-    /// ダンジョンの生成
+    /// このメソッドを実行するたびに、新しくダンジョンデータが作成される。
     /// </summary>
     public void CreateStage()
     {

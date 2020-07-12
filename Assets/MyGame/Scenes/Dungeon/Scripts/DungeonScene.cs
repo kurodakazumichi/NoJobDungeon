@@ -102,11 +102,11 @@ namespace MyGame.Dungeon {
       // マップチップを生成
       FieldManager.Instance.CreateFields();
 
-      // プレイヤーを生成
-      PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
-
       // 敵を生成
       EnemyManager.Instance.CreateEnemies();
+
+      // プレイヤーを生成
+      PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
 
       // カメラをダンジョン設定にする
       CameraManager.Instance.SetDungeonSettings();
@@ -114,7 +114,6 @@ namespace MyGame.Dungeon {
 
       // 入力待ちフェーズへ
       this.state.SetState(Phase.PlayerThink);
-
     }
 
 
@@ -278,6 +277,8 @@ namespace MyGame.Dungeon {
 #if _DEBUG
     public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
+      GUILayout.Label("Dungeon Scene Functions");
+
       if (GUILayout.Button("Remake"))
       {
         this.state.SetState(Phase.CreateStage);
