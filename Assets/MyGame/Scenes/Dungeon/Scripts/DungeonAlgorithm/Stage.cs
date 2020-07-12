@@ -9,9 +9,6 @@ namespace MyGame.Dungeon
   /// ダンジョンステージクラス
   /// </summary>
 	public class Stage
-#if _DEBUG
-    : IDebugMenu
-#endif
   {
     /// <summary>
     /// ステージ配列
@@ -37,7 +34,7 @@ namespace MyGame.Dungeon
       this.Reset();
 
 #if _DEBUG
-      DebugMenuManager.Instance.JoinMenu(DebugMenu.Page.Stage, this);
+      DebugMenuManager.Instance.JoinMenu(DebugMenu.Page.Stage, DrawDebugMenu);
 #endif
     }
 
@@ -301,7 +298,7 @@ namespace MyGame.Dungeon
 
 #endif
 
-    void IDebugMenu.DrawDebug()
+    private void DrawDebugMenu()
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sAisle = new GUIStyle();

@@ -33,9 +33,11 @@ namespace MyGame
 
     private Stack<Page> pageStack = new Stack<Page>();
 
-    private Dictionary<Page, IDebugMenu> pages = new Dictionary<Page, IDebugMenu>();
+    private Dictionary<Page, DrawDebugMenu> pages = new Dictionary<Page, DrawDebugMenu>();
 
     private DebugMenuTop topMenu;
+
+    public delegate void DrawDebugMenu();
 
     /// <summary>
     /// ページ在庫があるか
@@ -86,17 +88,18 @@ namespace MyGame
     /// <summary>
     /// デバッグメニューに登録する
     /// </summary>
-    public void JoinMenu(Page page, IDebugMenu iDebugMenu)
+    public void JoinMenu(Page page, DrawDebugMenu callback)
     {
       if (this.pages.ContainsKey(page) == false)
       {
-        this.pages.Add(page, iDebugMenu);
+        this.pages.Add(page, callback);
       }
       else
       {
-        this.pages[page] = iDebugMenu;
+        this.pages[page] += callback;
       }
     }
+
 
     /// <summary>
     /// ページ遷移要求
@@ -216,7 +219,7 @@ namespace MyGame
         var menu = pages[currentPage];
         if (menu != null)
         {
-          menu.DrawDebug();
+          menu.Invoke();
         }
         else
         {
@@ -229,14 +232,14 @@ namespace MyGame
     /// <summary>
     /// トップメニュー
     /// </summary>
-    private class DebugMenuTop : IDebugMenu
+    private class DebugMenuTop
     {
       public DebugMenuTop()
       {
-        DebugMenuManager.Instance.JoinMenu(Page.Top, this);
+        DebugMenuManager.Instance.JoinMenu(Page.Top, DrawDebug);
       }
 
-      void IDebugMenu.DrawDebug()
+      private void DrawDebug()
       {
         var pages = DebugMenuManager.Instance.pages;
         foreach (var page in pages)
