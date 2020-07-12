@@ -188,5 +188,34 @@ namespace MyGame.Dungeon
         });
       });
     }
+
+    //-------------------------------------------------------------------------
+    // Protected Method
+
+    protected override void Awake()
+    {
+      base.Awake();
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Enemy, DrawDebugMenu, nameof(EnemyManager));
+#endif
+    }
+
+#if _DEBUG
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    {
+      this.enemies.ForEach((e) =>
+      {
+        if (GUILayout.Button($"{e.Coord} 詳細"))
+        {
+          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyDetail, 
+            ( window ) => 
+            {
+              e.DrawDebugMenu();
+            });
+        }
+      });
+    }
+#endif
+
   }
 }

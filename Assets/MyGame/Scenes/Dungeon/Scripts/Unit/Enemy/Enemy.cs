@@ -198,13 +198,10 @@ namespace MyGame.Dungeon
       this.isAcceptAttack = true;
     }
 
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool _showDebug = false;
-    public void OnGUI()
-    {
-      if (!_showDebug) return;
 
+#if _DEBUG
+    public void DrawDebugMenu()
+    {
       GUILayout.BeginArea(new Rect(500, 0, 500, 500));
       {
         GUILayout.Label($"Current Coord: ({this.Coord})");
@@ -216,7 +213,6 @@ namespace MyGame.Dungeon
       }
       GUILayout.EndArea();
     }
-
 #endif
   }
 }

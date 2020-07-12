@@ -59,6 +59,10 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
 
       this.state.SetState(Phase.Load);
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu( DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene) );
+#endif
     }
 
     protected override void Update()
@@ -284,5 +288,16 @@ namespace MyGame.Dungeon {
       }
     }
 #endif
+
+#if _DEBUG
+    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    {
+      if (GUILayout.Button("Create"))
+      {
+        this.state.SetState(Phase.CreateStage);
+      }
+    }
+#endif
+
   }
 }
