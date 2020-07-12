@@ -163,7 +163,7 @@ namespace MyGame {
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       GUILayout.Label($"DirectionKey:{DirectionKey.value}");
       ButtonLabel("RB1", this.rb1);

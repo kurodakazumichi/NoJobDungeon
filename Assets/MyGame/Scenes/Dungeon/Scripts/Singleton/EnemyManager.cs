@@ -147,7 +147,6 @@ namespace MyGame.Dungeon
       base.Awake();
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Enemy, DrawDebugMenu, nameof(EnemyManager));
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.EnemyDetail, DrawDebugMenuDetaile, nameof(EnemyManager));
 #endif
     }
 
@@ -167,24 +166,19 @@ namespace MyGame.Dungeon
 
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, params object[] args)
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.enemies.ForEach((e) =>
       {
         if (GUILayout.Button($"{e.Coord} 詳細"))
         {
-          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyDetail, e );
+          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyDetail, 
+            ( window ) => 
+            {
+              e.DrawDebugMenu();
+            });
         }
       });
-    }
-
-    private void DrawDebugMenuDetaile(DebugMenu.MenuWindow menuWindow, params object[] args)
-    {
-      if (args != null && args.Length >= 1)
-      {
-        var e = args[0] as Enemy;
-        e.DrawDebugMenu();
-      }
     }
 #endif
 

@@ -111,7 +111,7 @@ namespace MyGame.Dungeon
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.player.DrawDebugMenu();
     }

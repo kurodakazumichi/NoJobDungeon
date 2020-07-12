@@ -29,7 +29,7 @@ namespace MyGame
       PageEnd, // ページの追加はここより↑
     }
 
-    public delegate void DrawMenu( MenuWindow menuWindow, params object[] args );
+    public delegate void DrawMenu( MenuWindow menuWindow );
   }
 
   public class DebugMenuManager : SingletonMonobehaviour<DebugMenuManager>
@@ -114,20 +114,20 @@ namespace MyGame
     /// <summary>
     /// ウィンドウを開く
     /// </summary>
-    public void OpenWindow(Page page, params object[] args)
+    public void OpenWindow(Page page, DrawMenu callback = null )
     {
       var newWindow = new MenuWindow();
-      newWindow.Open(windowNumber++, page, args);
+      newWindow.Open(windowNumber++, page, callback);
       menuWindows.Add(newWindow);
     }
 
     /// <summary>
     /// ウィンドウを開く(Rect指定あり）
     /// </summary>
-    public void OpenWindow(Page page, Rect rect, params object[] args)
+    public void OpenWindow(Page page, Rect rect, DrawMenu callback = null)
     {
       var newWindow = new MenuWindow();
-      newWindow.Open(windowNumber++, rect, page, args);
+      newWindow.Open(windowNumber++, rect, page, callback);
       menuWindows.Add(newWindow);
     }
 

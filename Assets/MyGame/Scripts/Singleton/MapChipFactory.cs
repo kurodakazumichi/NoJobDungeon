@@ -197,7 +197,7 @@ namespace MyGame
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.OnDebugFieldChip();
       this.OnDebugPlayerChip();

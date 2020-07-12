@@ -25,10 +25,6 @@ namespace MyGame.DebugMenu
 
     private Stack<Page> pageStack = new Stack<Page>();
 
-    private object[] currentArguments;
-
-    private object[] nextArguments;
-
     /// <summary>
     /// ページ在庫があるか
     /// </summary>
@@ -40,11 +36,12 @@ namespace MyGame.DebugMenu
 
     public int Id { get; private set; }  = 0;
 
+    private Dictionary<Page, DrawMenu> pageDrawCallbacks = new Dictionary<Page, DrawMenu>();
 
     /// <summary>
     /// ウィンドウを開く
     /// </summary>
-    public void Open(int id, Page page, params object[] args )
+    public void Open(int id, Page page, DrawMenu callback)
     {
       const float offset = 10f;
 
@@ -52,19 +49,30 @@ namespace MyGame.DebugMenu
       this.Id             = id;
       this.scrollPosition = Vector2.zero;
       this.IsClosed       = false;
-      OpenPage(page, args);
+      pageDrawCallbacks.Clear();
+      if (callback != null)
+      {
+        pageDrawCallbacks.Add(page, callback);
+      }
+      OpenPage(page);
     }
 
     /// <summary>
     /// ウィンドウを開く（Rect指定あり）
     /// </summary>
-    public void Open(int id, Rect rect, Page page, params object[] args)
+    public void Open(int id, Rect rect, Page page, DrawMenu callback)
     {
       this.windowRect     = rect;
       this.Id             = id;
       this.scrollPosition = Vector2.zero;
       this.IsClosed       = false;
-      OpenPage(page, args);
+      pageDrawCallbacks.Clear();
+      if (callback != null)
+      {
+        pageDrawCallbacks.Add(page, callback);
+      }
+
+      OpenPage(page);
     }
 
     /// <summary>
@@ -84,11 +92,10 @@ namespace MyGame.DebugMenu
     /// <summary>
     /// ページを開く
     /// </summary>
-    public void OpenPage(Page page, params object[] args)
+    public void OpenPage(Page page)
     {
       if (this.currentPage == page) return;
-      this.nextPage          = page;
-      this.nextArguments = args;
+      this.nextPage        = page;
     }
 
     /// <summary>
@@ -114,9 +121,7 @@ namespace MyGame.DebugMenu
 
       // ページ更新
       this.currentPage        = this.nextPage;
-      this.currentArguments      = this.nextArguments;
       this.nextPage           = Page.None;
-      this.nextArguments  = null;
     }
 
     //=========================================================================
@@ -191,21 +196,29 @@ namespace MyGame.DebugMenu
       using (var sv = new GUILayout.ScrollViewScope(scrollPosition))
       {
         scrollPosition = sv.scrollPosition;
-        var content = DebugMenuManager.Instance.GetMenuContent(currentPage);
-        if (content != null && content.Count > 0)
+
+        if (pageDrawCallbacks.TryGetValue(currentPage, out DrawMenu drawMenu))
         {
-          // ページ引数
-          content.ForEach((x) =>
-            {
-              // タイトル
-              GUILayout.Label($"{x.Title}", DebugMenuManager.Instance.ContentTitleStyle);
-              
-              x.DrawMenu?.Invoke(this, currentArguments);
-            });
+          drawMenu?.Invoke(this);
         }
         else
         {
-          GUILayout.Label($"{currentPage}のメニューはまだ登録されてないよ！");
+          var content = DebugMenuManager.Instance.GetMenuContent(currentPage);
+          if (content != null && content.Count > 0)
+          {
+            // ページ引数
+            content.ForEach((x) =>
+              {
+                // タイトル
+                GUILayout.Label($"{x.Title}", DebugMenuManager.Instance.ContentTitleStyle);
+
+                x.DrawMenu?.Invoke(this);
+              });
+          }
+          else
+          {
+            GUILayout.Label($"{currentPage}のメニューはまだ登録されてないよ！");
+          }
         }
       }
     }

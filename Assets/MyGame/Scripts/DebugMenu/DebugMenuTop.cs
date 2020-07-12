@@ -28,7 +28,7 @@ namespace MyGame.DebugMenu
       }
     }
 
-    private void DrawDebug(MenuWindow menuWindow, object[] args)
+    private void DrawDebug(MenuWindow menuWindow)
     {
       foreach (var page in this.pages)
       {

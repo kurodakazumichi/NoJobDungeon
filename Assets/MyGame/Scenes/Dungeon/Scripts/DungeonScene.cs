@@ -228,7 +228,7 @@ namespace MyGame.Dungeon {
 #endif
 
 #if _DEBUG
-    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow, object[] args)
+    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       if (GUILayout.Button("Create"))
       {
