@@ -25,7 +25,8 @@ namespace MyGame
     {
       for (int i = from; i < to; ++i)
       {
-        if (!cb(i)) break;
+        var isBreak = cb(i);
+        if (isBreak) break;
       }
     }
 
@@ -128,7 +129,9 @@ namespace MyGame
     {
       for (int i = 0; i < list.Count; ++i)
       {
-        if (!cb(list[i])) break;
+        var isBreak = cb(list[i]);
+
+        if (isBreak) break;
       }
     }
   }

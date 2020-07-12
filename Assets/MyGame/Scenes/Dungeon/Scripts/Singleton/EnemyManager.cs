@@ -35,15 +35,22 @@ namespace MyGame.Dungeon
       }
     }
 
+    /// <summary>
+    /// アタッカーがいる
+    /// </summary>
     public bool HasAttacker
     {
       get
       {
         bool hasAttacker = false;
+
+        // 敵さんループ
         MyGame.Util.Loop(this.enemies, (enemy) =>
         {
           hasAttacker = enemy.Behavior == Enemy.BehaviorType.Attack;
-          return !hasAttacker;
+          
+          // アタッカーがいたらループを抜ける
+          return hasAttacker;
         });
 
         return hasAttacker;
@@ -99,20 +106,23 @@ namespace MyGame.Dungeon
     /// </summary>
     public IAttackable OrderToAttack()
     {
-      IAttackable attacker = null;
-      MyGame.Util.Loop(this.enemies, (enemy) =>
+      Enemy enemy = null;
+
+      // アタッカーを探すために敵さんをループ
+      MyGame.Util.Loop(this.enemies, (e) =>
       {
-        var attacked = enemy.Attack();
+        // アタッカーじゃなければスキップ
+        if (e.Behavior != Enemy.BehaviorType.Attack) return false;
 
-        if (attacked)
-        {
-          attacker = enemy;
-          return false;
-        }
+        // 敵に攻撃の動きを命じる
+        e.Attack();
+        enemy = e;
 
+        // ループを抜ける
         return true;
       });
-      return attacker;
+
+      return enemy;
     }
 
     /// <summary>
