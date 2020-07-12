@@ -52,12 +52,18 @@ namespace MyGame.Dungeon
 
     /// <summary>
     /// プレイヤーを作成し、指定された座標に置く
+    /// 既にプレイヤーが存在していたらリセットする
     /// </summary>
     public void CreatePlayer(Vector2Int coord)
     {
       if (this.player == null)
       {
         this.player = new Player(coord);
+      }
+
+      else
+      {
+        this.player.Reset(coord);
       }
     }
 

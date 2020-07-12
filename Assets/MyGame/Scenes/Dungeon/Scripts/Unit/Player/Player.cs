@@ -92,9 +92,14 @@ namespace MyGame.Dungeon
     /// </summary>
     public Player(Vector2Int coord)
     {
-      this.coord = coord;
-
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
+
+      Reset(coord);
+    }
+
+    public void Reset(Vector2Int coord)
+    {
+      this.coord = coord;
       this.chip.transform.position = Util.GetPositionBy(coord);
     }
 

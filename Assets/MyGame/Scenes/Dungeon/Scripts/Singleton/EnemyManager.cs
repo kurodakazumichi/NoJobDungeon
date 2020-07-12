@@ -61,10 +61,25 @@ namespace MyGame.Dungeon
     // Public Method
 
     /// <summary>
+    /// 全ての敵を破棄してリストを空にする。
+    /// </summary>
+    public void Reset()
+    {
+      MyGame.Util.Loop(this.enemies, (enemy) =>
+      {
+        enemy.Destory();
+      });
+
+      this.enemies = new List<Enemy>();
+    }
+
+    /// <summary>
     /// 敵を生成する
     /// </summary>
     public void CreateEnemies()
     {
+      Reset();
+
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
         if (tile.IsEnemy)

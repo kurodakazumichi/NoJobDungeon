@@ -107,7 +107,10 @@ namespace MyGame
     /// </summary>
     public void Release<T>(T obj) where T : MonoBehaviour
     {
-      obj.gameObject.SetActive(false);
+      if (obj != null)
+      {
+        obj.gameObject.SetActive(false);
+      }
     }
 
     //-------------------------------------------------------------------------

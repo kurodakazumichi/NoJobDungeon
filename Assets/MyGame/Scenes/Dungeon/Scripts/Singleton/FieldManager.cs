@@ -19,12 +19,26 @@ namespace MyGame.Dungeon
       base.Awake();
       this.fields = new AutoChip[Define.WIDTH, Define.HEIGHT];
     }
-    
+
+    /// <summary>
+    /// 存在するフィールドチップを全て解放して配列をnullで埋める。
+    /// </summary>
+    public void Reset()
+    {
+      MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (x, y) => 
+      {
+        MapChipFactory.Instance.Release(this.fields[x, y]);
+        this.fields[x, y] = null;
+      });
+    }
+
     /// <summary>
     /// フィールドのマップチップを生成
     /// </summary>
     public void CreateFields()
     {
+      Reset();
+
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
         bool[] flags = new bool[9];
