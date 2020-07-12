@@ -15,7 +15,7 @@ namespace MyGame
 
       Top,
 
-      // ここから↓に追加
+      Stage,
     }
 
   }

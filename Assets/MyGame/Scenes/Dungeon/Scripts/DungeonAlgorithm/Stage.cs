@@ -9,7 +9,10 @@ namespace MyGame.Dungeon
   /// ダンジョンステージクラス
   /// </summary>
 	public class Stage
-	{
+#if _DEBUG
+    : IDebugMenu
+#endif
+  {
     /// <summary>
     /// ステージ配列
     /// </summary>
@@ -32,6 +35,10 @@ namespace MyGame.Dungeon
       });
 
       this.Reset();
+
+#if _DEBUG
+      DebugMenuManager.Instance.JoinMenu(DebugMenu.Page.Stage, this);
+#endif
     }
 
     /// <summary>
@@ -248,11 +255,12 @@ namespace MyGame.Dungeon
     {
       MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         return cb(x, y, this.tiles[x, y]);
-      });      
+      });
     }
 
+
     //-------------------------------------------------------------------------
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     //-------------------------------------------------------------------------
 
     public void OnGUI()
@@ -291,6 +299,56 @@ namespace MyGame.Dungeon
 			});
     }
 
-    #endif
+#endif
+
+    void IDebugMenu.DrawDebug()
+    {
+      GUIStyle sWall = new GUIStyle();
+      GUIStyle sAisle = new GUIStyle();
+      GUIStyle sRoom = new GUIStyle();
+      GUIStyle sPlayer = new GUIStyle();
+      GUIStyle sGoal = new GUIStyle();
+      GUIStyle sItem = new GUIStyle();
+      GUIStyle sEnemy = new GUIStyle();
+
+      GUIStyle style = null;
+      sWall.normal.textColor = Color.black;
+      sAisle.normal.textColor = Color.gray;
+      sRoom.normal.textColor = Color.blue;
+      sPlayer.normal.textColor = Color.white;
+      sGoal.normal.textColor = Color.magenta;
+      sItem.normal.textColor = Color.cyan;
+      sEnemy.normal.textColor = Color.red;
+
+      this.Map((int x, int y, Tile tile) =>
+      {
+        if (tile.IsWall) style = sWall;
+        if (tile.IsAisle) style = sAisle;
+        if (tile.IsRoom) style = sRoom;
+        if (tile.IsPlayer) style = sPlayer;
+        if (tile.IsGoal) style = sGoal;
+        if (tile.IsItem) style = sItem;
+        if (tile.IsEnemy) style = sEnemy;
+
+        if (style != null)
+        {
+          bool isNewLine = ( x % Define.WIDTH == 0 );
+          bool isEndLine = ( x != 0 && x % (Define.WIDTH-1) == 0);
+
+          if (isNewLine)
+          {
+            GUILayout.BeginHorizontal();
+          }
+          
+          GUILayout.Label( "■", style, GUILayout.Width(7), GUILayout.Height(7));
+
+          if (isEndLine)
+          {
+            GUILayout.EndHorizontal();
+          }
+        }
+      });
+
+    }
   }
 }
