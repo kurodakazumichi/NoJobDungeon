@@ -32,10 +32,6 @@ namespace MyGame.Dungeon
       });
 
       this.Reset();
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Stage, DrawDebugMenu, "MiniMap");
-#endif
     }
 
     /// <summary>
@@ -299,7 +295,7 @@ namespace MyGame.Dungeon
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
+    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sAisle = new GUIStyle();

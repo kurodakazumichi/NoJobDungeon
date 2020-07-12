@@ -16,14 +16,13 @@ namespace MyGame
       PageStart, // ページの追加はここより↓
       Top,
       Input,
-      Algorithm,
-      Stage,
       MapChip,
       Dungeon,
       Player,
       Enemy,
       
       PageChild, // トップ画面に表示しないものはここより↓
+      Algorithm,
       EnemyDetail,
 
       PageEnd, // ページの追加はここより↑

@@ -278,7 +278,7 @@ namespace MyGame.Dungeon {
 #if _DEBUG
     public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
-      if (GUILayout.Button("Create"))
+      if (GUILayout.Button("Remake"))
       {
         this.state.SetState(Phase.CreateStage);
       }

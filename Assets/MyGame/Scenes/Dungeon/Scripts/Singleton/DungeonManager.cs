@@ -32,6 +32,10 @@ namespace MyGame.Dungeon
       base.Awake();
       this.algorithm = new Algorithm();
       this.stage     = new Stage();
+
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
+#endif
     }
 
     //-------------------------------------------------------------------------
@@ -100,6 +104,21 @@ namespace MyGame.Dungeon
     {
       this.stage.Map(cb);
     }
+
+#if _DEBUG
+    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    {
+      this.stage.DrawDebugMenu(menuWindow);
+
+      if (GUILayout.Button("Algorithm"))
+      {
+        DebugMenuManager.Instance.OpenWindow(
+          DebugMenu.Page.Algorithm,
+          this.algorithm.DrawDebugMenu
+        );
+      }
+    }
+#endif
   }
 
 }

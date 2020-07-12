@@ -82,10 +82,6 @@ namespace MyGame.Dungeon {
       this.aisleCreationFlag = false;
 
       SetConfig();
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Algorithm, DrawDebugMenu, "Map");
-#endif
     }
 
     //-------------------------------------------------------------------------
@@ -832,7 +828,7 @@ namespace MyGame.Dungeon {
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
+    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sRoom = new GUIStyle();
