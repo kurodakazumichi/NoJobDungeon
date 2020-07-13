@@ -136,7 +136,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void MakePlayer()
     {
-      var pos = PlaceableCoord;
+      var pos = GetPlaceableCoord(1);
       AddTileState(pos.x, pos.y, Dungeon.Tiles.Player);
     }
 
@@ -145,7 +145,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void MakeGoal()
     {
-      var pos = PlaceableCoord;
+      var pos = GetPlaceableCoord(1);
       AddTileState(pos.x, pos.y, Dungeon.Tiles.Goal);
     }
 
@@ -155,7 +155,7 @@ namespace MyGame.Dungeon
     public void MakeItem()
     {
       MyGame.Util.LoopByRange(0, 10, (int i) => {
-        var pos = PlaceableCoord;
+        var pos = GetPlaceableCoord();
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Item);
       });
     }
@@ -163,7 +163,7 @@ namespace MyGame.Dungeon
     public void MakeEnemy()
     {
       MyGame.Util.LoopByRange(0, 3, (int i) => {
-        var pos = PlaceableCoord;
+        var pos = GetPlaceableCoord();
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Enemy);
       });
     }
@@ -172,23 +172,22 @@ namespace MyGame.Dungeon
     // 配置関連
 
     /// <summary>
-    /// ダンジョン内の配置可能なランダムな座標
+    /// ダンジョン内の配置可能なランダムな座標を取得
     /// </summary>
-    public Vector2Int PlaceableCoord
+    private Vector2Int GetPlaceableCoord(int padding = 0)
     {
-      get {
-        while(true) 
+      while(true)
+      {
+        var room = this.rooms.Rand();
+
+        var coord = room.RandomCoord(padding);
+
+        if (!this.tiles[coord.x, coord.y].IsEmpty)
         {
-          var room = this.rooms.Rand();
-
-          var pos = room.RandomCoord;
-
-          if (!this.tiles[pos.x, pos.y].IsEmpty) {
-            continue;
-          }
-        
-          return pos;
+          continue;
         }
+        
+        return coord;
       }
     }
 
@@ -335,7 +334,7 @@ namespace MyGame.Dungeon
       sAisle.normal.textColor  = Color.gray;
       sRoom.normal.textColor   = Color.blue;
       sPlayer.normal.textColor = Color.white;
-      sGoal.normal.textColor   = Color.magenta;
+      sGoal.normal.textColor   = Color.yellow;
       sItem.normal.textColor   = Color.cyan;
       sEnemy.normal.textColor  = Color.red;
 
