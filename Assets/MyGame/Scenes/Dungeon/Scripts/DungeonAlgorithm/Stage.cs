@@ -309,78 +309,56 @@ namespace MyGame.Dungeon
       });
     }
 
+#if _DEBUG
+    private int _mode = 0;
 
-    //-------------------------------------------------------------------------
-#if UNITY_EDITOR
-    //-------------------------------------------------------------------------
-
-    public void OnGUI()
+    private string[] _modes = new string[]
     {
-			GUIStyle sWall = new GUIStyle();
-			GUIStyle sAisle = new GUIStyle();
-			GUIStyle sRoom = new GUIStyle();
+      "Full", "Normal", "Clear"
+    };
+
+    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
+    {
+      this._mode = GUILayout.SelectionGrid(this._mode, this._modes, this._modes.Length);
+
+      GUIStyle sWall   = new GUIStyle();
+      GUIStyle sAisle  = new GUIStyle();
+      GUIStyle sRoom   = new GUIStyle();
       GUIStyle sPlayer = new GUIStyle();
       GUIStyle sGoal   = new GUIStyle();
       GUIStyle sItem   = new GUIStyle();
       GUIStyle sEnemy  = new GUIStyle();
 
-			GUIStyle style = null;
-			sWall.normal.textColor  = Color.black;
-			sAisle.normal.textColor = Color.gray;
-			sRoom.normal.textColor  = Color.blue;
-      sPlayer.normal.textColor = Color.white;
-      sGoal.normal.textColor = Color.magenta;
-      sItem.normal.textColor = Color.cyan;
-      sEnemy.normal.textColor = Color.red;
-
-			this.Map((int x, int y, Tile tile) =>
-			{
-				if (tile.IsWall) style = sWall;
-				if (tile.IsAisle) style = sAisle;
-				if (tile.IsRoom)  style = sRoom;
-        if (tile.IsPlayer) style = sPlayer;
-        if (tile.IsGoal) style = sGoal;
-        if (tile.IsItem) style = sItem;
-        if (tile.IsEnemy) style = sEnemy;
-
-        if (style != null) {
-          const int s = 7;
-				  GUI.Label(new Rect(x * s + 10, y * s + 10, s, s), "■", style);
-        }
-			});
-    }
-
-#endif
-
-#if _DEBUG
-    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
-    {
-      GUIStyle sWall = new GUIStyle();
-      GUIStyle sAisle = new GUIStyle();
-      GUIStyle sRoom = new GUIStyle();
-      GUIStyle sPlayer = new GUIStyle();
-      GUIStyle sGoal = new GUIStyle();
-      GUIStyle sItem = new GUIStyle();
-      GUIStyle sEnemy = new GUIStyle();
-
       GUIStyle style = null;
-      sWall.normal.textColor = Color.black;
-      sAisle.normal.textColor = Color.gray;
-      sRoom.normal.textColor = Color.blue;
+      sWall.normal.textColor   = Color.black;
+      sAisle.normal.textColor  = Color.gray;
+      sRoom.normal.textColor   = Color.blue;
       sPlayer.normal.textColor = Color.white;
-      sGoal.normal.textColor = Color.magenta;
-      sItem.normal.textColor = Color.cyan;
-      sEnemy.normal.textColor = Color.red;
+      sGoal.normal.textColor   = Color.magenta;
+      sItem.normal.textColor   = Color.cyan;
+      sEnemy.normal.textColor  = Color.red;
 
       this.Map((int x, int y, Tile tile) =>
       {
-        if (tile.IsWall) style = sWall;
-        if (tile.IsAisle) style = sAisle;
-        if (tile.IsRoom) style = sRoom;
+        if (tile.IsWall) style   = sWall;
+        if (tile.IsAisle) style  = sAisle;
+        if (tile.IsRoom) style   = sRoom;
         if (tile.IsPlayer) style = sPlayer;
-        if (tile.IsGoal) style = sGoal;
-        if (tile.IsItem) style = sItem;
-        if (tile.IsEnemy) style = sEnemy;
+        if (tile.IsGoal) style   = sGoal;
+        if (tile.IsItem) style   = sItem;
+        if (tile.IsEnemy) style  = sEnemy;
+
+        // 通常モードの場合、踏破してない場所は壁で代用
+        if (this._mode == 1 && !tile.IsClear)
+        {
+          style = sWall;
+        }
+
+        // 踏破モードの場合は踏破している箇所のみ色を付ける
+        if (this._mode == 2)
+        {
+          style = (tile.IsClear)? sGoal : sWall;
+        }
 
         if (style != null)
         {
