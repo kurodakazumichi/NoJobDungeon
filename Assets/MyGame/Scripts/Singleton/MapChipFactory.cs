@@ -34,7 +34,7 @@ namespace MyGame
 
   public enum GimmickChipType
   {
-    Goal = 8,
+    Goal = 231,
   }
 
   /// <summary>
