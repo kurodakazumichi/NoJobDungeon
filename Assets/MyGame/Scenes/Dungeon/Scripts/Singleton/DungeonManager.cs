@@ -66,6 +66,7 @@ namespace MyGame.Dungeon
         return this.stage.Find(Tiles.Goal)[0].Equals(PlayerCoord);
       }
     }
+
     //-------------------------------------------------------------------------
     // 取得
 
@@ -107,6 +108,8 @@ namespace MyGame.Dungeon
       this.stage.RemoveTileState(from, Tiles.Enemy);
       this.stage.AddTileState(to, Tiles.Enemy);
     }
+
+
 
     /// <summary>
     /// 指定した座標から敵の情報を除去する

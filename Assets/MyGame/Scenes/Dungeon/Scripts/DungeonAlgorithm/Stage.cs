@@ -295,7 +295,8 @@ namespace MyGame.Dungeon
 
     //-------------------------------------------------------------------------
     // その他
-		public void Map(System.Action<int, int, Tile> cb)
+
+    public void Map(System.Action<int, int, Tile> cb)
 		{
       MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         cb(x, y, this.tiles[x, y]);
