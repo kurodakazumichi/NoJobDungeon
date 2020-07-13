@@ -7,7 +7,7 @@ namespace MyGame
   /// <summary>
   /// 8方向キャラクターチップのベースクラス
   /// </summary>
-  public class CharChipBase : MapChipBase
+  public class CharChip : MapChipBase
   {
     //-------------------------------------------------------------------------
     // Enum

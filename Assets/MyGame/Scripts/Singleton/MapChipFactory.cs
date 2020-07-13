@@ -83,9 +83,9 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // Player Chip
 
-    public CharChipBase CreatePlayerChip()
+    public CharChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<CharChipBase>("player");
+      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
       chip.Reset();
       chip.SetSprite(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
       chip.Sorting = SpriteSortingOrder.Player;
@@ -103,9 +103,9 @@ namespace MyGame
       { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public CharChipBase CreateEnemyChip(EnemyChipType type)
+    public CharChip CreateEnemyChip(EnemyChipType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<CharChipBase>(type.ToString());
+      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
 
       chip.Reset();
 
