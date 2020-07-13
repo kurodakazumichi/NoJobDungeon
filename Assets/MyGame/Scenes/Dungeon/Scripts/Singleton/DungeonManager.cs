@@ -72,6 +72,14 @@ namespace MyGame.Dungeon
     /// <summary>
     /// ステージのタイル情報を取得する
     /// </summary>
+    public IReadOnlyTile GetTile(int x, int y)
+    {
+      return this.stage.GetTile(x, y);
+    }
+
+    /// <summary>
+    /// ステージのタイル情報を取得する
+    /// </summary>
     public IReadOnlyTile GetTile(Vector2Int coord)
     {
       return this.stage.GetTile(coord);
@@ -130,6 +138,29 @@ namespace MyGame.Dungeon
     public void Map(System.Action<int, int, IReadOnlyTile> cb)
     {
       this.stage.Map(cb);
+    }
+
+    /// <summary>
+    /// 中心座標から周囲 distance マス を見る
+    /// 範囲外に該当する座標はスキップする
+    /// </summary>
+    public void LookAround(Vector2Int center, int distance, System.Action<int, int, IReadOnlyTile> cb)
+    {
+      // LoopByRectで回すためのRect情報を作成
+      var rx   = center.x - distance;
+      var ry   = center.y - distance;
+      var size = distance * 2 + 1;
+      var rect = new RectInt(rx, ry, size, size);
+
+      // ループしてコールバックを呼ぶ
+      MyGame.Util.LoopByRect(rect, (x, y) =>
+      {
+        // 範囲外アクセスは無視
+        if (x < 0 || Define.WIDTH  - 1 <= x) return;
+        if (y < 0 || Define.HEIGHT - 1 <= y) return;
+
+        cb(x, y, GetTile(x, y));
+      });
     }
 
     //-------------------------------------------------------------------------
