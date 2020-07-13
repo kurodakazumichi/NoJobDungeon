@@ -187,6 +187,7 @@ namespace MyGame
       this.state.SetState(State.Attack);
     }
 
+    // TODO: スペルミス
     public void Oush(float time)
     {
       ResetForStateMachine();
