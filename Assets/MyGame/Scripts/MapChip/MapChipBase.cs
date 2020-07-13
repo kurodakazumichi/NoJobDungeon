@@ -12,6 +12,22 @@ namespace MyGame {
   {
     protected SpriteRenderer spriteRenderer;
 
+    public Sprite Sprite 
+    { 
+      set
+      {
+        this.spriteRenderer.sprite = value;
+      }
+    }
+
+    public int Sorting
+    {
+      set
+      {
+        this.spriteRenderer.sortingOrder = value;
+      }
+    }
+
     /// <summary>
     /// SpriteRendererをアタッチする
     /// </summary>

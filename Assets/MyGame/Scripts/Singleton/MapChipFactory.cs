@@ -13,6 +13,7 @@ namespace MyGame
     Gimmick,
     Player,
     Enemy,
+    Item,
   }
 
   public enum FieldChipType
@@ -35,6 +36,11 @@ namespace MyGame
   public enum GimmickChipType
   {
     Goal = 231,
+  }
+
+  public enum ItemChipType
+  {
+    Capsule,
   }
 
   /// <summary>
@@ -120,6 +126,30 @@ namespace MyGame
       return chip;
     }
 
+    //-------------------------------------------------------------------------
+    // Item Chip
+
+    /// <summary>
+    /// ItemChipTypeとリソースファイルのマップテーブル
+    /// </summary>
+    private Dictionary<ItemChipType, string> ItemChipResouceMap = new Dictionary<ItemChipType, string>()
+    {
+      { ItemChipType.Capsule, "Textures/ItemChip/icon_Capsule1_blue" }
+    };
+
+    public BasicChip CreateItemChip(ItemChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Item].Create<BasicChip>(type.ToString());
+
+      chip.Reset();
+      chip.Sprite  = Resources.Load<Sprite>(this.ItemChipResouceMap[type]);
+      chip.Sorting = SpriteSortingOrder.Item;
+
+      return chip;
+    }
+
+    //"Textures/ItemChip/icon_Capsule1_blue"
+
     /// <summary>
     /// 解放する
     /// </summary>
@@ -155,6 +185,8 @@ namespace MyGame
       folder = CreateFolderObject("Enemy");
       this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
 
+      folder = CreateFolderObject("Item");
+      this.pools.Add(MapChipGroup.Item, new ObjectPool(folder));
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
 #endif
@@ -217,12 +249,23 @@ namespace MyGame
       GUILayout.EndHorizontal();
     }
 
+    private void OnDebugItemChip()
+    {
+      GUILayout.Label("Item Chip Generator");
+      GUILayout.BeginHorizontal();
+      {
+        if (GUILayout.Button("Capsule")) CreateItemChip(ItemChipType.Capsule);
+      }
+      GUILayout.EndHorizontal();
+    }
+
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.OnDebugFieldChip();
       this.OnDebugGimmickChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
+      this.OnDebugItemChip();
     }
 #endif
 
