@@ -61,6 +61,7 @@ namespace MyGame {
         case CameraMode.Tracking: 
         {
           if (this.isLock) return;
+          if (this.target == null) return;
           var pos = this.target.transform.position;
 
           var cam = Camera.main.transform.position;

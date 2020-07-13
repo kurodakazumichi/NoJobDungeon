@@ -288,6 +288,14 @@ namespace MyGame.Dungeon {
       // プレイヤーが痛がっている間は待機
       if (PlayerManager.Instance.HasnActivePlayer) return;
 
+      // プレイヤーが死んじゃったらタイトル画面へ
+      if (PlayerManager.Instance.IsPlayerDead)
+      {
+        Debug.Log("プレイヤー死んじゃった");
+        CameraManager.Instance.SetFreeMode();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MyGame/Scenes/Title/TitleScene");
+      }
+
       // まだ攻撃をする敵が残っている場合は敵の攻撃開始フェーズへ
       if (EnemyManager.Instance.HasAttacker)
       {
