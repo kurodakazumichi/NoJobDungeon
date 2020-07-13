@@ -36,20 +36,32 @@ namespace MyGame.Dungeon {
     // 主要メソッド
 
     /// <summary>
-    /// 開始処理
+    /// 起動処理
     /// </summary>
-    protected override void Start()
+    protected override void Awake()
     {
+      base.Awake();
+
       var system = new GameObject("System");
 
       SingletonManager.Instance
         .Setup(nameof(DungeonManager), system)
         .Setup(nameof(MapChipFactory), system)
         .Setup(nameof(GimmickManager), system)
-        .Setup(nameof(PlayerManager) , system)
-        .Setup(nameof(FieldManager)  , system)
-        .Setup(nameof(EnemyManager)  , system);
+        .Setup(nameof(PlayerManager), system)
+        .Setup(nameof(FieldManager), system)
+        .Setup(nameof(EnemyManager), system);
 
+#if _DEBUG
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
+#endif
+    }
+
+    /// <summary>
+    /// 開始処理
+    /// </summary>
+    protected override void Start()
+    {
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
       this.state.Add(Phase.CreateStage, CreateStageEnter);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
@@ -60,10 +72,6 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
 
       this.state.SetState(Phase.Load);
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu( DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene) );
-#endif
     }
 
     protected override void Update()
