@@ -249,6 +249,9 @@ namespace MyGame.Dungeon
       // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
       this.hp -= attacker.Atk;
       this.isAcceptAttack = true;
+
+      // 攻撃してきた奴の方を向く
+      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
     }
     //-------------------------------------------------------------------------
     // 移動に関するUtil
