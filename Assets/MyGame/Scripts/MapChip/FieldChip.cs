@@ -11,7 +11,6 @@ namespace MyGame {
   {
     public void SetSprite(Sprite sprite)
     {
-      Debug.Log(sprite);
       this.spriteRenderer.sprite = sprite;
     }
 
