@@ -54,25 +54,15 @@ namespace MyGame.Dungeon
       get { return this.area; }
     }
 
-    public int yMin
-    {
-      get { return this.area.yMin; }
-    }
+    public int x => (Area.x);
+    public int y => (Area.y);
+    public int w => (Area.width);
+    public int h => (Area.height);
 
-    public int yMax
-    {
-      get { return this.area.yMax; }
-    }
-
-    public int xMin
-    {
-      get { return this.area.xMin; }
-    }
-
-    public int xMax
-    {
-      get { return this.area.xMax; }
-    }
+    public int yMin => (Area.yMin);
+    public int yMax => (Area.yMax);
+    public int xMin => (Area.xMin);
+    public int xMax => (Area.xMax);
 
     public Vector2Int RandomCoord
     {

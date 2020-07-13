@@ -128,6 +128,9 @@ namespace MyGame.Dungeon {
       CameraManager.Instance.SetDungeonSettings();
       CameraManager.Instance.SetTrackingMode(PlayerManager.Instance.PlayerObject);
 
+      // マップの踏破情報を更新
+      DungeonManager.Instance.UpdateClearFlags();
+
       // 入力待ちフェーズへ
       this.state.SetState(Phase.PlayerThink);
     }
@@ -176,6 +179,9 @@ namespace MyGame.Dungeon {
       // プレイヤーと敵に動けと命じる
       PlayerManager.Instance.OrderToMove();
       EnemyManager.Instance.OrderToMove();
+
+      // 踏破情報更新
+      DungeonManager.Instance.UpdateClearFlags();
     }
 
     private void MoveUpdate()

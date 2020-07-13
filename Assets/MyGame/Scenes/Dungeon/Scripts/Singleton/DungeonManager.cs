@@ -66,6 +66,7 @@ namespace MyGame.Dungeon
         return this.stage.Find(Tiles.Goal)[0].Equals(PlayerCoord);
       }
     }
+
     //-------------------------------------------------------------------------
     // 取得
 
@@ -108,6 +109,8 @@ namespace MyGame.Dungeon
       this.stage.AddTileState(to, Tiles.Enemy);
     }
 
+
+
     /// <summary>
     /// 指定した座標から敵の情報を除去する
     /// </summary>
@@ -130,6 +133,14 @@ namespace MyGame.Dungeon
     public void downFloor()
     {
       this.floor = Mathf.Max(1, --this.floor);
+    }
+
+    /// <summary>
+    /// 踏破フラグを更新する
+    /// </summary>
+    public void UpdateClearFlags()
+    {
+      this.stage.UpdateClearFlag(PlayerCoord);
     }
 
     //-------------------------------------------------------------------------

@@ -19,7 +19,7 @@ namespace MyGame.Dungeon {
     bool IsGoal     { get; }
     bool IsEmpty    { get; }
     bool IsObstacle { get; }
-
+    bool IsClear    { get; }
     bool Contain(params Tiles[] tiles);
     bool ContainEither(params Tiles[] tiles);
 
@@ -38,6 +38,7 @@ namespace MyGame.Dungeon {
 		Item   = 1 << 5,
 		Trap   = 1 << 6,
     Goal   = 1 << 7,
+    Clear  = 1 << 8,
 	}
 
   /// <summary>
@@ -108,6 +109,11 @@ namespace MyGame.Dungeon {
     public bool IsGoal
     {
       get { return this.state.Contain((uint)Tiles.Goal); }
+    }
+
+    public bool IsClear
+    {
+      get { return this.state.Contain((uint)Tiles.Clear); }
     }
 
     /// <summary>

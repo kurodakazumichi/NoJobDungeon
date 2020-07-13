@@ -236,8 +236,67 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
+    // マップの踏破
+
+    /// <summary>
+    /// 指定された座標をもとに踏破フラグを更新する
+    /// 基本は指定された座標の周囲１マスを更新するが
+    /// 指定された座標が部屋内だった場合は部屋を含むその周囲１マスを更新する。
+    /// </summary>
+    public void UpdateClearFlag(Vector2Int coord)
+    {
+      // 指定座標の周囲１マスの範囲を定義
+      var rect = new RectInt(coord.x - 1, coord.y - 1, 3, 3);
+
+      // 指定された座標が部屋の範囲内だった場合は
+      // 該当する部屋の周囲１マスを含む範囲に変更
+      var room = GetRoomBy(coord);
+
+      if (room != null)
+      {
+        rect = new RectInt(room.x - 1, room.y - 1, room.w + 2, room.h + 2);
+      }
+
+      // 矩形範囲の踏破フラグを更新
+      UpdateClearFlag(rect);
+    }
+
+    /// <summary>
+    /// 矩形情報をもとに踏破フラグを更新する
+    /// </summary>
+    private void UpdateClearFlag(RectInt rect)
+    {
+      MyGame.Util.LoopByRect(rect, (x, y) =>
+      {
+        AddTileState(x, y, Dungeon.Tiles.Clear);
+      });
+    }
+
+    /// <summary>
+    /// 指定された座標に存在する部屋を取得する
+    /// </summary>
+    private Room GetRoomBy(Vector2Int coord)
+    {
+      Room foundRoom = null;
+
+      MyGame.Util.Loop(this.rooms, (room) =>
+      {
+        if (room.Area.Contains(coord))
+        {
+          foundRoom = room;
+          return true;
+        }
+
+        return false;
+      });
+
+      return foundRoom;
+    }
+
+    //-------------------------------------------------------------------------
     // その他
-		public void Map(System.Action<int, int, Tile> cb)
+
+    public void Map(System.Action<int, int, Tile> cb)
 		{
       MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (int x, int y) => {
         cb(x, y, this.tiles[x, y]);
@@ -251,78 +310,56 @@ namespace MyGame.Dungeon
       });
     }
 
+#if _DEBUG
+    private int _mode = 0;
 
-    //-------------------------------------------------------------------------
-#if UNITY_EDITOR
-    //-------------------------------------------------------------------------
-
-    public void OnGUI()
+    private string[] _modes = new string[]
     {
-			GUIStyle sWall = new GUIStyle();
-			GUIStyle sAisle = new GUIStyle();
-			GUIStyle sRoom = new GUIStyle();
+      "Full", "Normal", "Clear"
+    };
+
+    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
+    {
+      this._mode = GUILayout.SelectionGrid(this._mode, this._modes, this._modes.Length);
+
+      GUIStyle sWall   = new GUIStyle();
+      GUIStyle sAisle  = new GUIStyle();
+      GUIStyle sRoom   = new GUIStyle();
       GUIStyle sPlayer = new GUIStyle();
       GUIStyle sGoal   = new GUIStyle();
       GUIStyle sItem   = new GUIStyle();
       GUIStyle sEnemy  = new GUIStyle();
 
-			GUIStyle style = null;
-			sWall.normal.textColor  = Color.black;
-			sAisle.normal.textColor = Color.gray;
-			sRoom.normal.textColor  = Color.blue;
-      sPlayer.normal.textColor = Color.white;
-      sGoal.normal.textColor = Color.magenta;
-      sItem.normal.textColor = Color.cyan;
-      sEnemy.normal.textColor = Color.red;
-
-			this.Map((int x, int y, Tile tile) =>
-			{
-				if (tile.IsWall) style = sWall;
-				if (tile.IsAisle) style = sAisle;
-				if (tile.IsRoom)  style = sRoom;
-        if (tile.IsPlayer) style = sPlayer;
-        if (tile.IsGoal) style = sGoal;
-        if (tile.IsItem) style = sItem;
-        if (tile.IsEnemy) style = sEnemy;
-
-        if (style != null) {
-          const int s = 7;
-				  GUI.Label(new Rect(x * s + 10, y * s + 10, s, s), "■", style);
-        }
-			});
-    }
-
-#endif
-
-#if _DEBUG
-    public void DrawDebugMenu( DebugMenu.MenuWindow menuWindow )
-    {
-      GUIStyle sWall = new GUIStyle();
-      GUIStyle sAisle = new GUIStyle();
-      GUIStyle sRoom = new GUIStyle();
-      GUIStyle sPlayer = new GUIStyle();
-      GUIStyle sGoal = new GUIStyle();
-      GUIStyle sItem = new GUIStyle();
-      GUIStyle sEnemy = new GUIStyle();
-
       GUIStyle style = null;
-      sWall.normal.textColor = Color.black;
-      sAisle.normal.textColor = Color.gray;
-      sRoom.normal.textColor = Color.blue;
+      sWall.normal.textColor   = Color.black;
+      sAisle.normal.textColor  = Color.gray;
+      sRoom.normal.textColor   = Color.blue;
       sPlayer.normal.textColor = Color.white;
-      sGoal.normal.textColor = Color.magenta;
-      sItem.normal.textColor = Color.cyan;
-      sEnemy.normal.textColor = Color.red;
+      sGoal.normal.textColor   = Color.magenta;
+      sItem.normal.textColor   = Color.cyan;
+      sEnemy.normal.textColor  = Color.red;
 
       this.Map((int x, int y, Tile tile) =>
       {
-        if (tile.IsWall) style = sWall;
-        if (tile.IsAisle) style = sAisle;
-        if (tile.IsRoom) style = sRoom;
+        if (tile.IsWall) style   = sWall;
+        if (tile.IsAisle) style  = sAisle;
+        if (tile.IsRoom) style   = sRoom;
         if (tile.IsPlayer) style = sPlayer;
-        if (tile.IsGoal) style = sGoal;
-        if (tile.IsItem) style = sItem;
-        if (tile.IsEnemy) style = sEnemy;
+        if (tile.IsGoal) style   = sGoal;
+        if (tile.IsItem) style   = sItem;
+        if (tile.IsEnemy) style  = sEnemy;
+
+        // 通常モードの場合、踏破してない場所は壁で代用
+        if (this._mode == 1 && !tile.IsClear)
+        {
+          style = sWall;
+        }
+
+        // 踏破モードの場合は踏破している箇所のみ色を付ける
+        if (this._mode == 2)
+        {
+          style = (tile.IsClear)? sGoal : sWall;
+        }
 
         if (style != null)
         {
