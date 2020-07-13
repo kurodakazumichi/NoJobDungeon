@@ -29,7 +29,7 @@ namespace MyGame.Title
 
       PressEnterKeyText.color = color;
 
-      if (Input.GetKeyDown(KeyCode.Return))
+      if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
       {
         SceneManager.LoadScene("MyGame/Scenes/Boot/Boot");
       }

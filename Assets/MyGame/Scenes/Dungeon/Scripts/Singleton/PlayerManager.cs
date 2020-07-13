@@ -135,6 +135,14 @@ namespace MyGame.Dungeon
     {
       this.player.DrawDebugMenu();
     }
+
+    private void OnGUI()
+    {
+      if (this.player != null)
+      {
+        this.player.OnGUI();
+      }
+    }
 #endif
 
   }

@@ -78,7 +78,7 @@ namespace MyGame.Dungeon
     /// 攻撃力
     /// TODO: 仮実装
     /// </summary>
-    public int Atk => (10);
+    public int Atk => (4);
 
     //-------------------------------------------------------------------------
     // Public Method
