@@ -64,13 +64,32 @@ namespace MyGame.Dungeon
     public int xMin => (Area.xMin);
     public int xMax => (Area.xMax);
 
-    public Vector2Int RandomCoord
+    /// <summary>
+    /// ランダムな座標を生成する
+    /// 引数にpaddingを渡す事で部屋の内側に余白を設定した上でランダムな座標を生成可能
+    /// </summary>
+    public Vector2Int RandomCoord(int padding = 0)
     {
-      get {
-        int x = this.area.x + Random.Range(0, this.area.width);
-        int y = this.area.y + Random.Range(0, this.area.height);
-        return new Vector2Int(x, y);
+      // 余白は正の値のみ
+      padding = Mathf.Abs(padding);
+
+      // 部屋のサイズを超える余白が設定されないように調整(横幅)
+      if (this.area.width - (padding * 2) < 0)
+      {
+        padding = 0;
       }
+
+      // 部屋のサイズを超える余白が設定されないように調整(縦幅)
+      if (this.area.height - (padding * 2) < 0)
+      {
+        padding = 0;
+      }
+
+      // ランダムな座標を生成
+      int x = this.area.x + Random.Range(0 + padding, this.area.width - padding);
+      int y = this.area.y + Random.Range(0 + padding, this.area.height - padding);
+
+      return new Vector2Int(x, y);
     }
 
   }
