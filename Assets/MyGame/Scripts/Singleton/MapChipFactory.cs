@@ -41,6 +41,18 @@ namespace MyGame
   public enum ItemChipType
   {
     Capsule,
+    Weapon,
+    Shield,
+    Book,
+    Accessory,
+    Card,
+    Ore,
+    Meat,
+    Vegetabl,
+    Shuriken,
+    Recipe,
+    Box,
+    Wood,
   }
 
   /// <summary>
@@ -123,7 +135,19 @@ namespace MyGame
     /// </summary>
     private Dictionary<ItemChipType, string> ItemChipResouceMap = new Dictionary<ItemChipType, string>()
     {
-      { ItemChipType.Capsule, "Textures/ItemChip/icon_Capsule1_blue" }
+      { ItemChipType.Capsule  , "Textures/ItemChip/icon_Capsule1_blue" },
+      { ItemChipType.Weapon   , "Textures/ItemChip/icon002" },
+      { ItemChipType.Book     , "Textures/ItemChip/icon009" },
+      { ItemChipType.Shield   , "Textures/ItemChip/icon010" },
+      { ItemChipType.Accessory, "Textures/ItemChip/icon015" },
+      { ItemChipType.Card     , "Textures/ItemChip/icon018" },
+      { ItemChipType.Ore      , "Textures/ItemChip/icon023" },
+      { ItemChipType.Meat     , "Textures/ItemChip/icon027" },
+      { ItemChipType.Vegetabl , "Textures/ItemChip/icon029" },
+      { ItemChipType.Shuriken , "Textures/ItemChip/icon138" },
+      { ItemChipType.Recipe   , "Textures/ItemChip/icon196" },
+      { ItemChipType.Wood     , "Textures/ItemChip/icon225" },
+      { ItemChipType.Box      , "Textures/ItemChip/icon246" },
     };
 
     public BasicChip CreateItemChip(ItemChipType type)

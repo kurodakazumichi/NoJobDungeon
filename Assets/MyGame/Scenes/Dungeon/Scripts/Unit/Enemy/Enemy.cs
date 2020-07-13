@@ -107,7 +107,6 @@ namespace MyGame.Dungeon
       {
         this.behavior = BehaviorType.Attack;
         this.chip.Direction = new Direction(v, false);
-        Debug.Log(this.chip.Direction.value);
       }
 
       // プレイヤーがいないなら移動を考える
