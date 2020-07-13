@@ -236,6 +236,64 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
+    // マップの踏破
+
+    /// <summary>
+    /// 指定された座標をもとに踏破フラグを更新する
+    /// 基本は指定された座標の周囲１マスを更新するが
+    /// 指定された座標が部屋内だった場合は部屋を含むその周囲１マスを更新する。
+    /// </summary>
+    public void UpdateClearFlag(Vector2Int coord)
+    {
+      // 指定座標の周囲１マスの範囲を定義
+      var rect = new RectInt(coord.x - 1, coord.y - 1, 3, 3);
+
+      // 指定された座標が部屋の範囲内だった場合は
+      // 該当する部屋の周囲１マスを含む範囲に変更
+      var room = GetRoomBy(coord);
+
+      if (room != null)
+      {
+        rect = new RectInt(room.x - 1, room.y - 1, room.w + 2, room.h + 2);
+      }
+
+      // 矩形範囲の踏破フラグを更新
+      UpdateClearFlag(rect);
+    }
+
+    /// <summary>
+    /// 矩形情報をもとに踏破フラグを更新する
+    /// </summary>
+    private void UpdateClearFlag(RectInt rect)
+    {
+      MyGame.Util.LoopByRect(rect, (x, y) =>
+      {
+        AddTileState(x, y, Dungeon.Tiles.Clear);
+      });
+    }
+
+    /// <summary>
+    /// 指定された座標に存在する部屋を取得する
+    /// </summary>
+    private Room GetRoomBy(Vector2Int coord)
+    {
+      Room foundRoom = null;
+
+      MyGame.Util.Loop(this.rooms, (room) =>
+      {
+        if (room.Area.Contains(coord))
+        {
+          foundRoom = room;
+          return true;
+        }
+
+        return false;
+      });
+
+      return foundRoom;
+    }
+
+    //-------------------------------------------------------------------------
     // その他
 		public void Map(System.Action<int, int, Tile> cb)
 		{
