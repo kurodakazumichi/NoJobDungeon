@@ -49,6 +49,11 @@ namespace MyGame.Dungeon
     private int hp = 10;
 
     /// <summary>
+    /// 最大体力
+    /// </summary>
+    private int maxHP = 10;
+
+    /// <summary>
     /// 攻撃を受けたフラグ
     /// TODO: 仮実装
     /// </summary>
@@ -351,6 +356,29 @@ namespace MyGame.Dungeon
     }
 
 #if _DEBUG
+
+    // デバッグ用体力ゲージ表示
+    private Texture2D tex1 = new Texture2D(1, 1);
+    private Texture2D tex2 = new Texture2D(1, 1);
+
+    public void OnGUI()
+    {
+      this.tex1.SetPixel(1, 1, new Color(1, 1, 1, 0.2f));
+      this.tex2.SetPixel(1, 1, new Color(0, 1, 1, 0.5f));
+      this.tex2.Apply();
+
+      GUIStyle style1 = new GUIStyle();
+      GUIStyle style2 = new GUIStyle();
+      style1.normal.background = this.tex1;
+      style2.normal.background = this.tex2;
+
+      var width = 200 * ((float)this.hp / (float)this.maxHP);
+
+      GUI.Box(new Rect(10, 10, 200, 20), "", style1);
+      GUI.Box(new Rect(10, 10, width, 20), "", style2);
+      GUI.Label(new Rect(10, 30, 100, 20), $"{this.hp}/{this.maxHP}");
+    }
+
     public void DrawDebugMenu()
     {
       //GUILayout.BeginArea(new Rect(500, 0, 500, 500));
