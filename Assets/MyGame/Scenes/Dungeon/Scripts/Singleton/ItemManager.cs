@@ -37,11 +37,20 @@ namespace MyGame.Dungeon
     {
       Reset();
 
+      // 仮実装
+      var list = new List<ItemChipType>();
+      foreach(var value in System.Enum.GetValues(typeof(ItemChipType)))
+      {
+        list.Add((ItemChipType)value);
+      }
+
       DungeonManager.Instance.Map((x, y, tile) =>
       {
         if (tile.IsItem)
         {
-          var chip = MapChipFactory.Instance.CreateItemChip(ItemChipType.Capsule);
+          var index = Random.Range(0, list.Count);
+          ItemChipType type = list[index];
+          var chip = MapChipFactory.Instance.CreateItemChip(type);
           chip.transform.position = Util.GetPositionBy(x, y);
           this.items.Add(chip);
         }
