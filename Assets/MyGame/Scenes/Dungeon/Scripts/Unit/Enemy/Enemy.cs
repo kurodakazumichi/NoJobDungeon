@@ -166,7 +166,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Ouch()
     {
-      this.chip.Oush(Define.SEC_PER_TURN);
+      this.chip.Ouch(Define.SEC_PER_TURN);
       this.isAcceptAttack = false;
     }
 
