@@ -10,6 +10,7 @@ namespace MyGame
   public enum MapChipGroup 
   {
     Field,
+    Gimmick,
     Player,
     Enemy,
   }
@@ -31,6 +32,10 @@ namespace MyGame
     Shobon,
   }
 
+  public enum GimmickChipType
+  {
+    Goal = 8,
+  }
 
   /// <summary>
   /// マップチップ生成クラス
@@ -52,6 +57,19 @@ namespace MyGame
     public FieldChip CreateFieldChip(FieldChipType type)
     {
       var chip = this.pools[MapChipGroup.Field].Create<FieldChip>("field");
+
+      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.SetSprite(sprites[(int)type]);
+
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Gimmick Chip
+
+    public GimmickChip CreateGimmickChip(GimmickChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Gimmick].Create<GimmickChip>(type.ToString());
 
       var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
       chip.SetSprite(sprites[(int)type]);
@@ -128,6 +146,9 @@ namespace MyGame
       folder = CreateFolderObject("Field"); 
       this.pools.Add(MapChipGroup.Field, new ObjectPool(folder));
 
+      folder = CreateFolderObject("Gimmick");
+      this.pools.Add(MapChipGroup.Gimmick, new ObjectPool(folder));
+
       folder = CreateFolderObject("Player");
       this.pools.Add(MapChipGroup.Player, new ObjectPool(folder));
 
@@ -150,18 +171,7 @@ namespace MyGame
       return folder;
     }
 
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool _debugDraw = false;
-
-    private void OnGUI()
-    {
-      if (!_debugDraw) return;
-
-      this.OnDebugFieldChip();
-      this.OnDebugPlayerChip();
-      this.OnDebugEnemyChip();
-    }
+#if _DEBUG
 
     private void OnDebugFieldChip()
     {
@@ -177,6 +187,15 @@ namespace MyGame
         }
       }
       GUILayout.EndHorizontal();
+    }
+
+    private void OnDebugGimmickChip()
+    {
+      GUILayout.Label("Gimmick Chip Generator");
+      if (GUILayout.Button("Goal"))
+      {
+        CreateGimmickChip(GimmickChipType.Goal);
+      }
     }
 
     private void OnDebugPlayerChip()
@@ -197,12 +216,11 @@ namespace MyGame
       }
       GUILayout.EndHorizontal();
     }
-#endif
 
-#if _DEBUG
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.OnDebugFieldChip();
+      this.OnDebugGimmickChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
     }
