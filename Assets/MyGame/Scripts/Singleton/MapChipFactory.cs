@@ -57,20 +57,6 @@ namespace MyGame
     private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
 
     //-------------------------------------------------------------------------
-    // Field Chip
-
-    // TODO: FieldChip -> AutoChipに差し替える
-    public FieldChip CreateFieldChip(FieldChipType type)
-    {
-      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>("field");
-
-      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.SetSprite(sprites[(int)type]);
-
-      return chip;
-    }
-
-    //-------------------------------------------------------------------------
     // Gimmick Chip
 
     public BasicChip CreateGimmickChip(GimmickChipType type)
@@ -206,22 +192,6 @@ namespace MyGame
 
 #if _DEBUG
 
-    private void OnDebugFieldChip()
-    {
-      GUILayout.Label("Field Chip Generator");
-      GUILayout.BeginHorizontal();
-      {
-        foreach (FieldChipType value in System.Enum.GetValues(typeof(FieldChipType)))
-        {
-          if (GUILayout.Button(value.ToString()))
-          {
-            CreateFieldChip(value);
-          }
-        }
-      }
-      GUILayout.EndHorizontal();
-    }
-
     private void OnDebugGimmickChip()
     {
       GUILayout.Label("Gimmick Chip Generator");
@@ -262,7 +232,6 @@ namespace MyGame
 
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
-      this.OnDebugFieldChip();
       this.OnDebugGimmickChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
