@@ -50,7 +50,8 @@ namespace MyGame.Dungeon {
         .Setup(nameof(GimmickManager), system)
         .Setup(nameof(PlayerManager), system)
         .Setup(nameof(FieldManager), system)
-        .Setup(nameof(EnemyManager), system);
+        .Setup(nameof(EnemyManager), system)
+        .Setup(nameof(ItemManager), system);
 
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
@@ -113,6 +114,9 @@ namespace MyGame.Dungeon {
 
       // ギミックを生成
       GimmickManager.Instance.CreateGimmicks();
+
+      // アイテムを生成
+      ItemManager.Instance.CreateItems();
 
       // 敵を生成
       EnemyManager.Instance.CreateEnemies();
