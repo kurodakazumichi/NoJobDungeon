@@ -315,5 +315,41 @@ namespace MyGame {
     /// 指定時間を経過した
     /// </summary>
     private bool IsTimeOver => (this.specifiedTime <= this.elapsedTime);
+
+#if _DEBUG
+
+    protected void OnDebugProperity()
+    {
+      GUILayout.Label($"Direction:{this.Direction.value.ToString()}");
+      GUILayout.Label($"State    :{this.StateKey.ToString()}");
+
+      Show((GUILayout.Toggle(this.IsShow, "Show")));
+    }
+
+    protected void OnDebugState()
+    {
+      GUILayout.BeginHorizontal();
+      {
+        if (GUILayout.Button("Move"))
+        {
+          var v = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1));
+          Move(1f, v);
+        }
+        if (GUILayout.Button("Attack"))
+        {
+          Attack(1f, 1f);
+        }
+        if (GUILayout.Button("Ouch"))
+        {
+          Ouch(1f);
+        }
+        if (GUILayout.Button("Vanish"))
+        {
+          Vanish(1f);
+        }
+      }
+      GUILayout.EndHorizontal();
+    }
+#endif
   }
 }

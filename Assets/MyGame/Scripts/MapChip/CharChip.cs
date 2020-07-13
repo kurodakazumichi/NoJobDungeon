@@ -56,7 +56,7 @@ namespace MyGame
     /// <summary>
     /// スプライトを設定する
     /// </summary>
-    public void SetSprite(Sprite[] sprites)
+    public void SetSprites(Sprite[] sprites)
     {
       this.sprites = sprites;
     }
@@ -201,17 +201,9 @@ namespace MyGame
       UpdateSpriteBy(index);
     }
 
-#if UNITY_EDITOR
-    //-------------------------------------------------------------------------
-    // デバッグ
-    [SerializeField]
-    private bool _debugShow    = false;
-    private string _spritePath = "Textures/CharChip/Nico";
-
-    void OnGUI()
+#if _DEBUG
+    public void DrawDebugMenu()
     {
-      if (!this._debugShow) return;
-
       // 方向の変更
       var d = InputManager.Instance.DirectionKey;
 
@@ -220,15 +212,13 @@ namespace MyGame
         this.Direction = d;
       }
 
-      GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-      {
-        OnDebugReseource();
-        OnDebugProperity();
-        OnDebugAnimation();
-        OnDebugState();
-      }
-      GUILayout.EndArea();
+      OnDebugReseource();
+      OnDebugProperity();
+      OnDebugAnimation();
+      OnDebugState();
     }
+
+    private string _spritePath = "Textures/CharChip/Nico";
 
     private void OnDebugReseource()
     {
@@ -236,21 +226,13 @@ namespace MyGame
       {
         GUILayout.Label("Sprite Path");
         this._spritePath = GUILayout.TextField(this._spritePath);
-        
+
         if (GUILayout.Button("Apply"))
         {
-          SetSprite(Resources.LoadAll<Sprite>(this._spritePath));
+          SetSprites(Resources.LoadAll<Sprite>(this._spritePath));
         }
       }
       GUILayout.EndHorizontal();
-    }
-
-    private void OnDebugProperity()
-    {
-      GUILayout.Label($"Direction:{this.Direction.value.ToString()}");
-      GUILayout.Label($"State    :{this.StateKey.ToString()}");
-
-      Show((GUILayout.Toggle(this.IsShow, "Show")));
     }
 
     private void OnDebugAnimation()
@@ -279,54 +261,6 @@ namespace MyGame
         }
       }
       GUILayout.EndHorizontal();
-    }
-
-    private void OnDebugState()
-    {
-      GUILayout.BeginHorizontal();
-      {
-        if (GUILayout.Button("Move"))
-        {
-          var v = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1));
-          Move(1f, v);
-        }
-        if (GUILayout.Button("Attack"))
-        {
-          Attack(1f, 1f);
-        }
-        if (GUILayout.Button("Ouch"))
-        {
-          Ouch(1f);
-        }
-        if (GUILayout.Button("Vanish"))
-        {
-          Vanish(1f);
-        }
-      }
-      GUILayout.EndHorizontal();
-    }
-#endif
-
-#if _DEBUG
-    public void DrawDebugMenu()
-    {
-      // 方向の変更
-      var d = InputManager.Instance.DirectionKey;
-
-      if (!d.IsNeutral)
-      {
-        this.Direction = d;
-      }
-
-
-      GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-      {
-        OnDebugReseource();
-        OnDebugProperity();
-        OnDebugAnimation();
-        OnDebugState();
-      }
-      GUILayout.EndArea();
     }
 #endif
 

@@ -202,16 +202,14 @@ namespace MyGame.Dungeon
 #if _DEBUG
     public void DrawDebugMenu()
     {
-      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      GUILayout.Label($"Current Coord: ({this.Coord})");
+      GUILayout.Label($"Behavior:{this.behavior}" );;
+      if(GUILayout.Button("Think"))
       {
-        GUILayout.Label($"Current Coord: ({this.Coord})");
-        GUILayout.Label($"Behavior:{this.behavior}" );;
-        if(GUILayout.Button("Think"))
-        {
-          Think();
-        }
+        Think();
       }
-      GUILayout.EndArea();
+      GUILayout.Label("CharChip");
+      this.chip.DrawDebugMenu();
     }
 #endif
   }

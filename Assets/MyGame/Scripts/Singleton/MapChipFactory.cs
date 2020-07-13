@@ -87,7 +87,7 @@ namespace MyGame
     {
       var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
       chip.Reset();
-      chip.SetSprite(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
       chip.Sorting = SpriteSortingOrder.Player;
       return chip;
     }
@@ -109,7 +109,7 @@ namespace MyGame
 
       chip.Reset();
 
-      chip.SetSprite(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
       chip.Sorting = SpriteSortingOrder.Enemy;
 
       return chip;
