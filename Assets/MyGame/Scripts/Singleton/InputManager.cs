@@ -22,6 +22,7 @@ namespace MyGame {
       float Hold   { get; }
       bool  IsHold { get; }
       bool  IsDown { get; }
+      bool  IsUp   { get; }
     }
 
     public class Button : IButton
@@ -69,6 +70,11 @@ namespace MyGame {
       /// ボタンが押されているかどうか
       /// </summary>
       public bool  IsDown => (Input.GetKeyDown(this.assignKey));
+
+      /// <summary>
+      /// ボタンが離されたかどうか
+      /// </summary>
+      public bool IsUp => (Input.GetKeyUp(this.assignKey));
 
       /// <summary>
       /// 長押しされている時間
