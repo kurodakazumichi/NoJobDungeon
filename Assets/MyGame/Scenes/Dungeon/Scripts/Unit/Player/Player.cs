@@ -30,7 +30,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーチップ
     /// </summary>
-    private PlayerChip chip;
+    private CharChipBase chip;
 
     /// <summary>
     /// プレイヤーの座標

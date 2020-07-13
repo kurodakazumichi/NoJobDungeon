@@ -83,11 +83,12 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // Player Chip
 
-    public PlayerChip CreatePlayerChip()
+    public CharChipBase CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("player");
+      var chip = this.pools[MapChipGroup.Player].Create<CharChipBase>("player");
       chip.Reset();
       chip.SetSprite(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.Sorting = SpriteSortingOrder.Player;
       return chip;
     }
 
