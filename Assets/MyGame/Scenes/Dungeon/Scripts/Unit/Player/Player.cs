@@ -54,6 +54,13 @@ namespace MyGame.Dungeon
     /// </summary>
     public bool isAcceptAttack = false;
 
+    /// <summary>
+    /// 敵の座標を入れるための配列とその配列を指すIndex
+    /// 周囲に敵がいた時に、ワンボタンで敵の方を向く処理で使う。
+    /// </summary>
+    private List<Vector2Int> aroundEnemies = new List<Vector2Int>();
+    private int aroundEnemiesIndex = 0;
+
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -108,12 +115,50 @@ namespace MyGame.Dungeon
     /// </summary>
     public Behavior Think()
     {
+      var behaviour = DecideBehaviour();
+
+      if (behaviour != Behavior.Thinking)
+      {
+        this.aroundEnemies.Clear();
+        this.aroundEnemiesIndex = 0;
+      }
+
+      return behaviour;
+    }
+
+    private Behavior DecideBehaviour()
+    {
       var direction = InputManager.Instance.DirectionKey;
 
       // 方向キー入力があったらプレイヤーの向きを更新
       if (!direction.IsNeutral)
       {
         this.chip.Direction = direction;
+      }
+
+      // 周囲に敵がいれば敵の方を向く
+      if (InputManager.Instance.RB4.IsUp)
+      {
+        if (this.aroundEnemies.Count == 0)
+        {
+          // 周囲１マスを見る
+          DungeonManager.Instance.LookAround(Coord, 1, (x, y, tile) =>
+          {
+            if (tile.IsEnemy)
+            {
+              this.aroundEnemies.Add(new Vector2Int(x, y));
+            }
+          });
+        }
+
+        // 周囲に敵がいたらそっちを向く
+        if (this.aroundEnemies.Count != 0)
+        {
+          var pos = this.aroundEnemies[this.aroundEnemiesIndex % this.aroundEnemies.Count];
+
+          this.chip.Direction = Direction.LookAt(Coord, pos);
+          this.aroundEnemiesIndex++;
+        }
       }
 
       // ダッシュしたい場合はダッシュできるかどうかをチェック
@@ -155,7 +200,7 @@ namespace MyGame.Dungeon
         return Behavior.Menu;
       }
 
-       return Behavior.Thinking;
+      return Behavior.Thinking;
     }
 
     /// <summary>
@@ -301,25 +346,6 @@ namespace MyGame.Dungeon
       // その他のケースはタイルが障害物でなければ進める
       return !next.IsObstacle;
     }
-
-#if UNITY_EDITOR
-
-    public void OnGUI()
-    {
-      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
-      {
-        GUILayout.Label($"Current Coord: ({this.Coord})");
-        GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
-
-        GetAttackTargets().ForEach((coord) => {
-          GUILayout.Label($"Attack Targets:{coord}");
-        });
-
-      }
-      GUILayout.EndArea();
-    }
-
-#endif
 
 #if _DEBUG
     public void DrawDebugMenu()

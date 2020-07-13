@@ -184,6 +184,14 @@ namespace MyGame
       }
     }
 
+    /// <summary>
+    /// from から to へ向かう方向を返す
+    /// </summary>
+    static public Direction LookAt(Vector2Int from, Vector2Int to, bool yUP = false)
+    {
+      return new Direction(to - from, yUP);
+    }
+
     // プリセット
     static public Direction newtral => (new Direction(Direction8.Neutral));
     static public Direction left => (new Direction(Direction8.Left));
