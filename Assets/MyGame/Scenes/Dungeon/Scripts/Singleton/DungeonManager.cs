@@ -132,6 +132,14 @@ namespace MyGame.Dungeon
       this.floor = Mathf.Max(1, --this.floor);
     }
 
+    /// <summary>
+    /// 踏破フラグを更新する
+    /// </summary>
+    public void UpdateClearFlags()
+    {
+      this.stage.UpdateClearFlag(PlayerCoord);
+    }
+
     //-------------------------------------------------------------------------
     // その他
 
