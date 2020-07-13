@@ -21,7 +21,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵チップ
     /// </summary>
-    private EnemyChip chip;
+    private CharChip chip;
 
     /// <summary>
     /// 敵の座標
@@ -166,7 +166,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Ouch()
     {
-      this.chip.Oush(Define.SEC_PER_TURN);
+      this.chip.Ouch(Define.SEC_PER_TURN);
       this.isAcceptAttack = false;
     }
 
@@ -202,16 +202,14 @@ namespace MyGame.Dungeon
 #if _DEBUG
     public void DrawDebugMenu()
     {
-      GUILayout.BeginArea(new Rect(500, 0, 500, 500));
+      GUILayout.Label($"Current Coord: ({this.Coord})");
+      GUILayout.Label($"Behavior:{this.behavior}" );;
+      if(GUILayout.Button("Think"))
       {
-        GUILayout.Label($"Current Coord: ({this.Coord})");
-        GUILayout.Label($"Behavior:{this.behavior}" );;
-        if(GUILayout.Button("Think"))
-        {
-          Think();
-        }
+        Think();
       }
-      GUILayout.EndArea();
+      GUILayout.Label("CharChip");
+      this.chip.DrawDebugMenu();
     }
 #endif
   }

@@ -11,7 +11,7 @@ namespace MyGame.Dungeon
   {
     //-------------------------------------------------------------------------
     // 仮実装
-    private GimmickChip gimmick = null;
+    private BasicChip gimmick = null;
 
     public void Reset()
     {

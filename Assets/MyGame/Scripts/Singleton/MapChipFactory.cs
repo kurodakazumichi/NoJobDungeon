@@ -57,28 +57,15 @@ namespace MyGame
     private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
 
     //-------------------------------------------------------------------------
-    // Field Chip
-
-    // TODO: FieldChip -> AutoChipに差し替える
-    public FieldChip CreateFieldChip(FieldChipType type)
-    {
-      var chip = this.pools[MapChipGroup.Field].Create<FieldChip>("field");
-
-      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.SetSprite(sprites[(int)type]);
-
-      return chip;
-    }
-
-    //-------------------------------------------------------------------------
     // Gimmick Chip
 
-    public GimmickChip CreateGimmickChip(GimmickChipType type)
+    public BasicChip CreateGimmickChip(GimmickChipType type)
     {
-      var chip = this.pools[MapChipGroup.Gimmick].Create<GimmickChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Gimmick].Create<BasicChip>(type.ToString());
 
-      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.SetSprite(sprites[(int)type]);
+      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.Sprite  = sprites[(int)type];
+      chip.Sorting = SpriteSortingOrder.Gimmick;
 
       return chip;
     }
@@ -96,11 +83,12 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // Player Chip
 
-    public PlayerChip CreatePlayerChip()
+    public CharChip CreatePlayerChip()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<PlayerChip>("player");
+      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
       chip.Reset();
-      chip.SetSprite(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.Sorting = SpriteSortingOrder.Player;
       return chip;
     }
 
@@ -115,13 +103,14 @@ namespace MyGame
       { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public EnemyChip CreateEnemyChip(EnemyChipType type)
+    public CharChip CreateEnemyChip(EnemyChipType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("enemy");
+      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
 
       chip.Reset();
 
-      chip.SetSprite(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.Sorting = SpriteSortingOrder.Enemy;
 
       return chip;
     }
@@ -205,22 +194,6 @@ namespace MyGame
 
 #if _DEBUG
 
-    private void OnDebugFieldChip()
-    {
-      GUILayout.Label("Field Chip Generator");
-      GUILayout.BeginHorizontal();
-      {
-        foreach (FieldChipType value in System.Enum.GetValues(typeof(FieldChipType)))
-        {
-          if (GUILayout.Button(value.ToString()))
-          {
-            CreateFieldChip(value);
-          }
-        }
-      }
-      GUILayout.EndHorizontal();
-    }
-
     private void OnDebugGimmickChip()
     {
       GUILayout.Label("Gimmick Chip Generator");
@@ -261,7 +234,6 @@ namespace MyGame
 
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
-      this.OnDebugFieldChip();
       this.OnDebugGimmickChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();

@@ -10,8 +10,10 @@ namespace MyGame
   /// </summary>
   public class BasicChip : MapChipBase
   {
-    public void Reset()
+    override public void Reset()
     {
+      base.Reset();
+
       Sprite  = null;
       Sorting = 0;
     }
