@@ -73,12 +73,13 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // Gimmick Chip
 
-    public GimmickChip CreateGimmickChip(GimmickChipType type)
+    public BasicChip CreateGimmickChip(GimmickChipType type)
     {
-      var chip = this.pools[MapChipGroup.Gimmick].Create<GimmickChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Gimmick].Create<BasicChip>(type.ToString());
 
-      var sprites = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.SetSprite(sprites[(int)type]);
+      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.Sprite  = sprites[(int)type];
+      chip.Sorting = SpriteSortingOrder.Gimmick;
 
       return chip;
     }
