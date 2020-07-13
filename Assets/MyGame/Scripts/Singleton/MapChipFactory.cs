@@ -103,13 +103,14 @@ namespace MyGame
       { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public EnemyChip CreateEnemyChip(EnemyChipType type)
+    public CharChipBase CreateEnemyChip(EnemyChipType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<EnemyChip>("enemy");
+      var chip = this.pools[MapChipGroup.Enemy].Create<CharChipBase>(type.ToString());
 
       chip.Reset();
 
       chip.SetSprite(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.Sorting = SpriteSortingOrder.Enemy;
 
       return chip;
     }

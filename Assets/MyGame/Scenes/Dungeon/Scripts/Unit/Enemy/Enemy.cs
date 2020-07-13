@@ -21,7 +21,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵チップ
     /// </summary>
-    private EnemyChip chip;
+    private CharChipBase chip;
 
     /// <summary>
     /// 敵の座標
