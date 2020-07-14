@@ -243,7 +243,7 @@ namespace MyGame
     private RightBottomCell rightBottomCell = new RightBottomCell();
 
     // Start is called before the first frame update
-    public void Setup(FieldChipType chipType)
+    public void Setup(AutoChipType chipType)
     {
       // スプライト読み込み
 
@@ -253,19 +253,19 @@ namespace MyGame
       //TODO: factory側からもらうようにかえたい
       switch (chipType)
       {
-        case FieldChipType.Sabaku:
+        case AutoChipType.Sabaku:
           sprites = Resources.LoadAll<Sprite>("Textures/MapChip/800x600/pipo-map001_at-sabaku");
           break;
 
-        case FieldChipType.Tuchi:
+        case AutoChipType.Tuchi:
           sprites = Resources.LoadAll<Sprite>("Textures/MapChip/640x480/pipo-map001_at-tuti");
           break;
 
-        case FieldChipType.Umi:
+        case AutoChipType.Umi:
           sprites = Resources.LoadAll<Sprite>("Textures/MapChip/800x600/pipo-map001_at-umi");
           break;
 
-        case FieldChipType.Mori:
+        case AutoChipType.Mori:
           sprites = Resources.LoadAll<Sprite>("Textures/MapChip/640x480/pipo-map001_at-mori");
           break;
 

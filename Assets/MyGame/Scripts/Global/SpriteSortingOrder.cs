@@ -6,9 +6,10 @@
   public static class SpriteSortingOrder
   {
     public const int BackGround = 0;
-    public const int Gimmick = 1;
-    public const int Item = 2;
-    public const int Enemy = 3;
-    public const int Player = 4;
+    public const int Deco = 1;
+    public const int Trap = 2;
+    public const int Item = 3;
+    public const int Enemy = 4;
+    public const int Player = 5;
   }
 }

@@ -10,17 +10,18 @@ namespace MyGame
   public enum MapChipGroup 
   {
     Field,
-    Gimmick,
-    Player,
-    Enemy,
+    Deco,
+    Trap,
     Item,
+    Enemy,
+    Player,
   }
 
-  public enum FieldChipType
+  /// <summary>
+  /// AutoChipの種類
+  /// </summary>
+  public enum AutoChipType
   {
-    Wall = 234,
-    Floor = 74,
-
     //:TODO 仮
     Sabaku,
     Tuchi,
@@ -28,16 +29,25 @@ namespace MyGame
     Umi,
   }
 
-  public enum EnemyChipType
-  {
-    Shobon,
-  }
-
-  public enum GimmickChipType
+  /// <summary>
+  /// DecoChipの種類
+  /// </summary>
+  public enum DecoChipType
   {
     Goal = 231,
   }
 
+  /// <summary>
+  /// 罠の種類
+  /// </summary>
+  public enum TrapChipType
+  {
+
+  }
+
+  /// <summary>
+  /// アイテムの種類
+  /// </summary>
   public enum ItemChipType
   {
     Capsule,
@@ -56,6 +66,14 @@ namespace MyGame
   }
 
   /// <summary>
+  /// 敵の種類
+  /// </summary>
+  public enum EnemyChipType
+  {
+    Shobon,
+  }
+
+  /// <summary>
   /// マップチップ生成クラス
   /// </summary>
   public class MapChipFactory : SingletonMonobehaviour<MapChipFactory>
@@ -69,23 +87,9 @@ namespace MyGame
     private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
 
     //-------------------------------------------------------------------------
-    // Gimmick Chip
-
-    public BasicChip CreateGimmickChip(GimmickChipType type)
-    {
-      var chip = this.pools[MapChipGroup.Gimmick].Create<BasicChip>(type.ToString());
-
-      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.Sprite  = sprites[(int)type];
-      chip.Sorting = SpriteSortingOrder.Gimmick;
-
-      return chip;
-    }
-
-    //-------------------------------------------------------------------------
     // Auto Chip
 
-    public AutoChip CreateAutoChip(FieldChipType type)
+    public AutoChip CreateAutoChip(AutoChipType type)
     {
       var chip = this.pools[MapChipGroup.Field].Create<AutoChip>("field");
       chip.Setup(type);
@@ -93,36 +97,34 @@ namespace MyGame
     }
 
     //-------------------------------------------------------------------------
-    // Player Chip
+    // Deco Chip
 
-    public CharChip CreatePlayerChip()
+    public BasicChip CreateDecoChip(DecoChipType type)
     {
-      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
+      var chip = this.pools[MapChipGroup.Deco].Create<BasicChip>(type.ToString());
       chip.Reset();
-      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
-      chip.Sorting = SpriteSortingOrder.Player;
+
+      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.Sprite = sprites[(int)type];
+      chip.Sorting = SpriteSortingOrder.Deco;
+
       return chip;
     }
 
     //-------------------------------------------------------------------------
-    // Enemy Chip
+    // Trap Chip
 
-    /// <summary>
-    /// EnemyChipTypeとリソースファイルのマップテーブル
-    /// </summary>
-    private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
+    private Dictionary<TrapChipType, string> TrapChipResourceMap = new Dictionary<TrapChipType, string>()
     {
-      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public CharChip CreateEnemyChip(EnemyChipType type)
+    public BasicChip CreateTrapChip(TrapChipType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Trap].Create<BasicChip>(type.ToString());
 
       chip.Reset();
-
-      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
-      chip.Sorting = SpriteSortingOrder.Enemy;
+      chip.Sprite = Resources.Load<Sprite>(this.TrapChipResourceMap[type]);
+      chip.Sorting = SpriteSortingOrder.Trap;
 
       return chip;
     }
@@ -161,7 +163,45 @@ namespace MyGame
       return chip;
     }
 
-    //"Textures/ItemChip/icon_Capsule1_blue"
+    //-------------------------------------------------------------------------
+    // Enemy Chip
+
+    /// <summary>
+    /// EnemyChipTypeとリソースファイルのマップテーブル
+    /// </summary>
+    private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
+    {
+      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
+    };
+
+    public CharChip CreateEnemyChip(EnemyChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
+
+      chip.Reset();
+
+      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.Sorting = SpriteSortingOrder.Enemy;
+
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Player Chip
+
+    public CharChip CreatePlayerChip()
+    {
+      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
+      chip.Reset();
+
+      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.Sorting = SpriteSortingOrder.Player;
+
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // その他
 
     /// <summary>
     /// 解放する
@@ -184,22 +224,13 @@ namespace MyGame
     {
       base.Awake();
 
-      GameObject folder;
+      // MapChipGroupに定義された列挙情報をもとにオブジェクトプールを生成する
+      foreach(var type in System.Enum.GetValues(typeof(MapChipGroup)))
+      {
+        GameObject folder = CreateFolderObject(type.ToString());
+        this.pools.Add((MapChipGroup)type, new ObjectPool(folder));
+      }
 
-      folder = CreateFolderObject("Field"); 
-      this.pools.Add(MapChipGroup.Field, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Gimmick");
-      this.pools.Add(MapChipGroup.Gimmick, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Player");
-      this.pools.Add(MapChipGroup.Player, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Enemy");
-      this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Item");
-      this.pools.Add(MapChipGroup.Item, new ObjectPool(folder));
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
 #endif
@@ -218,12 +249,12 @@ namespace MyGame
 
 #if _DEBUG
 
-    private void OnDebugGimmickChip()
+    private void OnDebugDecoChip()
     {
-      GUILayout.Label("Gimmick Chip Generator");
-      if (GUILayout.Button("Goal"))
+      GUILayout.Label("Deco Chip Generator");
+      using (var scope = new GUILayout.HorizontalScope())
       {
-        CreateGimmickChip(GimmickChipType.Goal);
+        if (GUILayout.Button("Goal")) CreateDecoChip(DecoChipType.Goal);
       }
     }
 
@@ -258,7 +289,7 @@ namespace MyGame
 
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
-      this.OnDebugGimmickChip();
+      this.OnDebugDecoChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
       this.OnDebugItemChip();

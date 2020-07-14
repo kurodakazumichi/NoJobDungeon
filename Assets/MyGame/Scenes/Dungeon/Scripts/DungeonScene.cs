@@ -47,7 +47,6 @@ namespace MyGame.Dungeon {
       SingletonManager.Instance
         .Setup(nameof(DungeonManager), system)
         .Setup(nameof(MapChipFactory), system)
-        .Setup(nameof(GimmickManager), system)
         .Setup(nameof(PlayerManager), system)
         .Setup(nameof(FieldManager), system)
         .Setup(nameof(EnemyManager), system)
@@ -111,9 +110,6 @@ namespace MyGame.Dungeon {
 
       // マップチップを生成
       FieldManager.Instance.CreateFields();
-
-      // ギミックを生成
-      GimmickManager.Instance.CreateGimmicks();
 
       // アイテムを生成
       ItemManager.Instance.CreateItems();
