@@ -31,7 +31,7 @@ namespace MyGame.Title
 
       if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
       {
-        SceneManager.LoadScene("MyGame/Scenes/Boot/Boot");
+        SceneManager.LoadScene("MyGame/Scenes/Dungeon/DungeonScene");
       }
     }
   }
