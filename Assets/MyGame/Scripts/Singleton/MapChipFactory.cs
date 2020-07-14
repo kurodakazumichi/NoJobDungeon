@@ -14,6 +14,7 @@ namespace MyGame
     Player,
     Enemy,
     Item,
+    Trap,
   }
 
   public enum AutoChipType
@@ -33,6 +34,11 @@ namespace MyGame
   public enum GimmickChipType
   {
     Goal = 231,
+  }
+
+  public enum TrapChipType
+  {
+
   }
 
   public enum ItemChipType
@@ -158,7 +164,22 @@ namespace MyGame
       return chip;
     }
 
-    //"Textures/ItemChip/icon_Capsule1_blue"
+    //-------------------------------------------------------------------------
+    // Trap Chip
+
+    private Dictionary<TrapChipType, string> TrapChipResourceMap = new Dictionary<TrapChipType, string>(){
+    };
+
+    public BasicChip CreateTrapChip(TrapChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Trap].Create<BasicChip>(type.ToString());
+
+      chip.Reset();
+      chip.Sprite = Resources.Load<Sprite>(this.TrapChipResourceMap[type]);
+      chip.Sorting = SpriteSortingOrder.Trap;
+
+      return chip;
+    }
 
     /// <summary>
     /// 解放する
@@ -197,6 +218,10 @@ namespace MyGame
 
       folder = CreateFolderObject("Item");
       this.pools.Add(MapChipGroup.Item, new ObjectPool(folder));
+
+      folder = CreateFolderObject("Trap");
+      this.pools.Add(MapChipGroup.Trap, new ObjectPool(folder));
+
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
 #endif
