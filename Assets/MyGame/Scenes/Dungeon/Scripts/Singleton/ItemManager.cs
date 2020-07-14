@@ -12,7 +12,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アイテムリスト
     /// </summary>
-    private List<BasicChip> items = new List<BasicChip>();
+    private List<FieldItem> items = new List<FieldItem>();
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -20,11 +20,11 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アイテムリストをリセット
     /// </summary>
-    private void Reset()
+    public void Reset()
     {
       MyGame.Util.Loop(this.items, (item) =>
       {
-        MapChipFactory.Instance.Release(item);
+        item.Destory();
       });
 
       this.items.Clear();
@@ -37,23 +37,27 @@ namespace MyGame.Dungeon
     {
       Reset();
 
-      // 仮実装
-      var list = new List<ItemChipType>();
-      foreach(var value in System.Enum.GetValues(typeof(ItemChipType)))
+      // ランダムアイテムの仮実装
+      var list = new List<ItemId>();
+      foreach(var value in System.Enum.GetValues(typeof(ItemId)))
       {
-        list.Add((ItemChipType)value);
+        list.Add((ItemId)value);
       }
 
+      // アイテム生成＆設置
       DungeonManager.Instance.Map((x, y, tile) =>
       {
-        if (tile.IsItem)
-        {
-          var index = Random.Range(0, list.Count);
-          ItemChipType type = list[index];
-          var chip = MapChipFactory.Instance.CreateItemChip(type);
-          chip.transform.position = Util.GetPositionBy(x, y);
-          this.items.Add(chip);
-        }
+        if (tile.IsItem == false) return;
+
+        // 生成するアイテムのIDをランダムで決定
+        var id = list[Random.Range(0, list.Count)];
+
+        // アイテムを生成
+        var item = new FieldItem();
+        item.Setup(new Vector2Int(x, y), ItemMaster.Instance.Get(id));
+
+        // アイテムをリストに追加
+        this.items.Add(item);
       });
     }
   }
