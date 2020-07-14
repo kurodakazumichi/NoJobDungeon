@@ -16,11 +16,8 @@ namespace MyGame
     Item,
   }
 
-  public enum FieldChipType
+  public enum AutoChipType
   {
-    Wall = 234,
-    Floor = 74,
-
     //:TODO 仮
     Sabaku,
     Tuchi,
@@ -85,7 +82,7 @@ namespace MyGame
     //-------------------------------------------------------------------------
     // Auto Chip
 
-    public AutoChip CreateAutoChip(FieldChipType type)
+    public AutoChip CreateAutoChip(AutoChipType type)
     {
       var chip = this.pools[MapChipGroup.Field].Create<AutoChip>("field");
       chip.Setup(type);

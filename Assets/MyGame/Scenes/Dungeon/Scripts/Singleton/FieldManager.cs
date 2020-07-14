@@ -67,7 +67,7 @@ namespace MyGame.Dungeon
           }
         );
 
-        FieldChipType chipType = tile.IsWall ? FieldChipType.Umi : FieldChipType.Sabaku;  //:TODO 仮
+        AutoChipType chipType = tile.IsWall ? AutoChipType.Umi : AutoChipType.Sabaku;  //:TODO 仮
         AutoChip chip = MapChipFactory.Instance.CreateAutoChip(chipType);
         chip.Coord    = new Vector2Int(x,y);
         chip.TileSize = Define.CHIP_SCALE.x;
