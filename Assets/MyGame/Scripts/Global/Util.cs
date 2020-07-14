@@ -121,6 +121,14 @@ namespace MyGame
     {
       T tmp = default;
       System.Enum.TryParse<T>(key, out tmp);
+
+#if _DEBUG
+      if (tmp.ToString() != key)
+      {
+        Debug.LogError($"{typeof(T)}に文字列「{key}」は定義されていなかったため「{tmp}」に変換されました。");
+      }
+#endif
+
       return tmp;
     }
   }

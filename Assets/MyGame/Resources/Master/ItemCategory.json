@@ -1,9 +1,9 @@
 {
   "list":[
-    {"id":"1", "name":"武器", "itemChipType":"Capsule"},
+    {"id":"1", "name":"武器", "itemChipType":"Weapon"},
     {"id":"2", "name":"盾", "itemChipType":"Shield"},
     {"id":"3", "name":"アクセサリー", "itemChipType":"Accessory"},
-    {"id":"4", "name":"薬", "itemChipType":"Capsule"},
+    {"id":"4", "name":"薬", "itemChipType":"Drug"},
     {"id":"5", "name":"書籍", "itemChipType":"Book"}
   ]
 }
