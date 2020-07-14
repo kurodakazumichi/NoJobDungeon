@@ -4,7 +4,12 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class FieldItem
+  public interface IReadOnlyFieldItem
+  {
+    string Name { get; }
+  }
+
+  public class FieldItem : IReadOnlyFieldItem
   {
     /// <summary>
     /// アイテムの情報
@@ -20,6 +25,11 @@ namespace MyGame.Dungeon
     /// マップチップ
     /// </summary>
     private BasicChip chip = null;
+
+    /// <summary>
+    /// アイテム名
+    /// </summary>
+    public string Name => ((this.entity != null)? this.entity.Name : "");
 
     /// <summary>
     /// セットアップ

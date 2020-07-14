@@ -60,5 +60,18 @@ namespace MyGame.Dungeon
         this.items.Add(item);
       });
     }
+
+    /// <summary>
+    /// 指定した座標のアイテムを探す
+    /// </summary>
+    public IReadOnlyFieldItem Find(Vector2Int coord)
+    {
+      foreach(var item in this.items)
+      {
+        if (item.Coord.Equals(coord)) return item;
+      }
+
+      return null;
+    }
   }
 }
