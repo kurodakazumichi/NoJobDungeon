@@ -9,7 +9,15 @@ namespace MyGame.Dungeon
   /// </summary>
   public class FieldManager : SingletonMonobehaviour<FieldManager>
   {
-    private AutoChip[,] fields;
+    /// <summary>
+    ///  AutoChipの配列
+    /// </summary>
+    private AutoChip[,] autoChips;
+
+    /// <summary>
+    /// DecoChipのリスト
+    /// </summary>
+    private List<BasicChip> decoChips = new List<BasicChip>();
 
     /// <summary>
     /// メンバの初期化
@@ -17,27 +25,48 @@ namespace MyGame.Dungeon
     protected override void Awake()
     {
       base.Awake();
-      this.fields = new AutoChip[Define.WIDTH, Define.HEIGHT];
+      this.autoChips = new AutoChip[Define.WIDTH, Define.HEIGHT];
     }
+
+    /// <summary>
+    /// 生成済のマップチップを解放してリストを空にする
+    /// </summary>
+    public void Reset()
+    {
+      ResetAutoChips();
+      ResetDecoChips();
+    }
+
+    /// <summary>
+    /// AutoChipとDecoChipを作成する
+    /// </summary>
+    public void CreateFields() 
+    {
+      CreateAutoChips();
+      CreateDecoChips();
+    }
+
+    //-------------------------------------------------------------------------
+    // AutoChip
 
     /// <summary>
     /// 存在するフィールドチップを全て解放して配列をnullで埋める。
     /// </summary>
-    public void Reset()
+    private void ResetAutoChips()
     {
       MyGame.Util.Loop2D(Define.WIDTH, Define.HEIGHT, (x, y) => 
       {
-        MapChipFactory.Instance.Release(this.fields[x, y]);
-        this.fields[x, y] = null;
+        MapChipFactory.Instance.Release(this.autoChips[x, y]);
+        this.autoChips[x, y] = null;
       });
     }
 
     /// <summary>
     /// フィールドのマップチップを生成
     /// </summary>
-    public void CreateFields()
+    public void CreateAutoChips()
     {
-      Reset();
+      ResetAutoChips();
 
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
@@ -76,9 +105,42 @@ namespace MyGame.Dungeon
         // スプライトの更新
         chip.UpdateConnect(flags);
 
-        this.fields[x, y] = chip;
+        this.autoChips[x, y] = chip;
+      });
+    }
+
+    //-------------------------------------------------------------------------
+    // DecoChip
+
+    /// <summary>
+    /// リセット
+    /// </summary>
+    private void ResetDecoChips()
+    {
+      MyGame.Util.Loop(this.decoChips, (deco) =>
+      {
+        MapChipFactory.Instance.Release(deco);
+      });
+
+      this.decoChips.Clear();
+    }
+
+    /// <summary>
+    /// デコレーションチップを作成
+    /// </summary>
+    private void CreateDecoChips()
+    {
+      ResetDecoChips();
+
+      DungeonManager.Instance.Map((x, y, tile) =>
+      {
+        if (tile.IsGoal)
+        {
+          var chip = MapChipFactory.Instance.CreateDecoChip(DecoChipType.Goal);
+          chip.transform.position = Util.GetPositionBy(new Vector2Int(x, y));
+          this.decoChips.Add(chip);
+        }
       });
     }
   }
-
 }
