@@ -113,5 +113,15 @@ namespace MyGame
         if (isBreak) break;
       }
     }
+
+    /// <summary>
+    /// 文字列からEnumに変換
+    /// </summary>
+    static public T StrToEnum<T>(string key) where T : struct
+    {
+      T tmp = default;
+      System.Enum.TryParse<T>(key, out tmp);
+      return tmp;
+    }
   }
 }
