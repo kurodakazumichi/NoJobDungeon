@@ -15,6 +15,7 @@ namespace MyGame
     Enemy,
     Item,
     Trap,
+    Deco,
   }
 
   public enum AutoChipType
@@ -24,6 +25,11 @@ namespace MyGame
     Tuchi,
     Mori,
     Umi,
+  }
+
+  public enum DecoChipType
+  {
+    Goal = 231,
   }
 
   public enum EnemyChipType
@@ -92,6 +98,21 @@ namespace MyGame
     {
       var chip = this.pools[MapChipGroup.Field].Create<AutoChip>("field");
       chip.Setup(type);
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // Deco Chip
+
+    public BasicChip CreateDecoChip(DecoChipType type)
+    {
+      var chip = this.pools[MapChipGroup.Deco].Create<BasicChip>(type.ToString());
+      chip.Reset();
+
+      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
+      chip.Sprite = sprites[(int)type];
+      chip.Sorting = SpriteSortingOrder.Deco;
+
       return chip;
     }
 
@@ -236,6 +257,15 @@ namespace MyGame
       }
     }
 
+    private void OnDebugDecoChip()
+    {
+      GUILayout.Label("Deco Chip Generator");
+      using (var scope = new GUILayout.HorizontalScope())
+      {
+        if (GUILayout.Button("Goal")) CreateDecoChip(DecoChipType.Goal);
+      }
+    }
+
     private void OnDebugPlayerChip()
     {
       GUILayout.Label("Player Chip Generator");
@@ -268,6 +298,7 @@ namespace MyGame
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
       this.OnDebugGimmickChip();
+      this.OnDebugDecoChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
       this.OnDebugItemChip();
