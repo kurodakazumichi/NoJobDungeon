@@ -37,11 +37,6 @@ namespace MyGame
     Shobon,
   }
 
-  public enum GimmickChipType
-  {
-    Goal = 231,
-  }
-
   public enum TrapChipType
   {
 
@@ -76,20 +71,6 @@ namespace MyGame
     /// オブジェクトプールリスト
     /// </summary>
     private Dictionary<MapChipGroup, ObjectPool> pools = new Dictionary<MapChipGroup, ObjectPool>();
-
-    //-------------------------------------------------------------------------
-    // Gimmick Chip
-
-    public BasicChip CreateGimmickChip(GimmickChipType type)
-    {
-      var chip = this.pools[MapChipGroup.Gimmick].Create<BasicChip>(type.ToString());
-
-      var sprites  = Resources.LoadAll<Sprite>("Textures/MapChip/MapChip01");
-      chip.Sprite  = sprites[(int)type];
-      chip.Sorting = SpriteSortingOrder.Gimmick;
-
-      return chip;
-    }
 
     //-------------------------------------------------------------------------
     // Auto Chip
@@ -248,15 +229,6 @@ namespace MyGame
 
 #if _DEBUG
 
-    private void OnDebugGimmickChip()
-    {
-      GUILayout.Label("Gimmick Chip Generator");
-      if (GUILayout.Button("Goal"))
-      {
-        CreateGimmickChip(GimmickChipType.Goal);
-      }
-    }
-
     private void OnDebugDecoChip()
     {
       GUILayout.Label("Deco Chip Generator");
@@ -297,7 +269,6 @@ namespace MyGame
 
     private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
     {
-      this.OnDebugGimmickChip();
       this.OnDebugDecoChip();
       this.OnDebugPlayerChip();
       this.OnDebugEnemyChip();
