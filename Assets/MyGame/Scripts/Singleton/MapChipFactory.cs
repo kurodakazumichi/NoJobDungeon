@@ -50,7 +50,7 @@ namespace MyGame
   /// </summary>
   public enum ItemChipType
   {
-    Capsule,
+    Drug,
     Weapon,
     Shield,
     Book,
@@ -137,7 +137,6 @@ namespace MyGame
     /// </summary>
     private Dictionary<ItemChipType, string> ItemChipResouceMap = new Dictionary<ItemChipType, string>()
     {
-      { ItemChipType.Capsule  , "Textures/ItemChip/icon_Capsule1_blue" },
       { ItemChipType.Weapon   , "Textures/ItemChip/icon002" },
       { ItemChipType.Book     , "Textures/ItemChip/icon009" },
       { ItemChipType.Shield   , "Textures/ItemChip/icon010" },
@@ -146,6 +145,7 @@ namespace MyGame
       { ItemChipType.Ore      , "Textures/ItemChip/icon023" },
       { ItemChipType.Meat     , "Textures/ItemChip/icon027" },
       { ItemChipType.Vegetabl , "Textures/ItemChip/icon029" },
+      { ItemChipType.Drug     , "Textures/ItemChip/icon030" },
       { ItemChipType.Shuriken , "Textures/ItemChip/icon138" },
       { ItemChipType.Recipe   , "Textures/ItemChip/icon196" },
       { ItemChipType.Wood     , "Textures/ItemChip/icon225" },
@@ -282,7 +282,7 @@ namespace MyGame
       GUILayout.Label("Item Chip Generator");
       GUILayout.BeginHorizontal();
       {
-        if (GUILayout.Button("Capsule")) CreateItemChip(ItemChipType.Capsule);
+        if (GUILayout.Button("Drug")) CreateItemChip(ItemChipType.Drug);
       }
       GUILayout.EndHorizontal();
     }

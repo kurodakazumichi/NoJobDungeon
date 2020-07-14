@@ -115,24 +115,21 @@ namespace MyGame
     }
 
     /// <summary>
-    /// リストをもとにしたループ
+    /// 文字列からEnumに変換
     /// </summary>
-    static public void Loop<T>(List<T> list, System.Action<T> cb)
+    static public T StrToEnum<T>(string key) where T : struct
     {
-      list.ForEach(cb);
-    }
+      T tmp = default;
+      System.Enum.TryParse<T>(key, out tmp);
 
-    /// <summary>
-    /// リストをもとにしたループ(Func版)
-    /// </summary>
-    static public void Loop<T>(List<T> list, System.Func<T, bool> cb)
-    {
-      for (int i = 0; i < list.Count; ++i)
+#if _DEBUG
+      if (tmp.ToString() != key)
       {
-        var isBreak = cb(list[i]);
-
-        if (isBreak) break;
+        Debug.LogError($"{typeof(T)}に文字列「{key}」は定義されていなかったため「{tmp}」に変換されました。");
       }
+#endif
+
+      return tmp;
     }
   }
 }

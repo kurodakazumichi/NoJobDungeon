@@ -20,6 +20,8 @@ namespace MyGame
       Dungeon,
       Player,
       Enemy,
+      ItemMaster,
+      ItemCategoryMaster,
       
       PageChild, // トップ画面に表示しないものはここより↓
       Algorithm,

@@ -42,18 +42,14 @@ namespace MyGame.Dungeon
     {
       get
       {
-        bool hasAttacker = false;
-
-        // 敵さんループ
-        MyGame.Util.Loop(this.enemies, (enemy) =>
+        foreach(var enemy in this.enemies)
         {
-          hasAttacker = enemy.Behavior == Enemy.BehaviorType.Attack;
-          
-          // アタッカーがいたらループを抜ける
-          return hasAttacker;
-        });
-
-        return hasAttacker;
+          if (enemy.Behavior == Enemy.BehaviorType.Attack)
+          {
+            return true;
+          }
+        }
+        return false;
       }
     }
 
@@ -65,11 +61,10 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Reset()
     {
-      MyGame.Util.Loop(this.enemies, (enemy) =>
+      foreach(var enemy in this.enemies)
       {
         enemy.Destory();
-      });
-
+      }
       this.enemies = new List<Enemy>();
     }
 
@@ -95,7 +90,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToThink()
     {
-      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Think(); });
+      foreach(var enemy in this.enemies) { enemy.Think(); }
     }
 
     /// <summary>
@@ -103,33 +98,25 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToMove()
     {
-      MyGame.Util.Loop(this.enemies, (enemy) => { enemy.Move(); });
+      foreach (var enemy in this.enemies) { enemy.Move(); };
     }
 
     /// <summary>
     /// 敵さんに、攻撃しろと命じる
-    /// 一気に攻撃するとおかしいので、この処理では
-    /// 一度に１人だけ攻撃を命じる
+    /// 一気に攻撃するとおかしいので、この処理では一度に１人だけ攻撃を命じる
+    /// アタッカーの情報を攻撃を受ける側に伝えたいので、戻り値で返している。
     /// </summary>
     public IAttackable OrderToAttack()
     {
-      Enemy enemy = null;
-
       // アタッカーを探すために敵さんをループ
-      MyGame.Util.Loop(this.enemies, (e) =>
+      foreach(var enemy in this.enemies)
       {
-        // アタッカーじゃなければスキップ
-        if (e.Behavior != Enemy.BehaviorType.Attack) return false;
+        if (enemy.Behavior != Enemy.BehaviorType.Attack) continue;
 
-        // 敵に攻撃の動きを命じる
-        e.Attack();
-        enemy = e;
-
-        // ループを抜ける
-        return true;
-      });
-
-      return enemy;
+        enemy.Attack();
+        return enemy;
+      }
+      return null;
     }
 
     /// <summary>
@@ -137,13 +124,10 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      MyGame.Util.Loop(this.enemies, (enemy) =>
-      {
-        if (enemy.isAcceptAttack)
-        {
-          enemy.Ouch();
-        }
-      });
+      foreach(var e in this.enemies) 
+      { 
+        if (e.isAcceptAttack) e.Ouch();
+      }
     }
 
     /// <summary>
@@ -151,13 +135,10 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToVanish()
     {
-      MyGame.Util.Loop(this.enemies, (enemy) =>
+      foreach(var e in this.enemies)
       {
-        if (enemy.IsDead)
-        {
-          enemy.Vanish();
-        }
-      });
+        if (e.IsDead) e.Vanish();
+      }
     }
 
     /// <summary>
@@ -169,18 +150,18 @@ namespace MyGame.Dungeon
       List<Enemy> newList = new List<Enemy>(this.enemies.Count);
 
       // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
-      MyGame.Util.Loop(this.enemies, (enemy) =>
+      foreach(var e in this.enemies)
       {
-        if (enemy.IsDead)
+        if (e.IsDead) 
         {
-          enemy.Destory();
-        }
+          e.Destory();
+        } 
         
-        else
+        else 
         {
-          newList.Add(enemy);
+          newList.Add(e);
         }
-      });
+      }
 
       // 敵リストを更新
       this.enemies.Clear();
@@ -194,13 +175,13 @@ namespace MyGame.Dungeon
     {
       targets.ForEach((coord) =>
       {
-        MyGame.Util.Loop(this.enemies, (enemy) =>
+        foreach(var e in this.enemies)
         {
-          if (enemy.Coord.Equals(coord))
+          if (e.Coord.Equals(coord))
           {
-            enemy.AcceptAttack(attacker);
+            e.AcceptAttack(attacker);
           }
-        });
+        }
       });
     }
 

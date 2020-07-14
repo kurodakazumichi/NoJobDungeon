@@ -194,6 +194,13 @@ namespace MyGame.Dungeon {
         return;
       }
 
+      // 足元にアイテムがあるかチェック
+      var item = ItemManager.Instance.Find(DungeonManager.Instance.PlayerCoord);
+      if (item != null)
+      {
+        Debug.Log($"{item.Name}の上に乗った。");
+      }
+
       // 動いてるやつらがいなくなったら次のフェーズへ
       this.state.SetState(Phase.EnemyAttackStart);
     }

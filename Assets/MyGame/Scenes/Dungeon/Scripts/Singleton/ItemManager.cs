@@ -12,7 +12,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アイテムリスト
     /// </summary>
-    private List<BasicChip> items = new List<BasicChip>();
+    private List<FieldItem> items = new List<FieldItem>();
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -20,12 +20,12 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アイテムリストをリセット
     /// </summary>
-    private void Reset()
+    public void Reset()
     {
-      MyGame.Util.Loop(this.items, (item) =>
+      foreach(var item in this.items)
       {
-        MapChipFactory.Instance.Release(item);
-      });
+        item.Destory();
+      }
 
       this.items.Clear();
     }
@@ -37,24 +37,59 @@ namespace MyGame.Dungeon
     {
       Reset();
 
-      // 仮実装
-      var list = new List<ItemChipType>();
-      foreach(var value in System.Enum.GetValues(typeof(ItemChipType)))
-      {
-        list.Add((ItemChipType)value);
-      }
+      // TODO:ランダムアイテムの仮実装
+      var ids = Master.Item.Instance.Ids();
 
+      // アイテム生成＆設置
       DungeonManager.Instance.Map((x, y, tile) =>
       {
-        if (tile.IsItem)
-        {
-          var index = Random.Range(0, list.Count);
-          ItemChipType type = list[index];
-          var chip = MapChipFactory.Instance.CreateItemChip(type);
-          chip.transform.position = Util.GetPositionBy(x, y);
-          this.items.Add(chip);
-        }
+        if (tile.IsItem == false) return;
+
+        // 生成するアイテムのIDをランダムで決定
+        var id = ids[Random.Range(0, ids.Count)];
+        var item = CreateItem(id);
+
+        item.Setup(new Vector2Int(x, y));
+
+        // アイテムをリストに追加
+        this.items.Add(item);
       });
+    }
+
+    /// <summary>
+    /// 指定した座標のアイテムを探す
+    /// </summary>
+    public IReadOnlyFieldItem Find(Vector2Int coord)
+    {
+      foreach(var item in this.items)
+      {
+        if (item.Coord.Equals(coord)) return item;
+      }
+
+      return null;
+    }
+
+    //-------------------------------------------------------------------------
+    // Private Method
+
+    /// <summary>
+    /// IDを元にFieldItemを作成する
+    /// </summary>
+    private FieldItem CreateItem(string id)
+    {
+      // Masterからデータを取得
+      var item = Master.Item.Instance.FindById(id);
+      var cate = Master.ItemCategory.Instance.FindById(item.CategoryId);
+
+      if (item == null || cate == null) return null;
+
+      // Propsを作成
+      var props = new FieldItem.Props();
+      props.Id       = item.Id;
+      props.Name     = item.Name;
+      props.ChipType = cate.ChipType;
+
+      return new FieldItem(props);
     }
   }
 }

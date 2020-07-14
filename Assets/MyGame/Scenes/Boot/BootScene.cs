@@ -30,11 +30,13 @@ namespace MyGame
 #if _DEBUG
       .Setup(nameof(DebugMenuManager), system)
 #endif
+      .Setup(nameof(Master.Item), system)
+      .Setup(nameof(Master.ItemCategory), system)
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
       .Setup(nameof(InputManager), system);
 
-      SceneManager.LoadScene("MyGame/Scenes/Dungeon/DungeonScene");
+      SceneManager.LoadScene("MyGame/Scenes/Title/TitleScene");
     }
   }
 }
