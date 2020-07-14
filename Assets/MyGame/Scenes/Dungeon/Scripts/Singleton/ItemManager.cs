@@ -37,12 +37,8 @@ namespace MyGame.Dungeon
     {
       Reset();
 
-      // ランダムアイテムの仮実装
-      var list = new List<ItemId>();
-      foreach(var value in System.Enum.GetValues(typeof(ItemId)))
-      {
-        list.Add((ItemId)value);
-      }
+      // TODO:ランダムアイテムの仮実装
+      var ids = Master.Item.Instance.Ids();
 
       // アイテム生成＆設置
       DungeonManager.Instance.Map((x, y, tile) =>
@@ -50,11 +46,10 @@ namespace MyGame.Dungeon
         if (tile.IsItem == false) return;
 
         // 生成するアイテムのIDをランダムで決定
-        var id = list[Random.Range(0, list.Count)];
+        var id = ids[Random.Range(0, ids.Count)];
+        var item = CreateItem(id);
 
-        // アイテムを生成
-        var item = new FieldItem();
-        item.Setup(new Vector2Int(x, y), ItemMaster.Instance.Get(id));
+        item.Setup(new Vector2Int(x, y));
 
         // アイテムをリストに追加
         this.items.Add(item);
@@ -72,6 +67,29 @@ namespace MyGame.Dungeon
       }
 
       return null;
+    }
+
+    //-------------------------------------------------------------------------
+    // Private Method
+
+    /// <summary>
+    /// IDを元にFieldItemを作成する
+    /// </summary>
+    private FieldItem CreateItem(string id)
+    {
+      // Masterからデータを取得
+      var item = Master.Item.Instance.FindById(id);
+      var cate = Master.ItemCategory.Instance.FindById(item.CategoryId);
+
+      if (item == null || cate == null) return null;
+
+      // Propsを作成
+      var props = new FieldItem.Props();
+      props.Id       = item.Id;
+      props.Name     = item.Name;
+      props.ChipType = cate.ChipType;
+
+      return new FieldItem(props);
     }
   }
 }

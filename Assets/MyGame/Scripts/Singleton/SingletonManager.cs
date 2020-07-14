@@ -21,7 +21,6 @@ namespace MyGame {
       var go = new GameObject(name);
 
       switch(name) {
-        case nameof(ItemMaster)             : go.AddComponent<ItemMaster>(); break;
         case nameof(Master.Item)            : go.AddComponent<Master.Item>(); break;
         case nameof(Master.ItemCategory)    : go.AddComponent<Master.ItemCategory>(); break;
         case nameof(MapChipFactory)         : go.AddComponent<MapChipFactory>(); break;

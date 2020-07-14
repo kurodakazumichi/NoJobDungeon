@@ -12,9 +12,31 @@ namespace MyGame.Dungeon
   public class FieldItem : IReadOnlyFieldItem
   {
     /// <summary>
+    /// FieldItemの生成に必要なパラメータ
+    /// </summary>
+    public class Props 
+    { 
+      public string Id;
+      public string Name;
+      public ItemChipType ChipType;
+    }
+
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="props"></param>
+    public FieldItem(Props props)
+    {
+      this.props = props;
+    }
+
+    //-------------------------------------------------------------------------
+    // Member
+
+    /// <summary>
     /// アイテムの情報
     /// </summary>
-    private ItemEntity entity = null;
+    private Props props = null;
 
     /// <summary>
     /// 座標
@@ -26,21 +48,38 @@ namespace MyGame.Dungeon
     /// </summary>
     private BasicChip chip = null;
 
+    //-------------------------------------------------------------------------
+    // Public Properity
+
     /// <summary>
     /// アイテム名
     /// </summary>
-    public string Name => ((this.entity != null)? this.entity.Name : "");
+    public string Name => ((this.props != null)? this.props.Name : "");
+
+    //-------------------------------------------------------------------------
+    // Public Method
 
     /// <summary>
-    /// セットアップ
+    /// 引数に座標を渡すだけのセットアップ
     /// </summary>
-    public void Setup(Vector2Int coord, ItemEntity entity)
+    /// <param name="coord"></param>
+    public void Setup(Vector2Int coord)
     {
-      this.entity = entity;
+      if (this.props == null) return;
+
+      this.Setup(coord, this.props);
+    }
+
+    /// <summary>
+    /// 座標とPropsを指定したセットアップ
+    /// </summary>
+    public void Setup(Vector2Int coord, Props props)
+    {
+      this.props = props;
 
       Coord = coord;
 
-      this.chip = MapChipFactory.Instance.CreateItemChip(entity.ChipType);
+      this.chip = MapChipFactory.Instance.CreateItemChip(props.ChipType);
       chip.transform.position = Util.GetPositionBy(coord);
     }
 
@@ -52,7 +91,7 @@ namespace MyGame.Dungeon
       MapChipFactory.Instance.Release(this.chip);
 
       this.chip = null;
-      this.entity = null;
+      this.props = null;
       this.Coord = Vector2Int.zero;
     }
   }

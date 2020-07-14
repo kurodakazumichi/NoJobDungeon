@@ -30,7 +30,6 @@ namespace MyGame
 #if _DEBUG
       .Setup(nameof(DebugMenuManager), system)
 #endif
-      .Setup(nameof(ItemMaster), system)
       .Setup(nameof(Master.Item), system)
       .Setup(nameof(Master.ItemCategory), system)
       .Setup(nameof(CameraManager), system)
