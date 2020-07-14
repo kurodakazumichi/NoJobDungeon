@@ -202,25 +202,12 @@ namespace MyGame
     {
       base.Awake();
 
-      GameObject folder;
-
-      folder = CreateFolderObject("Field"); 
-      this.pools.Add(MapChipGroup.Field, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Gimmick");
-      this.pools.Add(MapChipGroup.Gimmick, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Player");
-      this.pools.Add(MapChipGroup.Player, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Enemy");
-      this.pools.Add(MapChipGroup.Enemy, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Item");
-      this.pools.Add(MapChipGroup.Item, new ObjectPool(folder));
-
-      folder = CreateFolderObject("Trap");
-      this.pools.Add(MapChipGroup.Trap, new ObjectPool(folder));
+      // MapChipGroupに定義された列挙情報をもとにオブジェクトプールを生成する
+      foreach(var type in System.Enum.GetValues(typeof(MapChipGroup)))
+      {
+        GameObject folder = CreateFolderObject(type.ToString());
+        this.pools.Add((MapChipGroup)type, new ObjectPool(folder));
+      }
 
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
