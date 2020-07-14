@@ -7,13 +7,8 @@ namespace MyGame.Master
   /// <summary>
   /// ItemCategoryMaster
   /// </summary>
-  public class ItemCategory : SingletonMonobehaviour<ItemCategory>
+  public class ItemCategory : MasterBase<ItemCategory, ItemCategory.Entity>
   {
-    /// <summary>
-    /// データ格納庫
-    /// </summary>
-    private Dictionary<string, Entity> repository = new Dictionary<string, Entity>();
-
     /// <summary>
     /// DebugMenuを登録
     /// </summary>
@@ -31,8 +26,7 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var json = Resources.Load("Master/ItemCategory") as TextAsset;
-      var repo = JsonUtility.FromJson<ItemCategoryJson.Repository>(json.text);
+      var repo = Load<ItemCategoryJson.Repository>("Master/ItemCategory");
 
       foreach(var entity in repo.list)
       {
@@ -40,22 +34,19 @@ namespace MyGame.Master
       }
     }
 
-    public Entity FindById(string id)
-    {
-      return this.repository[id];
-    }
-
 #if _DEBUG
     //-------------------------------------------------------------------------
     // Debug
     private void DrawDebugMenu(DebugMenu.MenuWindow window)
     {
+      var DM = DebugMenuManager.Instance;
+
       // データを列挙
       foreach(var entity in this.repository)
       {
         if (GUILayout.Button($"{entity.Value.Name}")) 
         {
-          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.ItemCategoryMaster, (win) => 
+          DM.OpenWindow(DebugMenu.Page.ItemCategoryMaster, (win) => 
           {
             this.DrawDebugDetail(entity.Value);
           });

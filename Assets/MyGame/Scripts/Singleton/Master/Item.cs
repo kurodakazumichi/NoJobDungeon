@@ -7,10 +7,8 @@ namespace MyGame.Master
   /// <summary>
   /// Item Master
   /// </summary>
-  public class Item : SingletonMonobehaviour<Item>
+  public class Item : MasterBase<Item, Item.Entity>
   {
-    private Dictionary<string, Entity> repository = new Dictionary<string, Entity>();
-
     /// <summary>
     /// DebugMenuを登録
     /// </summary>
@@ -28,8 +26,7 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var json = Resources.Load("Master/Item") as TextAsset;
-      var repo = JsonUtility.FromJson<ItemJson.Repository>(json.text);
+      var repo = Load<ItemJson.Repository>("Master/Item");
 
       foreach(var entity in repo.list)
       {
@@ -37,22 +34,6 @@ namespace MyGame.Master
       }
     }
 
-    public Entity FindById(string id)
-    {
-      return this.repository[id];
-    }
-
-    public List<string> Ids()
-    {
-      List<string> ids = new List<string>();
-
-      foreach(var key in this.repository.Keys)
-      {
-        ids.Add(key);
-      }
-
-      return ids;
-    }
 
 #if _DEBUG
     //-------------------------------------------------------------------------
