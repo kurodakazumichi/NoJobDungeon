@@ -10,14 +10,16 @@ namespace MyGame
   public enum MapChipGroup 
   {
     Field,
-    Gimmick,
-    Player,
-    Enemy,
-    Item,
-    Trap,
     Deco,
+    Trap,
+    Item,
+    Enemy,
+    Player,
   }
 
+  /// <summary>
+  /// AutoChipの種類
+  /// </summary>
   public enum AutoChipType
   {
     //:TODO 仮
@@ -27,21 +29,25 @@ namespace MyGame
     Umi,
   }
 
+  /// <summary>
+  /// DecoChipの種類
+  /// </summary>
   public enum DecoChipType
   {
     Goal = 231,
   }
 
-  public enum EnemyChipType
-  {
-    Shobon,
-  }
-
+  /// <summary>
+  /// 罠の種類
+  /// </summary>
   public enum TrapChipType
   {
 
   }
 
+  /// <summary>
+  /// アイテムの種類
+  /// </summary>
   public enum ItemChipType
   {
     Capsule,
@@ -57,6 +63,14 @@ namespace MyGame
     Recipe,
     Box,
     Wood,
+  }
+
+  /// <summary>
+  /// 敵の種類
+  /// </summary>
+  public enum EnemyChipType
+  {
+    Shobon,
   }
 
   /// <summary>
@@ -98,36 +112,19 @@ namespace MyGame
     }
 
     //-------------------------------------------------------------------------
-    // Player Chip
+    // Trap Chip
 
-    public CharChip CreatePlayerChip()
+    private Dictionary<TrapChipType, string> TrapChipResourceMap = new Dictionary<TrapChipType, string>()
     {
-      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
-      chip.Reset();
-      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
-      chip.Sorting = SpriteSortingOrder.Player;
-      return chip;
-    }
-
-    //-------------------------------------------------------------------------
-    // Enemy Chip
-
-    /// <summary>
-    /// EnemyChipTypeとリソースファイルのマップテーブル
-    /// </summary>
-    private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
-    {
-      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public CharChip CreateEnemyChip(EnemyChipType type)
+    public BasicChip CreateTrapChip(TrapChipType type)
     {
-      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Trap].Create<BasicChip>(type.ToString());
 
       chip.Reset();
-
-      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
-      chip.Sorting = SpriteSortingOrder.Enemy;
+      chip.Sprite = Resources.Load<Sprite>(this.TrapChipResourceMap[type]);
+      chip.Sorting = SpriteSortingOrder.Trap;
 
       return chip;
     }
@@ -167,21 +164,44 @@ namespace MyGame
     }
 
     //-------------------------------------------------------------------------
-    // Trap Chip
+    // Enemy Chip
 
-    private Dictionary<TrapChipType, string> TrapChipResourceMap = new Dictionary<TrapChipType, string>(){
+    /// <summary>
+    /// EnemyChipTypeとリソースファイルのマップテーブル
+    /// </summary>
+    private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
+    {
+      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
     };
 
-    public BasicChip CreateTrapChip(TrapChipType type)
+    public CharChip CreateEnemyChip(EnemyChipType type)
     {
-      var chip = this.pools[MapChipGroup.Trap].Create<BasicChip>(type.ToString());
+      var chip = this.pools[MapChipGroup.Enemy].Create<CharChip>(type.ToString());
 
       chip.Reset();
-      chip.Sprite = Resources.Load<Sprite>(this.TrapChipResourceMap[type]);
-      chip.Sorting = SpriteSortingOrder.Trap;
+
+      chip.SetSprites(Resources.LoadAll<Sprite>(this.EnemyChipResouceMap[type]));
+      chip.Sorting = SpriteSortingOrder.Enemy;
 
       return chip;
     }
+
+    //-------------------------------------------------------------------------
+    // Player Chip
+
+    public CharChip CreatePlayerChip()
+    {
+      var chip = this.pools[MapChipGroup.Player].Create<CharChip>("player");
+      chip.Reset();
+
+      chip.SetSprites(Resources.LoadAll<Sprite>("Textures/CharChip/Nico"));
+      chip.Sorting = SpriteSortingOrder.Player;
+
+      return chip;
+    }
+
+    //-------------------------------------------------------------------------
+    // その他
 
     /// <summary>
     /// 解放する
