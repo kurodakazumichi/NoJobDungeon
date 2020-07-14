@@ -117,10 +117,10 @@ namespace MyGame.Dungeon
     /// </summary>
     private void ResetDecoChips()
     {
-      MyGame.Util.Loop(this.decoChips, (deco) =>
+      foreach(var chip in this.decoChips)
       {
-        MapChipFactory.Instance.Release(deco);
-      });
+        MapChipFactory.Instance.Release(chip);
+      }
 
       this.decoChips.Clear();
     }

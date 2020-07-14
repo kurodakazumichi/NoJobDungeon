@@ -113,26 +113,5 @@ namespace MyGame
         if (isBreak) break;
       }
     }
-
-    /// <summary>
-    /// リストをもとにしたループ
-    /// </summary>
-    static public void Loop<T>(List<T> list, System.Action<T> cb)
-    {
-      list.ForEach(cb);
-    }
-
-    /// <summary>
-    /// リストをもとにしたループ(Func版)
-    /// </summary>
-    static public void Loop<T>(List<T> list, System.Func<T, bool> cb)
-    {
-      for (int i = 0; i < list.Count; ++i)
-      {
-        var isBreak = cb(list[i]);
-
-        if (isBreak) break;
-      }
-    }
   }
 }

@@ -278,16 +278,14 @@ namespace MyGame.Dungeon
     {
       Room foundRoom = null;
 
-      MyGame.Util.Loop(this.rooms, (room) =>
-      {
+      foreach(var room in this.rooms) 
+      { 
         if (room.Area.Contains(coord))
         {
           foundRoom = room;
-          return true;
+          break;
         }
-
-        return false;
-      });
+      };
 
       return foundRoom;
     }

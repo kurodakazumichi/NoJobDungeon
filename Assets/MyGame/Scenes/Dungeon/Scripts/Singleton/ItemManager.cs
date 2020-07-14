@@ -22,10 +22,10 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Reset()
     {
-      MyGame.Util.Loop(this.items, (item) =>
+      foreach(var item in this.items)
       {
         item.Destory();
-      });
+      }
 
       this.items.Clear();
     }

@@ -66,9 +66,9 @@ namespace MyGame
         new ItemEntity(ItemId.ITEM004, ItemCategoryId.Drug, ItemChipType.Capsule, "命の薬"),
       };
 
-      Util.Loop(entities, (entity) => { 
+      foreach(var entity in entities) { 
         this.repository.Add(entity.Id, entity);
-      });
+      };
     }
 
     public ItemEntity Get(ItemId id)
