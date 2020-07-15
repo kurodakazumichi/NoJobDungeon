@@ -40,9 +40,9 @@ namespace MyGame.Dungeon
     // Public Method
 
     /// <summary>
-    /// コンストラクタ
+    /// セットアップ
     /// </summary>
-    public Enemy(Vector2Int coord)
+    virtual public void Setup(Vector2Int coord)
     {
       Chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       Coord = coord;

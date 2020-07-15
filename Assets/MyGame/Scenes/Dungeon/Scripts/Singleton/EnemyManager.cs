@@ -79,7 +79,8 @@ namespace MyGame.Dungeon
       {
         if (tile.IsEnemy)
         {
-          var enemy = new Enemy(new Vector2Int(x, y));
+          var enemy = new BasicEnemy();
+          enemy.Setup(new Vector2Int(x, y));
           this.enemies.Add(enemy);
         }
       });
