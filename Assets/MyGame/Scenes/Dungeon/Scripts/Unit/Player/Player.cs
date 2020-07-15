@@ -9,7 +9,7 @@ namespace MyGame.Dungeon
   /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
   /// またプレイヤーチップの制御を行う。
   /// </summary>
-  public class Player : CharBase, IAttackable
+  public class Player : CharBase
   {
     /// <summary>
     /// プレイヤーの行動一覧
@@ -231,25 +231,6 @@ namespace MyGame.Dungeon
       Status.Reset();
     }
 
-    /// <summary>
-    /// 攻撃をする
-    /// </summary>
-    public void Attack(IAttackable target)
-    {
-      target.AcceptAttack(this);
-    }
-
-    /// <summary>
-    /// 攻撃を受ける
-    /// </summary>
-    public void AcceptAttack(IAttackable attacker)
-    {
-      // 攻撃を受ける
-      Status.AcceptAttack(attacker.Status);
-
-      // 攻撃してきた奴の方を向く
-      Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
-    }
     //-------------------------------------------------------------------------
     // 移動に関するUtil
 
