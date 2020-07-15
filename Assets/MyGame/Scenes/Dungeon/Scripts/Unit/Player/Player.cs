@@ -33,11 +33,6 @@ namespace MyGame.Dungeon
     private Direction dashDirection = new Direction();
 
     /// <summary>
-    /// ステータス
-    /// </summary>
-    private Status status = null;
-
-    /// <summary>
     /// 敵の座標を入れるための配列とその配列を指すIndex
     /// 周囲に敵がいた時に、ワンボタンで敵の方を向く処理で使う。
     /// </summary>
@@ -57,11 +52,6 @@ namespace MyGame.Dungeon
     /// </summary>
     public bool IsIdle => (Chip.IsIdle);
 
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status => (this.status);
-
     //-------------------------------------------------------------------------
     // Public
 
@@ -75,7 +65,7 @@ namespace MyGame.Dungeon
       Reset(coord);
 
       Status.Props props = new Status.Props(10, 10, 2);
-      this.status = new Status(props);
+      Status = new Status(props);
     }
 
     public void Reset(Vector2Int coord)
@@ -243,7 +233,7 @@ namespace MyGame.Dungeon
       {
         Debug.Log($"無職は攻撃をかわした。");
       }
-      this.status.Reset();
+      Status.Reset();
     }
 
     /// <summary>
@@ -260,7 +250,7 @@ namespace MyGame.Dungeon
     public void AcceptAttack(IAttackable attacker)
     {
       // 攻撃を受ける
-      this.status.AcceptAttack(attacker.Status);
+      Status.AcceptAttack(attacker.Status);
 
       // 攻撃してきた奴の方を向く
       Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
@@ -379,14 +369,14 @@ namespace MyGame.Dungeon
       style1.normal.background = this.tex1;
       style2.normal.background = this.tex2;
 
-      var width = 200 * this.status.RateHP;
+      var width = 200 * Status.RateHP;
 
       GUI.Box(new Rect(10, 10, 200, 20), "", style1);
       GUI.Box(new Rect(10, 10, width, 20), "", style2);
 
       GUIStyle text = new GUIStyle();
       text.normal.textColor = Color.black;
-      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{this.status.HP}/{this.status.MaxHP}", text);
+      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{Status.HP}/{Status.MaxHP}", text);
     }
 
     public void DrawDebugMenu()

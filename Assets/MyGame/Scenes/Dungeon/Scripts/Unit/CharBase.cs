@@ -28,6 +28,11 @@ namespace MyGame.Dungeon
     protected CharChip Chip { get; set; } = null;
 
     /// <summary>
+    /// ステータス
+    /// </summary>
+    public Status Status { get; protected set; } = null;
+
+    /// <summary>
     /// 座標
     /// </summary>
     public Vector2Int Coord { get; set; } = Vector2Int.zero;

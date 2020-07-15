@@ -24,11 +24,6 @@ namespace MyGame.Dungeon
     private BehaviorType behavior = BehaviorType.None;
 
     /// <summary>
-    /// ステータス
-    /// </summary>
-    private Status status = null;
-
-    /// <summary>
     /// 移動予定の座標
     /// </summary>
     public Vector2Int nextCoord = Vector2Int.zero;
@@ -46,11 +41,6 @@ namespace MyGame.Dungeon
     /// </summary>
     public BehaviorType Behavior => (this.behavior);
 
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status => (this.status);
-
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -64,7 +54,7 @@ namespace MyGame.Dungeon
       Chip.transform.position = Util.GetPositionBy(coord);
 
       Status.Props props = new Status.Props(10, 4, 2);
-      this.status = new Status(props);
+      Status = new Status(props);
     }
 
     /// <summary>
@@ -161,7 +151,7 @@ namespace MyGame.Dungeon
       {
         Debug.Log($"しょぼんは攻撃をかわした。");
       }
-      this.status.Reset();
+      Status.Reset();
     }
 
     /// <summary>
@@ -202,7 +192,7 @@ namespace MyGame.Dungeon
     public void AcceptAttack(IAttackable attacker)
     {
       // 攻撃を受ける
-      this.status.AcceptAttack(attacker.Status);
+      Status.AcceptAttack(attacker.Status);
 
       // 攻撃してきた奴の方を向く
       Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
