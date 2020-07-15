@@ -124,7 +124,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶと敵が動き始める
     /// </summary>
-    public void Move()
+    public void DoMoveMotion()
     {
       if (this.behavior == BehaviorType.Move)
       {
@@ -139,7 +139,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃予定の敵がこのメソッドを呼ばれると、攻撃の動きを開始する
     /// </summary>
-    public void Attack()
+    public void DoAttackMotion()
     {
       // アタッカーじゃなければ何もしない
       if (this.behavior != BehaviorType.Attack) return;
@@ -152,7 +152,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶと敵が痛がる
     /// </summary>
-    public void Ouch()
+    public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
       if (!Status.IsAcceptedAttack) return;
@@ -183,7 +183,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶと敵が消滅する
     /// </summary>
-    public void Vanish()
+    public void DoVanishMotion()
     {
       DungeonManager.Instance.RemoveEnemyCoord(this.coord);
       this.chip.Vanish(Define.SEC_PER_TURN);

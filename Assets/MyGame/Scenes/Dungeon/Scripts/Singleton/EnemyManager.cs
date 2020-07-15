@@ -98,7 +98,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToMove()
     {
-      foreach (var enemy in this.enemies) { enemy.Move(); };
+      foreach (var enemy in this.enemies) { enemy.DoMoveMotion(); };
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ namespace MyGame.Dungeon
       {
         if (enemy.Behavior != Enemy.BehaviorType.Attack) continue;
 
-        enemy.Attack();
+        enemy.DoAttackMotion();
         return enemy;
       }
       return null;
@@ -126,7 +126,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies) 
       { 
-        e.Ouch();
+        e.DoOuchMotion();
       }
     }
 
@@ -137,7 +137,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies)
       {
-        if (e.Status.IsDead) e.Vanish();
+        if (e.Status.IsDead) e.DoVanishMotion();
       }
     }
 
