@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class Enemy : IAttackable
+  public class Enemy : CharBase, IAttackable
   {
     /// <summary>
     /// 敵の行動一覧
@@ -17,16 +17,6 @@ namespace MyGame.Dungeon
 
     //-------------------------------------------------------------------------
     // メンバー
-
-    /// <summary>
-    /// 敵チップ
-    /// </summary>
-    private CharChip chip;
-
-    /// <summary>
-    /// 敵の座標
-    /// </summary>
-    private Vector2Int coord = Vector2Int.zero;
 
     /// <summary>
     /// 行動
@@ -52,11 +42,6 @@ namespace MyGame.Dungeon
     public bool IsIdle => (this.chip.IsIdle);
 
     /// <summary>
-    /// 敵の座標
-    /// </summary>
-    public Vector2Int Coord => (this.coord);
-
-    /// <summary>
     /// 行動
     /// </summary>
     public BehaviorType Behavior => (this.behavior);
@@ -75,7 +60,7 @@ namespace MyGame.Dungeon
     public Enemy(Vector2Int coord)
     {
       this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
-      this.coord = coord;
+      Coord = coord;
       this.chip.transform.position = Util.GetPositionBy(coord);
 
       Status.Props props = new Status.Props(10, 4, 2);
@@ -89,7 +74,7 @@ namespace MyGame.Dungeon
     {
       // 自分の周囲１マスにプレイヤーがいるかどうか
       var player = DungeonManager.Instance.PlayerCoord;
-      var v = player - this.coord;
+      var v = player - Coord;
       
       // 周囲１マスにプレイヤーがいるならプレイヤーを攻撃
       if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
@@ -105,7 +90,7 @@ namespace MyGame.Dungeon
         var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
 
         // おそらく移動するであろう次の座標
-        var maybeNext = this.coord + dir;
+        var maybeNext = Coord + dir;
 
         // 移動先のタイル情報を見て移動するかどうかを決める
         var tile = DungeonManager.Instance.GetTile(maybeNext);
@@ -129,9 +114,9 @@ namespace MyGame.Dungeon
       if (this.behavior != BehaviorType.Move) return;
 
       // ダンジョンの情報を書き換え
-      DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
-      this.coord = this.nextCoord;
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
+      Coord = this.nextCoord;
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
       this.behavior = BehaviorType.None;
     }
 
@@ -188,7 +173,7 @@ namespace MyGame.Dungeon
       if (!Status.IsDead) return;
 
       // マップ上の敵の情報を除去する
-      DungeonManager.Instance.RemoveEnemyCoord(this.coord);
+      DungeonManager.Instance.RemoveEnemyCoord(Coord);
 
       // 消滅モーション開始
       this.chip.Vanish(Define.SEC_PER_TURN);

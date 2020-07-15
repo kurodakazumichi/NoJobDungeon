@@ -9,7 +9,7 @@ namespace MyGame.Dungeon
   /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
   /// またプレイヤーチップの制御を行う。
   /// </summary>
-  public class Player : IAttackable
+  public class Player : CharBase, IAttackable
   {
     /// <summary>
     /// プレイヤーの行動一覧
@@ -26,16 +26,6 @@ namespace MyGame.Dungeon
 
     //-------------------------------------------------------------------------
     // メンバー
-
-    /// <summary>
-    /// プレイヤーチップ
-    /// </summary>
-    private CharChip chip;
-
-    /// <summary>
-    /// プレイヤーの座標
-    /// </summary>
-    private Vector2Int coord = Vector2Int.zero;
 
     /// <summary>
     /// ダッシュの方向
@@ -61,11 +51,6 @@ namespace MyGame.Dungeon
     /// Player Chipのゲームオブジェクト
     /// </summary>
     public GameObject PlayerObject => (this.chip.gameObject);
-
-    /// <summary>
-    /// プレイヤーの座標
-    /// </summary>
-    public Vector2Int Coord => (this.coord);
 
     /// <summary>
     /// アイドル状態です
@@ -95,7 +80,7 @@ namespace MyGame.Dungeon
 
     public void Reset(Vector2Int coord)
     {
-      this.coord = coord;
+      Coord = coord;
       this.chip.transform.position = Util.GetPositionBy(coord);
     }
 
@@ -171,11 +156,11 @@ namespace MyGame.Dungeon
       if (IsWantToMove() && CanMoveTo(direction))
       {
         // 移動先の座標を算出
-        var next = this.coord + direction.ToVector(false);
+        var next = Coord + direction.ToVector(false);
 
         // 座標の更新
-        DungeonManager.Instance.UpdatePlayerCoord(this.coord, next);
-        this.coord = next;
+        DungeonManager.Instance.UpdatePlayerCoord(Coord, next);
+        Coord = next;
 
         return Behavior.Move;
       }
@@ -208,7 +193,7 @@ namespace MyGame.Dungeon
     {
       var area = new List<Vector2Int>()
       {
-        this.coord + this.chip.Direction.ToVector(false)
+        Coord + this.chip.Direction.ToVector(false)
       };
 
       return area;
@@ -219,7 +204,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoMoveMotion()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
     }
 
     /// <summary>
@@ -341,7 +326,7 @@ namespace MyGame.Dungeon
     {
       DungeonManager DM = DungeonManager.Instance;
 
-      var coord = this.coord;
+      var coord = Coord;
 
       IReadOnlyTile curr = DM.GetTile(coord);
       IReadOnlyTile next = DM.GetTile(coord, direction);
