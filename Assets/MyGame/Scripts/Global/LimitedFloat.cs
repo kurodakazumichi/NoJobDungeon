@@ -4,7 +4,19 @@ using UnityEngine;
 
 namespace MyGame
 {
-  class LimitedFloat
+  /// <summary>
+  /// 読み取り専用LimitedFloat
+  /// </summary>
+  public interface IReadOnlyLimitedFloat
+  {
+    float Now { get; }
+    float Max { get; }
+    float Rate { get; }
+    bool IsFull { get; }
+    bool IsEmpty { get; }
+  }
+
+  class LimitedFloat : IReadOnlyLimitedFloat
   {
     //-------------------------------------------------------------------------
     // Member
@@ -66,6 +78,15 @@ namespace MyGame
 
     //-------------------------------------------------------------------------
     // Public Method
+
+    /// <summary>
+    /// セットアップ
+    /// </summary>
+    public void Setup(float now, float max)
+    {
+      Max = max;
+      Now = now;
+    }
 
     /// <summary>
     /// 1になる
