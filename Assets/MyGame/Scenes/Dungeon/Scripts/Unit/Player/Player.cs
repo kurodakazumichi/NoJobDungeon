@@ -176,10 +176,12 @@ namespace MyGame.Dungeon
     /// </summary>
     public List<Vector2Int> GetAttackCoords()
     {
-      var area = new List<Vector2Int>()
+      var area = new List<Vector2Int>();
+
+      if (CanAttackTo(Chip.Direction))
       {
-        Coord + Chip.Direction.ToVector(false)
-      };
+        area.Add(Coord + Chip.Direction.ToVector(false));
+      }
 
       return area;
     }
