@@ -184,6 +184,9 @@ namespace MyGame.Dungeon {
 
       // 踏破情報更新
       DungeonManager.Instance.UpdateClearFlags();
+
+      // ミニマップ更新
+      HUD.Instance.UpdateMinimap();
     }
 
     private void MoveUpdate()

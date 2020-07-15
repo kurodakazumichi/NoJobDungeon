@@ -29,11 +29,9 @@ namespace MyGame.Dungeon
     //}
 
     // Update is called once per frame
-    void Update()
-    {
-      //TODO: 外部から呼んでもらうまでここで仮処理
-      UpdateMinimap();
-    }
+    //void Update()
+    //{
+    //}
 
     public void Setup()
     {
