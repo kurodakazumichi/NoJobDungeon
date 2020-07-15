@@ -10,6 +10,6 @@ namespace MyGame.Dungeon
   public interface IAttackable
   {
     Vector2Int Coord { get; }
-    int Atk { get; }
+    Status Status { get; }
   }
 }

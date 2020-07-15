@@ -45,7 +45,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーは死んでいます
     /// </summary>
-    public bool IsPlayerDead => (this.player.IsDead);
+    public bool IsPlayerDead => (this.player.Status.IsDead);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -102,7 +102,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      if (this.player.isAcceptAttack)
+      if (this.player.Status.IsAcceptedAttack)
       {
         this.player.Ouch();
       }

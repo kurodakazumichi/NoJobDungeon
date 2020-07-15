@@ -34,16 +34,9 @@ namespace MyGame.Dungeon
     private BehaviorType behavior = BehaviorType.None;
 
     /// <summary>
-    /// 体力
-    /// TODO: 仮実装
+    /// ステータス
     /// </summary>
-    private int hp = 10;
-
-    /// <summary>
-    /// 攻撃を受けたフラグ
-    /// TODO: 仮実装
-    /// </summary>
-    public bool isAcceptAttack = false;
+    private Status status = null;
 
     /// <summary>
     /// 移動予定の座標
@@ -59,12 +52,6 @@ namespace MyGame.Dungeon
     public bool IsIdle => (this.chip.IsIdle);
 
     /// <summary>
-    /// 死んでいます
-    /// TODO: 仮実装
-    /// </summary>
-    public bool IsDead => (this.hp <= 0);
-
-    /// <summary>
     /// 敵の座標
     /// </summary>
     public Vector2Int Coord => (this.coord);
@@ -75,10 +62,9 @@ namespace MyGame.Dungeon
     public BehaviorType Behavior => (this.behavior);
 
     /// <summary>
-    /// 攻撃力
-    /// TODO: 仮実装
+    /// ステータス
     /// </summary>
-    public int Atk => (4);
+    public Status Status => (this.status);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -91,6 +77,9 @@ namespace MyGame.Dungeon
       this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       this.coord = coord;
       this.chip.transform.position = Util.GetPositionBy(coord);
+
+      Status.Props props = new Status.Props(10, 4, 2);
+      this.status = new Status(props);
     }
 
     /// <summary>
@@ -166,7 +155,7 @@ namespace MyGame.Dungeon
     public void Ouch()
     {
       this.chip.Ouch(Define.SEC_PER_TURN);
-      this.isAcceptAttack = false;
+      this.status.Reset();
     }
 
     /// <summary>
@@ -192,9 +181,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public void AcceptAttack(IAttackable attacker)
     {
-      // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
-      this.hp -= attacker.Atk;
-      this.isAcceptAttack = true;
+      // 攻撃を受ける
+      this.status.AcceptAttack(attacker.Status);
+
+      // 攻撃してきた奴の方を向く
+      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
     }
 
 
