@@ -50,12 +50,12 @@ namespace MyGame.Dungeon
     /// <summary>
     /// Player Chipのゲームオブジェクト
     /// </summary>
-    public GameObject PlayerObject => (this.chip.gameObject);
+    public GameObject PlayerObject => (Chip.gameObject);
 
     /// <summary>
     /// アイドル状態です
     /// </summary>
-    public bool IsIdle => (this.chip.IsIdle);
+    public bool IsIdle => (Chip.IsIdle);
 
     /// <summary>
     /// ステータス
@@ -70,7 +70,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public Player(Vector2Int coord)
     {
-      this.chip  = MapChipFactory.Instance.CreatePlayerChip();
+      Chip = MapChipFactory.Instance.CreatePlayerChip();
 
       Reset(coord);
 
@@ -81,7 +81,7 @@ namespace MyGame.Dungeon
     public void Reset(Vector2Int coord)
     {
       Coord = coord;
-      this.chip.transform.position = Util.GetPositionBy(coord);
+      Chip.transform.position = Util.GetPositionBy(coord);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace MyGame.Dungeon
       // 方向キー入力があったらプレイヤーの向きを更新
       if (!direction.IsNeutral)
       {
-        this.chip.Direction = direction;
+        Chip.Direction = direction;
       }
 
       // 周囲に敵がいれば敵の方を向く
@@ -139,7 +139,7 @@ namespace MyGame.Dungeon
         {
           var pos = this.aroundEnemies[this.aroundEnemiesIndex % this.aroundEnemies.Count];
 
-          this.chip.Direction = Direction.LookAt(Coord, pos);
+          Chip.Direction = Direction.LookAt(Coord, pos);
           this.aroundEnemiesIndex++;
         }
       }
@@ -193,7 +193,7 @@ namespace MyGame.Dungeon
     {
       var area = new List<Vector2Int>()
       {
-        Coord + this.chip.Direction.ToVector(false)
+        Coord + Chip.Direction.ToVector(false)
       };
 
       return area;
@@ -204,7 +204,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoMoveMotion()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
     }
 
     /// <summary>
@@ -212,7 +212,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoAttackMotion()
     {
-      this.chip.Attack(Define.SEC_PER_TURN, 0.4f);
+      Chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
 
     /// <summary>
@@ -228,7 +228,7 @@ namespace MyGame.Dungeon
       {
         if (Status.HasDamage)
         {
-          this.chip.Ouch(Define.SEC_PER_TURN);
+          Chip.Ouch(Define.SEC_PER_TURN);
           Debug.Log($"無職は{Status.AcceptedDamage}のダメージをうけた。");
         }
 
@@ -263,7 +263,7 @@ namespace MyGame.Dungeon
       this.status.AcceptAttack(attacker.Status);
 
       // 攻撃してきた奴の方を向く
-      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
+      Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
     }
     //-------------------------------------------------------------------------
     // 移動に関するUtil

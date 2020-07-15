@@ -39,7 +39,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アイドル状態です
     /// </summary>
-    public bool IsIdle => (this.chip.IsIdle);
+    public bool IsIdle => (Chip.IsIdle);
 
     /// <summary>
     /// 行動
@@ -59,9 +59,9 @@ namespace MyGame.Dungeon
     /// </summary>
     public Enemy(Vector2Int coord)
     {
-      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
+      Chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
       Coord = coord;
-      this.chip.transform.position = Util.GetPositionBy(coord);
+      Chip.transform.position = Util.GetPositionBy(coord);
 
       Status.Props props = new Status.Props(10, 4, 2);
       this.status = new Status(props);
@@ -80,7 +80,7 @@ namespace MyGame.Dungeon
       if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
       {
         this.behavior = BehaviorType.Attack;
-        this.chip.Direction = new Direction(v, false);
+        Chip.Direction = new Direction(v, false);
       }
 
       // プレイヤーがいないなら移動を考える
@@ -99,7 +99,7 @@ namespace MyGame.Dungeon
         if (!tile.IsObstacle)
         {
           // 座標と方向を更新
-          this.chip.Direction = new Direction(dir, false);
+          Chip.Direction = new Direction(dir, false);
           this.nextCoord = maybeNext;
           this.behavior = BehaviorType.Move;
         }
@@ -116,7 +116,7 @@ namespace MyGame.Dungeon
       // ダンジョンの情報を書き換え
       DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
       Coord = this.nextCoord;
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
       this.behavior = BehaviorType.None;
     }
 
@@ -129,7 +129,7 @@ namespace MyGame.Dungeon
       if (this.behavior != BehaviorType.Attack) return;
 
       // 攻撃の動きを開始
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      Chip.Attack(Define.SEC_PER_TURN, 1f);
       this.behavior = BehaviorType.None;
     }
 
@@ -146,7 +146,7 @@ namespace MyGame.Dungeon
       {
         if (Status.HasDamage)
         {
-          this.chip.Ouch(Define.SEC_PER_TURN);
+          Chip.Ouch(Define.SEC_PER_TURN);
           Debug.Log($"しょぼんは{Status.AcceptedDamage}のダメージをうけた。");
         }
 
@@ -176,7 +176,7 @@ namespace MyGame.Dungeon
       DungeonManager.Instance.RemoveEnemyCoord(Coord);
 
       // 消滅モーション開始
-      this.chip.Vanish(Define.SEC_PER_TURN);
+      Chip.Vanish(Define.SEC_PER_TURN);
     }
 
     /// <summary>
@@ -184,8 +184,8 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Destory()
     {
-      MapChipFactory.Instance.Release(this.chip);
-      this.chip = null;
+      MapChipFactory.Instance.Release(Chip);
+      Chip = null;
     }
 
     /// <summary>
@@ -205,7 +205,7 @@ namespace MyGame.Dungeon
       this.status.AcceptAttack(attacker.Status);
 
       // 攻撃してきた奴の方を向く
-      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
+      Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
     }
 
 
@@ -219,7 +219,7 @@ namespace MyGame.Dungeon
         Think();
       }
       GUILayout.Label("CharChip");
-      this.chip.DrawDebugMenu();
+      Chip.DrawDebugMenu();
     }
 #endif
   }
