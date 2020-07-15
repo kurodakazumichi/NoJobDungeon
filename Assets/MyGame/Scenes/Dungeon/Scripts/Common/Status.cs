@@ -103,10 +103,15 @@ namespace MyGame.Dungeon
     {
       this.isAcceptedAttack = true;
 
-      var dmg = Mathf.Max(0, status.Pow.Now - Def.Now);
-      this.hp.Now -= dmg;
-
-      this.isHit = true;
+      // 攻撃は90パーの確立で当たる
+      this.isHit = Random.Range(0f, 1f) <= Define.HIT_RATE;
+      
+      // 攻撃があたった場合はダメージ計算
+      if (isHit)
+      {
+        var dmg = Mathf.Max(0, status.Pow.Now - Def.Now);
+        this.hp.Now -= dmg;
+      }
     }
 
   }

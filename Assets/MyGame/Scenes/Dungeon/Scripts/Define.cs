@@ -15,6 +15,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public const float SEC_PER_TURN = 0.15f;
 
+    /// <summary>
+    /// 基本命中率
+    /// </summary>
+    public const float HIT_RATE = 0.9f;
+
     public static Vector3 CHIP_SCALE
     {
       get { return new Vector3(1, 1 ,1); }

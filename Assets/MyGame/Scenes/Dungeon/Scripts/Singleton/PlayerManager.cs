@@ -102,10 +102,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      if (this.player.Status.IsAcceptedAttack)
-      {
-        this.player.Ouch();
-      }
+      this.player.Ouch();
     }
 
     /// <summary>

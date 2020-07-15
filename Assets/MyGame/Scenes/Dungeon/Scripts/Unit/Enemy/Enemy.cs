@@ -154,7 +154,20 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Ouch()
     {
-      this.chip.Ouch(Define.SEC_PER_TURN);
+      // 攻撃を受けていなければ痛がらない
+      if (!Status.IsAcceptedAttack) return;
+
+      // 攻撃を受けていたら痛がる
+      if (Status.IsHit)
+      {
+        this.chip.Ouch(Define.SEC_PER_TURN);
+      }
+
+      // 攻撃を避けていたらメッセージを表示
+      else
+      {
+        Debug.Log($"しょぼんは攻撃をかわした。");
+      }
       this.status.Reset();
     }
 

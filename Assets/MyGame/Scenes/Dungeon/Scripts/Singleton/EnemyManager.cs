@@ -126,7 +126,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies) 
       { 
-        if (e.Status.IsAcceptedAttack) e.Ouch();
+        e.Ouch();
       }
     }
 
