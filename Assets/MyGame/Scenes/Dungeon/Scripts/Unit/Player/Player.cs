@@ -100,6 +100,15 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// １ターンに１度だけ呼ばれる更新処理
+    /// </summary>
+    public void Update()
+    {
+      // 体力を微量回復
+      Status.AddHP(Status.MaxHP * 0.015f);
+    }
+
+    /// <summary>
     /// 入力内容からプレイヤーがどんな行動をするかを決める処理
     /// </summary>
     public Behavior Think()
@@ -377,11 +386,14 @@ namespace MyGame.Dungeon
       style1.normal.background = this.tex1;
       style2.normal.background = this.tex2;
 
-      var width = 200 * this.status.HP.Rate;
+      var width = 200 * this.status.RateHP;
 
       GUI.Box(new Rect(10, 10, 200, 20), "", style1);
       GUI.Box(new Rect(10, 10, width, 20), "", style2);
-      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{this.status.HP.Now}/{this.status.HP.Max}");
+
+      GUIStyle text = new GUIStyle();
+      text.normal.textColor = Color.black;
+      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{this.status.HP}/{this.status.MaxHP}", text);
     }
 
     public void DrawDebugMenu()

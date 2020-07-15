@@ -22,6 +22,7 @@ namespace MyGame.Dungeon {
       PlayerAttackEnd,
       EnemyAttackStart,
       EnemyAttackEnd,
+      TurnEnd,
     }
 
     //-------------------------------------------------------------------------
@@ -70,6 +71,7 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
       this.state.Add(Phase.EnemyAttackStart, EnemyAttackStartEnter, EnemyAttackStartUpdate);
       this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
+      this.state.Add(Phase.TurnEnd, TurnEndEnter, TurnEndUpdate);
 
       this.state.SetState(Phase.Load);
     }
@@ -312,6 +314,18 @@ namespace MyGame.Dungeon {
         return;
       }
 
+      this.state.SetState(Phase.TurnEnd);
+    }
+
+    //-------------------------------------------------------------------------
+    // ターンエンド
+    private void TurnEndEnter()
+    {
+      PlayerManager.Instance.UpdatePlayer();
+    }
+
+    private void TurnEndUpdate()
+    {
       this.state.SetState(Phase.PlayerThink);
     }
 

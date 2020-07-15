@@ -92,17 +92,34 @@ namespace MyGame.Dungeon
     //-------------------------------------------------------------------------
     // Public Properity
 
-    public IReadOnlyLimitedFloat HP => (this.hp);
-    public IReadOnlyLimitedFloat Pow => (this.pow);
-    public IReadOnlyLimitedFloat Def => (this.def);
+    public int HP => ((int)this.hp.Now);
+    public int MaxHP => ((int)this.hp.Max);
+    public float RateHP => ((float)HP/MaxHP);
     public bool IsAcceptedAttack => (this.isAcceptedAttack);
     public bool IsHit => (this.isHit);
-    public bool IsDead => (this.hp.IsEmpty);
+    public bool IsDead => (((int)this.hp.Now < 1));
     public float AcceptedDamage => (this.acceptedDamage);
     public bool HasDamage => (0 < this.acceptedDamage);
 
     //-------------------------------------------------------------------------
     // Public Method
+
+    /// <summary>
+    /// HPを追加
+    /// </summary>
+    /// <param name="num"></param>
+    public void AddHP(float num)
+    {
+      this.hp.Now += num;
+    }
+
+    /// <summary>
+    /// 力を追加
+    /// </summary>
+    public void AddPow(float num)
+    {
+      this.pow.Now += num;
+    }
 
     /// <summary>
     /// 攻撃を受ける
@@ -117,7 +134,7 @@ namespace MyGame.Dungeon
       // 攻撃があたった場合はダメージ計算
       if (isHit)
       {
-        this.acceptedDamage = Mathf.Max(0, status.Pow.Now - Def.Now);
+        this.acceptedDamage = Mathf.Max(0, status.pow.Now - def.Now);
         this.hp.Now -= acceptedDamage;
       }
     }

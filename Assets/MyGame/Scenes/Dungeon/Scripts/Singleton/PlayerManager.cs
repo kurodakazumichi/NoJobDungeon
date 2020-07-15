@@ -68,6 +68,14 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// １ターンに１度だけ呼ぶ更新処理
+    /// </summary>
+    public void UpdatePlayer()
+    {
+      if (this.player != null) this.player.Update();
+    }
+
+    /// <summary>
     /// プレイヤーの思考を監視する
     /// </summary>
     public Player.Behavior MonitorPlayerThoughs()
