@@ -232,7 +232,16 @@ namespace MyGame.Dungeon
       // 攻撃を受けていたら痛がる
       if (Status.IsHit)
       {
-        this.chip.Ouch(Define.SEC_PER_TURN);
+        if (Status.HasDamage)
+        {
+          this.chip.Ouch(Define.SEC_PER_TURN);
+          Debug.Log($"無職は{Status.AcceptedDamage}のダメージをうけた。");
+        }
+
+        else
+        {
+          Debug.Log("無職は攻撃をうけたがなんともなかった。");
+        }
       }
 
       // 攻撃を避けていたらメッセージを表示

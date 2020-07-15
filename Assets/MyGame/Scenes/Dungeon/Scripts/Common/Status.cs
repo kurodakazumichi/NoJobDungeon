@@ -34,6 +34,11 @@ namespace MyGame.Dungeon
     /// </summary>
     private bool isHit = false;
 
+    /// <summary>
+    /// 実際に受けたダメージ
+    /// </summary>
+    private float acceptedDamage = 0;
+
     //-------------------------------------------------------------------------
     // コンストラクタ・セットアップ・リセット
 
@@ -81,6 +86,7 @@ namespace MyGame.Dungeon
     {
       this.isHit          = false;
       this.isAcceptedAttack = false;
+      this.acceptedDamage   = 0;
     }
 
     //-------------------------------------------------------------------------
@@ -92,6 +98,8 @@ namespace MyGame.Dungeon
     public bool IsAcceptedAttack => (this.isAcceptedAttack);
     public bool IsHit => (this.isHit);
     public bool IsDead => (this.hp.IsEmpty);
+    public float AcceptedDamage => (this.acceptedDamage);
+    public bool HasDamage => (0 < this.acceptedDamage);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -109,8 +117,8 @@ namespace MyGame.Dungeon
       // 攻撃があたった場合はダメージ計算
       if (isHit)
       {
-        var dmg = Mathf.Max(0, status.Pow.Now - Def.Now);
-        this.hp.Now -= dmg;
+        this.acceptedDamage = Mathf.Max(0, status.Pow.Now - Def.Now);
+        this.hp.Now -= acceptedDamage;
       }
     }
 
