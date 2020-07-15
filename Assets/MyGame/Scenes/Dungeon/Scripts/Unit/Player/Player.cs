@@ -174,7 +174,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
     /// </summary>
-    public List<Vector2Int> GetAttackTargets()
+    public List<Vector2Int> GetAttackCoords()
     {
       var area = new List<Vector2Int>()
       {
@@ -362,7 +362,7 @@ namespace MyGame.Dungeon
         GUILayout.Label($"Current Coord: ({this.Coord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
 
-        GetAttackTargets().ForEach((coord) => {
+        GetAttackCoords().ForEach((coord) => {
           GUILayout.Label($"Attack Targets:{coord}");
         });
 
