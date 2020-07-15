@@ -70,6 +70,9 @@ namespace MyGame.Dungeon
       }
     }
 
+    /// <summary>
+    /// 表示位置
+    /// </summary>
     public enum Anchor
     {
       LeftTop,
@@ -115,25 +118,25 @@ namespace MyGame.Dungeon
     private TileImage[,] tileImages;
     
 
-    void Start()
-    {
-      Setup();
-    }
+    //void Start()
+    //{
+    //}
 
-    // Update is called once per frame
-    void Update()
-    {
-      UpdateTile();
-    }
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //}
 
     public void Setup()
     {
-      tileImages = new TileImage[Define.WIDTH, Define.HEIGHT];
+      tileImages                  = new TileImage[Define.WIDTH, Define.HEIGHT];
       wallRectTransform.sizeDelta = new Vector2(Define.WIDTH * tileSize, Define.HEIGHT * tileSize);
-
     }
 
-    private void UpdateTile()
+    /// <summary>
+    /// タイル更新
+    /// </summary>
+    public void UpdateTile()
     {
       switch (this.anchor)
       {
@@ -160,10 +163,8 @@ namespace MyGame.Dungeon
         else if (tile.IsTrap)     tileImage.ApplyStyle(TrapTileStyle, tile.IsClear);
         else if (tile.IsItem)     tileImage.ApplyStyle(ItemTileStyle, tile.IsClear);
         else if (tile.IsRoom)     tileImage.ApplyStyle(RoomTileStyle, tile.IsClear);
-        else if (tile.IsAisle)   tileImage.ApplyStyle(AisleTileStyle, tile.IsClear);
+        else if (tile.IsAisle)    tileImage.ApplyStyle(AisleTileStyle, tile.IsClear);
         else if (tile.IsWall)     tileImage.ApplyStyle(null, false);
-
-
       });
     }
   }

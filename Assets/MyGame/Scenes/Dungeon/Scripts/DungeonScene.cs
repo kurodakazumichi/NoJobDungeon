@@ -51,7 +51,8 @@ namespace MyGame.Dungeon {
         .Setup(nameof(PlayerManager), system)
         .Setup(nameof(FieldManager), system)
         .Setup(nameof(EnemyManager), system)
-        .Setup(nameof(ItemManager), system);
+        .Setup(nameof(ItemManager), system)
+        .Setup(nameof(HUD), system);
 
 #if _DEBUG
       DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
@@ -128,6 +129,9 @@ namespace MyGame.Dungeon {
 
       // マップの踏破情報を更新
       DungeonManager.Instance.UpdateClearFlags();
+
+      // HUD生成
+      HUD.Instance.Setup();
 
       // 入力待ちフェーズへ
       this.state.SetState(Phase.PlayerThink);
