@@ -61,9 +61,10 @@ namespace MyGame.Dungeon
       var player = DungeonManager.Instance.PlayerCoord;
       var v = player - Coord;
       
-      // 周囲１マスにプレイヤーがいるならプレイヤーを攻撃
-      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
+      // 周囲１マスにプレイヤーがいる、かつその方向に攻撃可能であれば
+      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1 && CanAttackTo(new Direction(v, false)))
       {
+        // かつ攻撃できる方向であれば攻撃
         this.behavior = BehaviorType.Attack;
         Chip.Direction = new Direction(v, false);
       }
