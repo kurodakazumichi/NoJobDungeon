@@ -285,49 +285,6 @@ namespace MyGame.Dungeon
       return true;
     }
 
-    /// <summary>
-    /// 指定した方向にプレイヤーが動けるかを確認
-    /// </summary>
-    public bool CanMoveTo(Direction direction)
-    {
-      DungeonManager DM = DungeonManager.Instance;
-
-      var coord = Coord;
-
-      IReadOnlyTile curr = DM.GetTile(coord);
-      IReadOnlyTile next = DM.GetTile(coord, direction);
-
-      // 上下左右だったら進行方向のタイルが障害物でなければ進める
-      if (direction.IsStraight || direction.IsNeutral)
-      {
-        return !next.IsObstacle;
-      }
-
-      // 斜め入力の場合は入力された方向によって周囲の壁の情報を見て判断
-      IReadOnlyTile tile1 = (direction.hasLeft)
-        ? DM.GetTile(coord, Direction.left)
-        : DM.GetTile(coord, Direction.right);
-
-      IReadOnlyTile tile2 = (direction.hasUp)
-        ? DM.GetTile(coord, Direction.up)
-        : DM.GetTile(coord, Direction.down);
-
-      // 斜め入力時は周囲に壁があったら進めない
-      if (tile1.IsWall || tile2.IsWall)
-      {
-        return false;
-      }
-
-      // 斜め入力時に進行方向をふさぐように敵がいたら進めない
-      if (tile1.IsEnemy && tile2.IsEnemy)
-      {
-        return false;
-      }
-
-      // その他のケースはタイルが障害物でなければ進める
-      return !next.IsObstacle;
-    }
-
 #if _DEBUG
 
     // デバッグ用体力ゲージ表示
