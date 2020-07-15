@@ -217,7 +217,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶとプレイヤーが移動する
     /// </summary>
-    public void Move()
+    public void DoMoveMotion()
     {
       this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
     }
@@ -225,7 +225,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
     /// </summary>
-    public void Attack()
+    public void DoAttackMotion()
     {
       this.chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
@@ -233,7 +233,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶと敵が痛がる
     /// </summary>
-    public void Ouch()
+    public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
       if (!Status.IsAcceptedAttack) return;

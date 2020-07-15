@@ -93,7 +93,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToMove()
     {
-      this.player.Move();
+      this.player.DoMoveMotion();
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToAttack()
     {
-      this.player.Attack();
+      this.player.DoAttackMotion();
     }
 
 
@@ -110,7 +110,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void OrderToOuch()
     {
-      this.player.Ouch();
+      this.player.DoOuchMotion();
     }
 
     /// <summary>
