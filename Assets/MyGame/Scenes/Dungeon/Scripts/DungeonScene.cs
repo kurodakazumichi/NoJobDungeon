@@ -153,7 +153,7 @@ namespace MyGame.Dungeon {
         case Player.Behavior.Move:
         {
           // 敵に行動を考えるように命じる
-          EnemyManager.Instance.OrderToThink();
+          EnemyManager.Instance.Think();
 
           // 移動フェーズへ
           this.state.SetState(Phase.Move);
@@ -164,7 +164,7 @@ namespace MyGame.Dungeon {
         case Player.Behavior.Attack:
         {
           // 敵に行動を考えるように命じる
-          EnemyManager.Instance.OrderToThink();
+          EnemyManager.Instance.Think();
 
           // プレイヤー攻撃開始フェーズへ
           this.state.SetState(Phase.PlayerAttackStart);
@@ -179,8 +179,8 @@ namespace MyGame.Dungeon {
     private void MoveEnter()
     {
       // プレイヤーと敵に動けと命じる
-      PlayerManager.Instance.OrderToMove();
-      EnemyManager.Instance.OrderToMove();
+      PlayerManager.Instance.DoMoveMotion();
+      EnemyManager.Instance.DoMoveMotion();
 
       // 踏破情報更新
       DungeonManager.Instance.UpdateClearFlags();
@@ -219,18 +219,15 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackStartEnter()
     {
-      // 攻撃対象となる座標一覧をください
-      var targets = PlayerManager.Instance.AttackTargets;
+      // 攻撃対象を取得
+      var aim     = PlayerManager.Instance.AimCoords;
+      var targets = EnemyManager.Instance.FindTarget(aim);
 
-      // プレイヤーのアタッカーとしての情報下さい
-      var attacker = PlayerManager.Instance.Attacker;
-
-      // 敵に攻撃を加える
-      EnemyManager.Instance.AttackEnemies(attacker, targets);
-
+      PlayerManager.Instance.Attack(targets);
+      
       // プレイヤーは攻撃を、敵は痛がる動きをしてください
-      PlayerManager.Instance.OrderToAttack();
-      EnemyManager.Instance.OrderToOuch();
+      PlayerManager.Instance.DoAttackMotion();
+      EnemyManager.Instance.DoOuchMotion();
 
       // プレイヤーの動きに合わせてカメラが動くとガクガクするので
       // プレイヤー攻撃中はカメラが動かないようにロック(Exitと解除するのを忘れずに)
@@ -256,7 +253,7 @@ namespace MyGame.Dungeon {
     private void PlayerAttackEndEnter()
     {
       // 死んだ敵は消滅して下さい
-      EnemyManager.Instance.OrderToVanish();
+      EnemyManager.Instance.DoVanishMotion();
     }
 
     private void PlayerAttackEndUpdate()
@@ -277,11 +274,8 @@ namespace MyGame.Dungeon {
 
     private void EnemyAttackStartEnter()
     {
-      // 敵に攻撃の動きをするように命じるとともに、攻撃した敵の情報を取得
-      IAttackable attacker = EnemyManager.Instance.OrderToAttack();
-
-      // プレイヤーに対して攻撃を行う
-      PlayerManager.Instance.AttackPlayer(attacker);
+      // 敵の攻撃
+      EnemyManager.Instance.Attack(PlayerManager.Instance.Attacker);
     }
 
     private void EnemyAttackStartUpdate()
@@ -298,7 +292,7 @@ namespace MyGame.Dungeon {
     private void EnemyAttackEndEnter()
     {
       // プレイヤーに痛がるよう命じる
-      PlayerManager.Instance.OrderToOuch();
+      PlayerManager.Instance.DoOuchMotion();
     }
 
     private void EnemyAttackEndUpdate()

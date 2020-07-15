@@ -10,6 +10,11 @@ namespace MyGame.Dungeon
     // Member
 
     /// <summary>
+    /// 名前
+    /// </summary>
+    private string name = "";
+
+    /// <summary>
     /// HP
     /// </summary>
     private LimitedFloat hp = new LimitedFloat();
@@ -47,13 +52,15 @@ namespace MyGame.Dungeon
     /// </summary>
     public class Props
     {
-      public Props(float hp, float pow, float def)
+      public Props(string name, float hp, float pow, float def)
       {
+        Name = name;
         HP = hp;
         Pow = pow;
         Def = def;
       }
 
+      public string Name = "";
       public float HP = 0;
       public float Pow = 0;
       public float Def = 0;
@@ -72,6 +79,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Setup(Props props)
     {
+      this.name = props.Name;
       this.hp.Setup(props.HP, props.HP);
       this.pow.Setup(props.Pow, props.Pow);
       this.def.Setup(props.Def, props.Def);
@@ -100,6 +108,7 @@ namespace MyGame.Dungeon
     public bool IsDead => (((int)this.hp.Now < 1));
     public float AcceptedDamage => (this.acceptedDamage);
     public bool HasDamage => (0 < this.acceptedDamage);
+    public string Name => (this.name);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -124,7 +133,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    public void AcceptAttack(Status status)
+    public void AcceptAttack(Status attacker)
     {
       this.isAcceptedAttack = true;
 
@@ -134,8 +143,26 @@ namespace MyGame.Dungeon
       // 攻撃があたった場合はダメージ計算
       if (isHit)
       {
-        this.acceptedDamage = Mathf.Max(0, status.pow.Now - def.Now);
+        this.acceptedDamage = (int)Mathf.Max(0, attacker.pow.Now - def.Now);
         this.hp.Now -= acceptedDamage;
+      }
+
+      // TODO:何らかの形でこの情報を外へ出す
+      if (isHit)
+      {
+        if (0 < this.acceptedDamage)
+        {
+          Debug.Log($"{attacker.Name}は{Name}に{this.acceptedDamage}ダメージを与えた。");
+        }
+        else
+        {
+          Debug.Log($"{Name}はダメージをうけなかった");
+        }
+      }
+
+      else
+      {
+        Debug.Log($"{Name}は攻撃をかわした。");
       }
     }
 

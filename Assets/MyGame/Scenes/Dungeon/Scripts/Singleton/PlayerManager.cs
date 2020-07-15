@@ -33,9 +33,9 @@ namespace MyGame.Dungeon
     public bool HasnActivePlayer => ((this.player != null && !this.player.IsIdle));
 
     /// <summary>
-    /// 通常攻撃の対象となる座標リスト
+    /// プレイヤーが攻撃しようと狙っている座標
     /// </summary>
-    public List<Vector2Int> AttackTargets => (this.player.GetAttackTargets());
+    public List<Vector2Int> AimCoords => (this.player.GetAttackCoords());
 
     /// <summary>
     /// プレイヤーのアタッカーとしての能力
@@ -89,38 +89,38 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// プレイヤーに移動するように指示をだす
+    /// 移動モーションを行う
     /// </summary>
-    public void OrderToMove()
+    public void DoMoveMotion()
     {
-      this.player.Move();
+      this.player.DoMoveMotion();
     }
 
     /// <summary>
-    /// プレイヤーに攻撃するように指示を出す
+    /// 攻撃モーションを行う
     /// </summary>
-    public void OrderToAttack()
+    public void DoAttackMotion()
     {
-      this.player.Attack();
+      this.player.DoAttackMotion();
     }
 
 
     /// <summary>
-    /// プレイヤーが攻撃を受けていたら「いてぇっ！」って演出するように指示を出す
+    /// 「いてぇっ！」ってモーションを行う
     /// </summary>
-    public void OrderToOuch()
+    public void DoOuchMotion()
     {
-      this.player.Ouch();
+      this.player.DoOuchMotion();
     }
 
     /// <summary>
-    /// 攻撃をうける
+    /// 攻撃する
     /// </summary>
-    public void AttackPlayer(IAttackable attacker)
+    public void Attack(List<IAttackable> targets)
     {
-      if (attacker != null)
+      foreach(var target in targets)
       {
-        this.player.AcceptAttack(attacker);
+        this.player.Attack(target);
       }
     }
 

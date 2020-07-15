@@ -9,7 +9,7 @@ namespace MyGame.Dungeon
   /// プレイヤーに関するパラメータやダンジョン内での行動判断ロジックを持つ。
   /// またプレイヤーチップの制御を行う。
   /// </summary>
-  public class Player : IAttackable
+  public class Player : CharBase
   {
     /// <summary>
     /// プレイヤーの行動一覧
@@ -28,24 +28,9 @@ namespace MyGame.Dungeon
     // メンバー
 
     /// <summary>
-    /// プレイヤーチップ
-    /// </summary>
-    private CharChip chip;
-
-    /// <summary>
-    /// プレイヤーの座標
-    /// </summary>
-    private Vector2Int coord = Vector2Int.zero;
-
-    /// <summary>
     /// ダッシュの方向
     /// </summary>
     private Direction dashDirection = new Direction();
-
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    private Status status = null;
 
     /// <summary>
     /// 敵の座標を入れるための配列とその配列を指すIndex
@@ -60,22 +45,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// Player Chipのゲームオブジェクト
     /// </summary>
-    public GameObject PlayerObject => (this.chip.gameObject);
-
-    /// <summary>
-    /// プレイヤーの座標
-    /// </summary>
-    public Vector2Int Coord => (this.coord);
-
-    /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public bool IsIdle => (this.chip.IsIdle);
-
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status => (this.status);
+    public GameObject PlayerObject => (Chip.gameObject);
 
     //-------------------------------------------------------------------------
     // Public
@@ -85,18 +55,18 @@ namespace MyGame.Dungeon
     /// </summary>
     public Player(Vector2Int coord)
     {
-      this.chip  = MapChipFactory.Instance.CreatePlayerChip();
+      Chip = MapChipFactory.Instance.CreatePlayerChip();
 
       Reset(coord);
 
-      Status.Props props = new Status.Props(10, 10, 2);
-      this.status = new Status(props);
+      Status.Props props = new Status.Props("無職", 10, 10, 2);
+      Status = new Status(props);
     }
 
     public void Reset(Vector2Int coord)
     {
-      this.coord = coord;
-      this.chip.transform.position = Util.GetPositionBy(coord);
+      Coord = coord;
+      Chip.transform.position = Util.GetPositionBy(coord);
     }
 
     /// <summary>
@@ -131,7 +101,7 @@ namespace MyGame.Dungeon
       // 方向キー入力があったらプレイヤーの向きを更新
       if (!direction.IsNeutral)
       {
-        this.chip.Direction = direction;
+        Chip.Direction = direction;
       }
 
       // 周囲に敵がいれば敵の方を向く
@@ -154,7 +124,7 @@ namespace MyGame.Dungeon
         {
           var pos = this.aroundEnemies[this.aroundEnemiesIndex % this.aroundEnemies.Count];
 
-          this.chip.Direction = Direction.LookAt(Coord, pos);
+          Chip.Direction = Direction.LookAt(Coord, pos);
           this.aroundEnemiesIndex++;
         }
       }
@@ -171,11 +141,11 @@ namespace MyGame.Dungeon
       if (IsWantToMove() && CanMoveTo(direction))
       {
         // 移動先の座標を算出
-        var next = this.coord + direction.ToVector(false);
+        var next = Coord + direction.ToVector(false);
 
         // 座標の更新
-        DungeonManager.Instance.UpdatePlayerCoord(this.coord, next);
-        this.coord = next;
+        DungeonManager.Instance.UpdatePlayerCoord(Coord, next);
+        Coord = next;
 
         return Behavior.Move;
       }
@@ -204,12 +174,14 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
     /// </summary>
-    public List<Vector2Int> GetAttackTargets()
+    public List<Vector2Int> GetAttackCoords()
     {
-      var area = new List<Vector2Int>()
+      var area = new List<Vector2Int>();
+
+      if (CanAttackTo(Chip.Direction))
       {
-        this.coord + this.chip.Direction.ToVector(false)
-      };
+        area.Add(Coord + Chip.Direction.ToVector(false));
+      }
 
       return area;
     }
@@ -217,61 +189,36 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶとプレイヤーが移動する
     /// </summary>
-    public void Move()
+    public void DoMoveMotion()
     {
-      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
     }
 
     /// <summary>
     /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
     /// </summary>
-    public void Attack()
+    public void DoAttackMotion()
     {
-      this.chip.Attack(Define.SEC_PER_TURN, 0.4f);
+      Chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
 
     /// <summary>
     /// このメソッドを呼ぶと敵が痛がる
     /// </summary>
-    public void Ouch()
+    public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
       if (!Status.IsAcceptedAttack) return;
 
       // 攻撃を受けていたら痛がる
-      if (Status.IsHit)
+      if (Status.IsHit && Status.HasDamage)
       {
-        if (Status.HasDamage)
-        {
-          this.chip.Ouch(Define.SEC_PER_TURN);
-          Debug.Log($"無職は{Status.AcceptedDamage}のダメージをうけた。");
-        }
-
-        else
-        {
-          Debug.Log("無職は攻撃をうけたがなんともなかった。");
-        }
+        Chip.Ouch(Define.SEC_PER_TURN);
       }
 
-      // 攻撃を避けていたらメッセージを表示
-      else
-      {
-        Debug.Log($"無職は攻撃をかわした。");
-      }
-      this.status.Reset();
+      Status.Reset();
     }
 
-    /// <summary>
-    /// 攻撃を受ける
-    /// </summary>
-    public void AcceptAttack(IAttackable attacker)
-    {
-      // 攻撃を受ける
-      this.status.AcceptAttack(attacker.Status);
-
-      // 攻撃してきた奴の方を向く
-      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
-    }
     //-------------------------------------------------------------------------
     // 移動に関するUtil
 
@@ -326,49 +273,6 @@ namespace MyGame.Dungeon
       return true;
     }
 
-    /// <summary>
-    /// 指定した方向にプレイヤーが動けるかを確認
-    /// </summary>
-    public bool CanMoveTo(Direction direction)
-    {
-      DungeonManager DM = DungeonManager.Instance;
-
-      var coord = this.coord;
-
-      IReadOnlyTile curr = DM.GetTile(coord);
-      IReadOnlyTile next = DM.GetTile(coord, direction);
-
-      // 上下左右だったら進行方向のタイルが障害物でなければ進める
-      if (direction.IsStraight || direction.IsNeutral)
-      {
-        return !next.IsObstacle;
-      }
-
-      // 斜め入力の場合は入力された方向によって周囲の壁の情報を見て判断
-      IReadOnlyTile tile1 = (direction.hasLeft)
-        ? DM.GetTile(coord, Direction.left)
-        : DM.GetTile(coord, Direction.right);
-
-      IReadOnlyTile tile2 = (direction.hasUp)
-        ? DM.GetTile(coord, Direction.up)
-        : DM.GetTile(coord, Direction.down);
-
-      // 斜め入力時は周囲に壁があったら進めない
-      if (tile1.IsWall || tile2.IsWall)
-      {
-        return false;
-      }
-
-      // 斜め入力時に進行方向をふさぐように敵がいたら進めない
-      if (tile1.IsEnemy && tile2.IsEnemy)
-      {
-        return false;
-      }
-
-      // その他のケースはタイルが障害物でなければ進める
-      return !next.IsObstacle;
-    }
-
 #if _DEBUG
 
     // デバッグ用体力ゲージ表示
@@ -386,14 +290,14 @@ namespace MyGame.Dungeon
       style1.normal.background = this.tex1;
       style2.normal.background = this.tex2;
 
-      var width = 200 * this.status.RateHP;
+      var width = 200 * Status.RateHP;
 
       GUI.Box(new Rect(10, 10, 200, 20), "", style1);
       GUI.Box(new Rect(10, 10, width, 20), "", style2);
 
       GUIStyle text = new GUIStyle();
       text.normal.textColor = Color.black;
-      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{this.status.HP}/{this.status.MaxHP}", text);
+      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{Status.HP}/{Status.MaxHP}", text);
     }
 
     public void DrawDebugMenu()
@@ -403,7 +307,7 @@ namespace MyGame.Dungeon
         GUILayout.Label($"Current Coord: ({this.Coord})");
         GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
 
-        GetAttackTargets().ForEach((coord) => {
+        GetAttackCoords().ForEach((coord) => {
           GUILayout.Label($"Attack Targets:{coord}");
         });
 

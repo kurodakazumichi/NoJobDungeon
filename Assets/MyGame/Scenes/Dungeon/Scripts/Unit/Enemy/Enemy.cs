@@ -4,8 +4,25 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class Enemy : IAttackable
+  public class Enemy : CharBase
   {
+    /// <summary>
+    /// 敵生成に必要なパラメータ
+    /// </summary>
+    public class Props
+    {
+      public Props(Vector2Int coord, EnemyChipType chipType, Status.Props statusProps)
+      {
+        Coord = coord;
+        ChipType = chipType;
+        StatusProps = statusProps;
+      }
+
+      public Vector2Int Coord = Vector2Int.zero;
+      public EnemyChipType ChipType = default;
+      public Status.Props StatusProps = null;
+    }
+
     /// <summary>
     /// 敵の行動一覧
     /// </summary>
@@ -19,24 +36,9 @@ namespace MyGame.Dungeon
     // メンバー
 
     /// <summary>
-    /// 敵チップ
-    /// </summary>
-    private CharChip chip;
-
-    /// <summary>
-    /// 敵の座標
-    /// </summary>
-    private Vector2Int coord = Vector2Int.zero;
-
-    /// <summary>
     /// 行動
     /// </summary>
     private BehaviorType behavior = BehaviorType.None;
-
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    private Status status = null;
 
     /// <summary>
     /// 移動予定の座標
@@ -47,39 +49,23 @@ namespace MyGame.Dungeon
     // Public Properity
 
     /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public bool IsIdle => (this.chip.IsIdle);
-
-    /// <summary>
-    /// 敵の座標
-    /// </summary>
-    public Vector2Int Coord => (this.coord);
-
-    /// <summary>
     /// 行動
     /// </summary>
     public BehaviorType Behavior => (this.behavior);
-
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status => (this.status);
 
     //-------------------------------------------------------------------------
     // Public Method
 
     /// <summary>
-    /// コンストラクタ
+    /// セットアップ
     /// </summary>
-    public Enemy(Vector2Int coord)
+    virtual public void Setup(Props props)
     {
-      this.chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
-      this.coord = coord;
-      this.chip.transform.position = Util.GetPositionBy(coord);
+      Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
+      Coord = props.Coord;
+      Chip.transform.position = Util.GetPositionBy(Coord);
 
-      Status.Props props = new Status.Props(10, 4, 2);
-      this.status = new Status(props);
+      Status = new Status(props.StatusProps);
     }
 
     /// <summary>
@@ -89,33 +75,30 @@ namespace MyGame.Dungeon
     {
       // 自分の周囲１マスにプレイヤーがいるかどうか
       var player = DungeonManager.Instance.PlayerCoord;
-      var v = player - this.coord;
+      var v = player - Coord;
       
-      // 周囲１マスにプレイヤーがいるならプレイヤーを攻撃
-      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1)
+      // 周囲１マスにプレイヤーがいる、かつその方向に攻撃可能であれば
+      if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1 && CanAttackTo(new Direction(v, false)))
       {
+        // かつ攻撃できる方向であれば攻撃
         this.behavior = BehaviorType.Attack;
-        this.chip.Direction = new Direction(v, false);
+        Chip.Direction = new Direction(v, false);
       }
 
       // プレイヤーがいないなら移動を考える
       else
       {
-        // ランダムで移動方向を決める
-        var dir = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
+        // ランダムで移動量を決める
+        var move = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
 
-        // おそらく移動するであろう次の座標
-        var maybeNext = this.coord + dir;
+        // 移動方向を生成
+        var moveDir = new Direction(move, false);
 
-        // 移動先のタイル情報を見て移動するかどうかを決める
-        var tile = DungeonManager.Instance.GetTile(maybeNext);
-
-        // 移動先に障害物はないね、移動しよう。
-        if (!tile.IsObstacle)
+        // 移動可能であれば移動する
+        if (CanMoveTo(moveDir))
         {
-          // 座標と方向を更新
-          this.chip.Direction = new Direction(dir, false);
-          this.nextCoord = maybeNext;
+          Chip.Direction = moveDir;
+          this.nextCoord = Coord + move;
           this.behavior = BehaviorType.Move;
         }
       }
@@ -124,69 +107,59 @@ namespace MyGame.Dungeon
     /// <summary>
     /// このメソッドを呼ぶと敵が動き始める
     /// </summary>
-    public void Move()
+    public void DoMoveMotion()
     {
-      if (this.behavior == BehaviorType.Move)
-      {
-        // ダンジョンの情報を書き換え
-        DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
-        this.coord = this.nextCoord;
-        this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
-        this.behavior = BehaviorType.None;
-      }
+      if (this.behavior != BehaviorType.Move) return;
+
+      // ダンジョンの情報を書き換え
+      DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
+      Coord = this.nextCoord;
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
+      this.behavior = BehaviorType.None;
     }
 
     /// <summary>
     /// 攻撃予定の敵がこのメソッドを呼ばれると、攻撃の動きを開始する
     /// </summary>
-    public void Attack()
+    public void DoAttackMotion()
     {
       // アタッカーじゃなければ何もしない
       if (this.behavior != BehaviorType.Attack) return;
 
       // 攻撃の動きを開始
-      this.chip.Attack(Define.SEC_PER_TURN, 1f);
+      Chip.Attack(Define.SEC_PER_TURN, 1f);
       this.behavior = BehaviorType.None;
     }
 
     /// <summary>
     /// このメソッドを呼ぶと敵が痛がる
     /// </summary>
-    public void Ouch()
+    public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
       if (!Status.IsAcceptedAttack) return;
 
       // 攻撃を受けていたら痛がる
-      if (Status.IsHit)
+      if (Status.IsHit && Status.HasDamage)
       {
-        if (Status.HasDamage)
-        {
-          this.chip.Ouch(Define.SEC_PER_TURN);
-          Debug.Log($"しょぼんは{Status.AcceptedDamage}のダメージをうけた。");
-        }
-
-        else
-        {
-          Debug.Log("しょぼんは攻撃をうけたがなんともなかった。");
-        }
+        Chip.Ouch(Define.SEC_PER_TURN);
       }
-
-      // 攻撃を避けていたらメッセージを表示
-      else
-      {
-        Debug.Log($"しょぼんは攻撃をかわした。");
-      }
-      this.status.Reset();
+      Status.Reset();
     }
 
     /// <summary>
     /// このメソッドを呼ぶと敵が消滅する
     /// </summary>
-    public void Vanish()
+    public void DoVanishMotion()
     {
-      DungeonManager.Instance.RemoveEnemyCoord(this.coord);
-      this.chip.Vanish(Define.SEC_PER_TURN);
+      // 死んでいなければ消えない
+      if (!Status.IsDead) return;
+
+      // マップ上の敵の情報を除去する
+      DungeonManager.Instance.RemoveEnemyCoord(Coord);
+
+      // 消滅モーション開始
+      Chip.Vanish(Define.SEC_PER_TURN);
     }
 
     /// <summary>
@@ -194,22 +167,9 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Destory()
     {
-      MapChipFactory.Instance.Release(this.chip);
-      this.chip = null;
+      MapChipFactory.Instance.Release(Chip);
+      Chip = null;
     }
-
-    /// <summary>
-    /// 攻撃を受ける
-    /// </summary>
-    public void AcceptAttack(IAttackable attacker)
-    {
-      // 攻撃を受ける
-      this.status.AcceptAttack(attacker.Status);
-
-      // 攻撃してきた奴の方を向く
-      this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
-    }
-
 
 #if _DEBUG
     public void DrawDebugMenu()
@@ -221,7 +181,7 @@ namespace MyGame.Dungeon
         Think();
       }
       GUILayout.Label("CharChip");
-      this.chip.DrawDebugMenu();
+      Chip.DrawDebugMenu();
     }
 #endif
   }
