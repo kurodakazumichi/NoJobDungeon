@@ -88,7 +88,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さんたちにどう行動するか考えてもらう
     /// </summary>
-    public void OrderToThink()
+    public void Think()
     {
       foreach(var enemy in this.enemies) { enemy.Think(); }
     }
@@ -96,33 +96,15 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さん達に、移動しろと命じる
     /// </summary>
-    public void OrderToMove()
+    public void DoMoveMotion()
     {
       foreach (var enemy in this.enemies) { enemy.DoMoveMotion(); };
     }
 
     /// <summary>
-    /// 敵さんに、攻撃しろと命じる
-    /// 一気に攻撃するとおかしいので、この処理では一度に１人だけ攻撃を命じる
-    /// アタッカーの情報を攻撃を受ける側に伝えたいので、戻り値で返している。
-    /// </summary>
-    public IAttackable OrderToAttack()
-    {
-      // アタッカーを探すために敵さんをループ
-      foreach(var enemy in this.enemies)
-      {
-        if (enemy.Behavior != Enemy.BehaviorType.Attack) continue;
-
-        enemy.DoAttackMotion();
-        return enemy;
-      }
-      return null;
-    }
-
-    /// <summary>
     /// 敵さんたちに痛がるように命じる
     /// </summary>
-    public void OrderToOuch()
+    public void DoOuchMotion()
     {
       foreach(var e in this.enemies) 
       { 
@@ -133,7 +115,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵さんたちに消滅するように命じる
     /// </summary>
-    public void OrderToVanish()
+    public void DoVanishMotion()
     {
       foreach(var e in this.enemies)
       {
@@ -166,6 +148,68 @@ namespace MyGame.Dungeon
       // 敵リストを更新
       this.enemies.Clear();
       this.enemies = newList;
+    }
+
+    /// <summary>
+    /// 指定された座標に一致する攻撃
+    /// </summary>
+    public List<IAttackable> FindTarget(List<Vector2Int> coords)
+    {
+      List<IAttackable> found = new List<IAttackable>();
+
+      foreach (var coord in coords)
+      {
+        var enemy = GetEnemyBy(coord);
+
+        if (enemy == null) continue;
+
+        found.Add(enemy);
+      }
+
+      return found;
+    }
+
+    /// <summary>
+    /// 座標に一致する敵を取得する
+    /// </summary>
+    public Enemy GetEnemyBy(Vector2Int coord)
+    {
+      foreach(var enemy in this.enemies)
+      {
+        if (enemy.Coord.Equals(coord)) return enemy;
+      }
+
+      return null;
+    }
+
+    /// <summary>
+    /// 攻撃する
+    /// </summary>
+    public void Attack(IAttackable target)
+    {
+      var attacker = FindAttacker();
+
+      if (attacker != null)
+      {
+        attacker.Attack(target);
+        attacker.DoAttackMotion();
+      }
+    }
+
+    /// <summary>
+    /// 行動が攻撃になっている敵を探す
+    /// </summary>
+    /// <returns></returns>
+    private Enemy FindAttacker()
+    {
+      foreach(var enemy in this.enemies)
+      {
+        if (enemy.Behavior != Enemy.BehaviorType.Attack) continue;
+
+        return enemy;
+      }
+
+      return null;
     }
 
     /// <summary>
