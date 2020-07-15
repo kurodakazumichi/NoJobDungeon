@@ -12,7 +12,10 @@ namespace MyGame.Dungeon
     // Serialize
 
     [SerializeField]
-    private Transform tileRoot;
+    private RectTransform root;
+
+    [SerializeField]
+    private RectTransform tileRoot;
 
     [SerializeField]
     private RectTransform wallRectTransform;
@@ -51,6 +54,8 @@ namespace MyGame.Dungeon
     [SerializeField]
     private int tileSize;
 
+    [SerializeField]
+    private Anchor anchor;
 
     //-------------------------------------------------------------------------
 
@@ -64,6 +69,15 @@ namespace MyGame.Dungeon
         return cachedTransform;
       }
     }
+
+    public enum Anchor
+    {
+      LeftTop,
+      RightTop,
+      LeftBottom,
+      RightBottom,
+    }
+    
 
     private class TileImage
     {
@@ -121,6 +135,14 @@ namespace MyGame.Dungeon
 
     private void UpdateTile()
     {
+      switch (this.anchor)
+      {
+        case Anchor.LeftTop:      this.root.anchoredPosition = new Vector2(0f, 0f); break;
+        case Anchor.RightTop:     this.root.anchoredPosition = new Vector2( Screen.width - Define.WIDTH * tileSize, 0f); break;
+        case Anchor.LeftBottom:   this.root.anchoredPosition = new Vector2(0f, -(Screen.height - Define.HEIGHT * tileSize)); break;
+        case Anchor.RightBottom:  this.root.anchoredPosition = new Vector2(Screen.width - Define.WIDTH * tileSize, -(Screen.height - Define.HEIGHT * tileSize)); break;
+      }
+
       DungeonManager.Instance.Map((x, y, tile) =>
       {
         var tileImage = tileImages[x, y];
