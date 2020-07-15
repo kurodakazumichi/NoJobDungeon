@@ -10,6 +10,11 @@ namespace MyGame.Dungeon
     // Member
 
     /// <summary>
+    /// 名前
+    /// </summary>
+    private string name = "";
+
+    /// <summary>
     /// HP
     /// </summary>
     private LimitedFloat hp = new LimitedFloat();
@@ -47,13 +52,15 @@ namespace MyGame.Dungeon
     /// </summary>
     public class Props
     {
-      public Props(float hp, float pow, float def)
+      public Props(string name, float hp, float pow, float def)
       {
+        Name = name;
         HP = hp;
         Pow = pow;
         Def = def;
       }
 
+      public string Name = "";
       public float HP = 0;
       public float Pow = 0;
       public float Def = 0;
@@ -72,6 +79,7 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Setup(Props props)
     {
+      this.name = props.Name;
       this.hp.Setup(props.HP, props.HP);
       this.pow.Setup(props.Pow, props.Pow);
       this.def.Setup(props.Def, props.Def);
@@ -100,6 +108,7 @@ namespace MyGame.Dungeon
     public bool IsDead => (((int)this.hp.Now < 1));
     public float AcceptedDamage => (this.acceptedDamage);
     public bool HasDamage => (0 < this.acceptedDamage);
+    public string Name => (this.name);
 
     //-------------------------------------------------------------------------
     // Public Method

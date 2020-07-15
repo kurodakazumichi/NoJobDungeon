@@ -48,7 +48,7 @@ namespace MyGame.Dungeon
       Coord = coord;
       Chip.transform.position = Util.GetPositionBy(coord);
 
-      Status.Props props = new Status.Props(10, 4, 2);
+      Status.Props props = new Status.Props("しょぼん", 10, 4, 2);
       Status = new Status(props);
     }
 

@@ -59,7 +59,7 @@ namespace MyGame.Dungeon
 
       Reset(coord);
 
-      Status.Props props = new Status.Props(10, 10, 2);
+      Status.Props props = new Status.Props("無職", 10, 10, 2);
       Status = new Status(props);
     }
 
