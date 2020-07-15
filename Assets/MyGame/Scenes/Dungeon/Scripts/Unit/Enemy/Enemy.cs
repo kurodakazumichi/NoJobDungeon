@@ -7,6 +7,23 @@ namespace MyGame.Dungeon
   public class Enemy : CharBase
   {
     /// <summary>
+    /// 敵生成に必要なパラメータ
+    /// </summary>
+    public class Props
+    {
+      public Props(Vector2Int coord, EnemyChipType chipType, Status.Props statusProps)
+      {
+        Coord = coord;
+        ChipType = chipType;
+        StatusProps = statusProps;
+      }
+
+      public Vector2Int Coord = Vector2Int.zero;
+      public EnemyChipType ChipType = default;
+      public Status.Props StatusProps = null;
+    }
+
+    /// <summary>
     /// 敵の行動一覧
     /// </summary>
     public enum BehaviorType { 
@@ -42,14 +59,13 @@ namespace MyGame.Dungeon
     /// <summary>
     /// セットアップ
     /// </summary>
-    virtual public void Setup(Vector2Int coord)
+    virtual public void Setup(Props props)
     {
-      Chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.Shobon);
-      Coord = coord;
-      Chip.transform.position = Util.GetPositionBy(coord);
+      Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
+      Coord = props.Coord;
+      Chip.transform.position = Util.GetPositionBy(Coord);
 
-      Status.Props props = new Status.Props("しょぼん", 10, 4, 2);
-      Status = new Status(props);
+      Status = new Status(props.StatusProps);
     }
 
     /// <summary>

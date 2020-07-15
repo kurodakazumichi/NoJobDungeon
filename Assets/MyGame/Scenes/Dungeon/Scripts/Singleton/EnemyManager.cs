@@ -79,8 +79,13 @@ namespace MyGame.Dungeon
       {
         if (tile.IsEnemy)
         {
-          var enemy = new BasicEnemy();
-          enemy.Setup(new Vector2Int(x, y));
+          var enemy = new Enemy();
+          Enemy.Props props =  new Enemy.Props(
+            new Vector2Int(x, y),
+            EnemyChipType.Shobon,
+            new Status.Props("しょぼん", 10, 4, 2)
+          );
+          enemy.Setup(props);
           this.enemies.Add(enemy);
         }
       });
