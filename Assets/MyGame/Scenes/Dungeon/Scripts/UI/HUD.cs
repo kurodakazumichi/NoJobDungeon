@@ -37,13 +37,14 @@ namespace MyGame.Dungeon
     {
       //-------------------------------
       // ミニマップ
+      if( minimap == null ) 
       {
         var prefab  = Resources.Load<GameObject>("UI/MiniMapCanvas");
         var go      = Instantiate(prefab, this.CachedTransform);
         minimap     = go.GetComponent<UIMinimap>();
         minimap.Setup();
-        minimap.UpdateTile();
       }
+      minimap.UpdateTile();
     }
 
     /// <summary>
