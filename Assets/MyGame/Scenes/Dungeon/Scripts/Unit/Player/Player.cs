@@ -211,25 +211,11 @@ namespace MyGame.Dungeon
       if (!Status.IsAcceptedAttack) return;
 
       // 攻撃を受けていたら痛がる
-      if (Status.IsHit)
+      if (Status.IsHit && Status.HasDamage)
       {
-        if (Status.HasDamage)
-        {
-          Chip.Ouch(Define.SEC_PER_TURN);
-          Debug.Log($"無職は{Status.AcceptedDamage}のダメージをうけた。");
-        }
-
-        else
-        {
-          Debug.Log("無職は攻撃をうけたがなんともなかった。");
-        }
+        Chip.Ouch(Define.SEC_PER_TURN);
       }
 
-      // 攻撃を避けていたらメッセージを表示
-      else
-      {
-        Debug.Log($"無職は攻撃をかわした。");
-      }
       Status.Reset();
     }
 

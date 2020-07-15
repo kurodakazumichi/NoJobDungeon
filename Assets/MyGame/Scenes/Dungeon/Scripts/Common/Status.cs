@@ -133,7 +133,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    public void AcceptAttack(Status status)
+    public void AcceptAttack(Status attacker)
     {
       this.isAcceptedAttack = true;
 
@@ -143,8 +143,26 @@ namespace MyGame.Dungeon
       // 攻撃があたった場合はダメージ計算
       if (isHit)
       {
-        this.acceptedDamage = Mathf.Max(0, status.pow.Now - def.Now);
+        this.acceptedDamage = (int)Mathf.Max(0, attacker.pow.Now - def.Now);
         this.hp.Now -= acceptedDamage;
+      }
+
+      // TODO:何らかの形でこの情報を外へ出す
+      if (isHit)
+      {
+        if (0 < this.acceptedDamage)
+        {
+          Debug.Log($"{attacker.Name}は{Name}に{this.acceptedDamage}ダメージを与えた。");
+        }
+        else
+        {
+          Debug.Log($"{Name}はダメージをうけなかった");
+        }
+      }
+
+      else
+      {
+        Debug.Log($"{Name}は攻撃をかわした。");
       }
     }
 
