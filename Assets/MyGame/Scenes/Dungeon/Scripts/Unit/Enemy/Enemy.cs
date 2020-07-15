@@ -126,14 +126,13 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoMoveMotion()
     {
-      if (this.behavior == BehaviorType.Move)
-      {
-        // ダンジョンの情報を書き換え
-        DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
-        this.coord = this.nextCoord;
-        this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
-        this.behavior = BehaviorType.None;
-      }
+      if (this.behavior != BehaviorType.Move) return;
+
+      // ダンジョンの情報を書き換え
+      DungeonManager.Instance.UpdateEnemyCoord(this.coord, this.nextCoord);
+      this.coord = this.nextCoord;
+      this.chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(this.coord));
+      this.behavior = BehaviorType.None;
     }
 
     /// <summary>
@@ -185,7 +184,13 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoVanishMotion()
     {
+      // 死んでいなければ消えない
+      if (!Status.IsDead) return;
+
+      // マップ上の敵の情報を除去する
       DungeonManager.Instance.RemoveEnemyCoord(this.coord);
+
+      // 消滅モーション開始
       this.chip.Vanish(Define.SEC_PER_TURN);
     }
 

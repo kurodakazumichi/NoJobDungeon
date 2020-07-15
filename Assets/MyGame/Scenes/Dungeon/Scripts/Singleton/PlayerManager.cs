@@ -124,17 +124,6 @@ namespace MyGame.Dungeon
       }
     }
 
-    /// <summary>
-    /// 攻撃をうける
-    /// </summary>
-    public void AttackPlayer(IAttackable attacker)
-    {
-      if (attacker != null)
-      {
-        this.player.AcceptAttack(attacker);
-      }
-    }
-
     //-------------------------------------------------------------------------
     // Protected Method
 

@@ -90,7 +90,9 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Think()
     {
-      foreach(var enemy in this.enemies) { enemy.Think(); }
+      foreach(var enemy in this.enemies) { 
+        enemy.Think(); 
+      }
     }
 
     /// <summary>
@@ -98,7 +100,9 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoMoveMotion()
     {
-      foreach (var enemy in this.enemies) { enemy.DoMoveMotion(); };
+      foreach (var enemy in this.enemies) {
+        enemy.DoMoveMotion(); 
+      };
     }
 
     /// <summary>
@@ -119,7 +123,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies)
       {
-        if (e.Status.IsDead) e.DoVanishMotion();
+        e.DoVanishMotion();
       }
     }
 
@@ -210,23 +214,6 @@ namespace MyGame.Dungeon
       }
 
       return null;
-    }
-
-    /// <summary>
-    /// 指定された座標にいる敵さんに攻撃を与える
-    /// </summary>
-    public void AttackEnemies(IAttackable attacker, List<Vector2Int> targets)
-    {
-      targets.ForEach((coord) =>
-      {
-        foreach(var e in this.enemies)
-        {
-          if (e.Coord.Equals(coord))
-          {
-            e.AcceptAttack(attacker);
-          }
-        }
-      });
     }
 
     //-------------------------------------------------------------------------
