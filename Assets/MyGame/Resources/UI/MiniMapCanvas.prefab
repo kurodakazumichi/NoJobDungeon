@@ -287,4 +287,4 @@ MonoBehaviour:
   PlayerTileStyle:
     Color: {r: 1, g: 1, b: 1, a: 1}
   tileSize: 7
-  anchor: 0
+  anchor: 3
