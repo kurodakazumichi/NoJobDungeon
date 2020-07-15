@@ -32,6 +32,7 @@ namespace MyGame {
         case nameof(Dungeon.FieldManager)   : go.AddComponent<Dungeon.FieldManager>(); break;
         case nameof(Dungeon.EnemyManager)   : go.AddComponent<Dungeon.EnemyManager>(); break;
         case nameof(Dungeon.ItemManager)    : go.AddComponent<Dungeon.ItemManager>(); break;
+        case nameof(Dungeon.HUD)            : go.AddComponent<Dungeon.HUD>();break;
 #if _DEBUG
         case nameof(DebugMenuManager)       : go.AddComponent<DebugMenuManager>(); break;
 #endif
