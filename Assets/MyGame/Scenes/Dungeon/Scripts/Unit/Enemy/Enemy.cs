@@ -32,11 +32,6 @@ namespace MyGame.Dungeon
     // Public Properity
 
     /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public bool IsIdle => (Chip.IsIdle);
-
-    /// <summary>
     /// 行動
     /// </summary>
     public BehaviorType Behavior => (this.behavior);

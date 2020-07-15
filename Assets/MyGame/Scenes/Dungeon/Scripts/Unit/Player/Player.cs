@@ -47,11 +47,6 @@ namespace MyGame.Dungeon
     /// </summary>
     public GameObject PlayerObject => (Chip.gameObject);
 
-    /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public bool IsIdle => (Chip.IsIdle);
-
     //-------------------------------------------------------------------------
     // Public
 

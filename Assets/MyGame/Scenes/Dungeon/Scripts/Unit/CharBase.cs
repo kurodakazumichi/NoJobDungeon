@@ -37,5 +37,21 @@ namespace MyGame.Dungeon
     /// </summary>
     public Vector2Int Coord { get; set; } = Vector2Int.zero;
 
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    virtual public bool IsIdle
+    {
+      get
+      {
+        if (Chip == null)
+        {
+          return true;
+        }
+
+        return Chip.IsIdle;
+      }
+    }
+
   }
 }
