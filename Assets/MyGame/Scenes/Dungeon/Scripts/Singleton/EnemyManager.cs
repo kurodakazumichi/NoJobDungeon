@@ -126,7 +126,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies) 
       { 
-        if (e.isAcceptAttack) e.Ouch();
+        e.Ouch();
       }
     }
 
@@ -137,7 +137,7 @@ namespace MyGame.Dungeon
     {
       foreach(var e in this.enemies)
       {
-        if (e.IsDead) e.Vanish();
+        if (e.Status.IsDead) e.Vanish();
       }
     }
 
@@ -152,7 +152,7 @@ namespace MyGame.Dungeon
       // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
       foreach(var e in this.enemies)
       {
-        if (e.IsDead) 
+        if (e.Status.IsDead) 
         {
           e.Destory();
         } 

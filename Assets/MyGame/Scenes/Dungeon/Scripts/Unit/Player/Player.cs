@@ -43,21 +43,9 @@ namespace MyGame.Dungeon
     private Direction dashDirection = new Direction();
 
     /// <summary>
-    /// 体力
-    /// TODO: 仮実装
+    /// ステータス
     /// </summary>
-    private int hp = 10;
-
-    /// <summary>
-    /// 最大体力
-    /// </summary>
-    private int maxHP = 10;
-
-    /// <summary>
-    /// 攻撃を受けたフラグ
-    /// TODO: 仮実装
-    /// </summary>
-    public bool isAcceptAttack = false;
+    private Status status = null;
 
     /// <summary>
     /// 敵の座標を入れるための配列とその配列を指すIndex
@@ -85,16 +73,9 @@ namespace MyGame.Dungeon
     public bool IsIdle => (this.chip.IsIdle);
 
     /// <summary>
-    /// 攻撃力
-    /// TODO: 仮実装
+    /// ステータス
     /// </summary>
-    public int Atk => (10);
-
-    /// <summary>
-    /// 死んでいます
-    /// TODO: 仮実装
-    /// </summary>
-    public bool IsDead => (this.hp <= 0);
+    public Status Status => (this.status);
 
     //-------------------------------------------------------------------------
     // Public
@@ -107,6 +88,9 @@ namespace MyGame.Dungeon
       this.chip  = MapChipFactory.Instance.CreatePlayerChip();
 
       Reset(coord);
+
+      Status.Props props = new Status.Props(10, 10, 2);
+      this.status = new Status(props);
     }
 
     public void Reset(Vector2Int coord)
@@ -242,8 +226,30 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Ouch()
     {
-      this.chip.Ouch(Define.SEC_PER_TURN);
-      this.isAcceptAttack = false;
+      // 攻撃を受けていなければ痛がらない
+      if (!Status.IsAcceptedAttack) return;
+
+      // 攻撃を受けていたら痛がる
+      if (Status.IsHit)
+      {
+        if (Status.HasDamage)
+        {
+          this.chip.Ouch(Define.SEC_PER_TURN);
+          Debug.Log($"無職は{Status.AcceptedDamage}のダメージをうけた。");
+        }
+
+        else
+        {
+          Debug.Log("無職は攻撃をうけたがなんともなかった。");
+        }
+      }
+
+      // 攻撃を避けていたらメッセージを表示
+      else
+      {
+        Debug.Log($"無職は攻撃をかわした。");
+      }
+      this.status.Reset();
     }
 
     /// <summary>
@@ -251,9 +257,8 @@ namespace MyGame.Dungeon
     /// </summary>
     public void AcceptAttack(IAttackable attacker)
     {
-      // ここで攻撃を受けて、残りの体力や死亡などの判定を行う
-      this.hp -= attacker.Atk;
-      this.isAcceptAttack = true;
+      // 攻撃を受ける
+      this.status.AcceptAttack(attacker.Status);
 
       // 攻撃してきた奴の方を向く
       this.chip.Direction = Direction.LookAt(Coord, attacker.Coord);
@@ -372,11 +377,11 @@ namespace MyGame.Dungeon
       style1.normal.background = this.tex1;
       style2.normal.background = this.tex2;
 
-      var width = 200 * ((float)this.hp / (float)this.maxHP);
+      var width = 200 * this.status.HP.Rate;
 
       GUI.Box(new Rect(10, 10, 200, 20), "", style1);
       GUI.Box(new Rect(10, 10, width, 20), "", style2);
-      GUI.Label(new Rect(10, 30, 100, 20), $"{this.hp}/{this.maxHP}");
+      GUI.Label(new Rect(10, 30, 100, 20), $"HP:{this.status.HP.Now}/{this.status.HP.Max}");
     }
 
     public void DrawDebugMenu()
