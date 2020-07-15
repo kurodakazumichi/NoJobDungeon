@@ -9,6 +9,7 @@ namespace MyGame.Dungeon
   /// </summary>
   public interface IAttackable
   {
+    void AcceptAttack(IAttackable attacker);
     Vector2Int Coord { get; }
     Status Status { get; }
   }

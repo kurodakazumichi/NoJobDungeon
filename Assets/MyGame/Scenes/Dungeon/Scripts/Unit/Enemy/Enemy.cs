@@ -199,6 +199,14 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 攻撃をする
+    /// </summary>
+    public void Attack(IAttackable target)
+    {
+      target.AcceptAttack(this);
+    }
+
+    /// <summary>
     /// 攻撃を受ける
     /// </summary>
     public void AcceptAttack(IAttackable attacker)
