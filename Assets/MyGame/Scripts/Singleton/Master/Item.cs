@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// Item Master
   /// </summary>
-  public class Item : MasterBase<Item, Item.Entity>
+  public class ItemMaster : MasterBase<ItemMaster, ItemMaster.Entity>
   {
     /// <summary>
     /// DebugMenuを登録
@@ -16,7 +16,7 @@ namespace MyGame.Master
     {
       base.Awake();
 #if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemMaster, DrawDebugMenu, nameof(Item));
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemMaster, DrawDebugMenu, nameof(ItemMaster));
 #endif
     }
 

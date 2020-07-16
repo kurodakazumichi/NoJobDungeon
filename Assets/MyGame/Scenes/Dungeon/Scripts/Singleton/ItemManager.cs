@@ -38,7 +38,7 @@ namespace MyGame.Dungeon
       Reset();
 
       // TODO:ランダムアイテムの仮実装
-      var ids = Master.Item.Instance.Ids();
+      var ids = Master.ItemMaster.Instance.Ids();
 
       // アイテム生成＆設置
       DungeonManager.Instance.Map((x, y, tile) =>
@@ -78,7 +78,7 @@ namespace MyGame.Dungeon
     private FieldItem CreateItem(string id)
     {
       // Masterからデータを取得
-      var item = Master.Item.Instance.FindById(id);
+      var item = Master.ItemMaster.Instance.FindById(id);
       var cate = Master.ItemCategoryMaster.Instance.FindById(item.CategoryId);
 
       if (item == null || cate == null) return null;
