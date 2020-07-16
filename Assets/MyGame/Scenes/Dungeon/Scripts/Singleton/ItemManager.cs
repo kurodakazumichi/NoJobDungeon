@@ -79,7 +79,7 @@ namespace MyGame.Dungeon
     {
       // Masterからデータを取得
       var item = Master.Item.Instance.FindById(id);
-      var cate = Master.ItemCategory.Instance.FindById(item.CategoryId);
+      var cate = Master.ItemCategoryMaster.Instance.FindById(item.CategoryId);
 
       if (item == null || cate == null) return null;
 

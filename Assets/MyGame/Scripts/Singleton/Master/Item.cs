@@ -61,8 +61,8 @@ namespace MyGame.Master
       using (var scope = new GUILayout.HorizontalScope())
       {
         GUILayout.Label("Category:");
-        var category = ItemCategory.Instance.FindById(entity.CategoryId);
-        ItemCategory.Instance.DrawDebugDetail(category);
+        var category = ItemCategoryMaster.Instance.FindById(entity.CategoryId);
+        ItemCategoryMaster.Instance.DrawDebugDetail(category);
       }
     }
 #endif

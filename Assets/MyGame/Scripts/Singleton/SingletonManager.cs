@@ -21,18 +21,18 @@ namespace MyGame {
       var go = new GameObject(name);
 
       switch(name) {
-        case nameof(Master.Item)            : go.AddComponent<Master.Item>(); break;
-        case nameof(Master.ItemCategory)    : go.AddComponent<Master.ItemCategory>(); break;
-        case nameof(MapChipFactory)         : go.AddComponent<MapChipFactory>(); break;
-        case nameof(CameraManager)          : go.AddComponent<CameraManager>(); break;
-        case nameof(TimeManager)            : go.AddComponent<TimeManager>(); break;
-        case nameof(InputManager)           : go.AddComponent<InputManager>(); break;
-        case nameof(Dungeon.PlayerManager)  : go.AddComponent<Dungeon.PlayerManager>(); break;
-        case nameof(Dungeon.DungeonManager) : go.AddComponent<Dungeon.DungeonManager>(); break;
-        case nameof(Dungeon.FieldManager)   : go.AddComponent<Dungeon.FieldManager>(); break;
-        case nameof(Dungeon.EnemyManager)   : go.AddComponent<Dungeon.EnemyManager>(); break;
-        case nameof(Dungeon.ItemManager)    : go.AddComponent<Dungeon.ItemManager>(); break;
-        case nameof(Dungeon.HUD)            : go.AddComponent<Dungeon.HUD>();break;
+        case nameof(Master.Item)               : go.AddComponent<Master.Item>(); break;
+        case nameof(Master.ItemCategoryMaster) : go.AddComponent<Master.ItemCategoryMaster>(); break;
+        case nameof(MapChipFactory)            : go.AddComponent<MapChipFactory>(); break;
+        case nameof(CameraManager)             : go.AddComponent<CameraManager>(); break;
+        case nameof(TimeManager)               : go.AddComponent<TimeManager>(); break;
+        case nameof(InputManager)              : go.AddComponent<InputManager>(); break;
+        case nameof(Dungeon.PlayerManager)     : go.AddComponent<Dungeon.PlayerManager>(); break;
+        case nameof(Dungeon.DungeonManager)    : go.AddComponent<Dungeon.DungeonManager>(); break;
+        case nameof(Dungeon.FieldManager)      : go.AddComponent<Dungeon.FieldManager>(); break;
+        case nameof(Dungeon.EnemyManager)      : go.AddComponent<Dungeon.EnemyManager>(); break;
+        case nameof(Dungeon.ItemManager)       : go.AddComponent<Dungeon.ItemManager>(); break;
+        case nameof(Dungeon.HUD)               : go.AddComponent<Dungeon.HUD>();break;
 #if _DEBUG
         case nameof(DebugMenuManager)       : go.AddComponent<DebugMenuManager>(); break;
 #endif
