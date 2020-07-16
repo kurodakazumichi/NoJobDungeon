@@ -1,79 +1,79 @@
 fileFormatVersion: 2
-guid: 618752b58884c9142a5abf1fc8f8aab8
+guid: 8e7314f299b77964e869f6b97af6c704
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -645692447420315348
-    second: Nico_0
+      213: -2088000535628536740
+    second: Mashroom_0
   - first:
-      213: -5621418015767585296
-    second: Nico_1
+      213: 3887663211288319605
+    second: Mashroom_1
   - first:
-      213: 4376031491972589120
-    second: Nico_2
+      213: 3578123197544730050
+    second: Mashroom_2
   - first:
-      213: -7202741402728156099
-    second: Nico_3
+      213: 8865076675659703971
+    second: Mashroom_3
   - first:
-      213: -39413120618334697
-    second: Nico_4
+      213: 1916391413072433244
+    second: Mashroom_4
   - first:
-      213: -4619978703896178127
-    second: Nico_5
+      213: 534029116444272896
+    second: Mashroom_5
   - first:
-      213: -3285871240544768984
-    second: Nico_6
+      213: -7088039947861291678
+    second: Mashroom_6
   - first:
-      213: 3251841263968356800
-    second: Nico_7
+      213: -4031989572425629140
+    second: Mashroom_7
   - first:
-      213: -4066979140374956471
-    second: Nico_8
+      213: -7437045468143122149
+    second: Mashroom_8
   - first:
-      213: 2708443657381442474
-    second: Nico_9
+      213: 3041086630758705066
+    second: Mashroom_9
   - first:
-      213: -2746630614950356247
-    second: Nico_10
+      213: -1485278994114365529
+    second: Mashroom_10
   - first:
-      213: -7142959811832640098
-    second: Nico_11
+      213: 6152795000419376195
+    second: Mashroom_11
   - first:
-      213: -1649304313974405205
-    second: Nico_12
+      213: 3096064027502339337
+    second: Mashroom_12
   - first:
-      213: -1077406165864585375
-    second: Nico_13
+      213: 2589786617933341811
+    second: Mashroom_13
   - first:
-      213: -3297956235520323289
-    second: Nico_14
+      213: -5737264757761924550
+    second: Mashroom_14
   - first:
-      213: 7033747453146089506
-    second: Nico_15
+      213: -5982220943440865262
+    second: Mashroom_15
   - first:
-      213: 879504718014002214
-    second: Nico_16
+      213: 873260764250570984
+    second: Mashroom_16
   - first:
-      213: -9137468166561707221
-    second: Nico_17
+      213: -8431765710462955183
+    second: Mashroom_17
   - first:
-      213: -4740992981801279230
-    second: Nico_18
+      213: -7846531847153069323
+    second: Mashroom_18
   - first:
-      213: 2905442479866833744
-    second: Nico_19
+      213: -2228391553154802319
+    second: Mashroom_19
   - first:
-      213: -1343934538025047827
-    second: Nico_20
+      213: 1900118119756030222
+    second: Mashroom_20
   - first:
-      213: 5974603635175845331
-    second: Nico_21
+      213: 8765006694667058603
+    second: Mashroom_21
   - first:
-      213: -237401611093721940
-    second: Nico_22
+      213: -4865793598221756141
+    second: Mashroom_22
   - first:
-      213: 3182898211505278930
-    second: Nico_23
+      213: 5977649513471862692
+    second: Mashroom_23
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -117,7 +117,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 24
+  spritePixelsToUnits: 30
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -159,13 +159,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nico_0
+      name: Mashroom_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,20 +173,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c290c5dd32a0a07f0800000000000000
-      internalID: -645692447420315348
+      spriteID: c542907539ee503e0800000000000000
+      internalID: -2088000535628536740
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_1
+      name: Mashroom_1
       rect:
         serializedVersion: 2
         x: 20
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,20 +194,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0fd11342916bcf1b0800000000000000
-      internalID: -5621418015767585296
+      spriteID: 576d13bc711c3f530800000000000000
+      internalID: 3887663211288319605
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_2
+      name: Mashroom_2
       rect:
         serializedVersion: 2
         x: 40
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,20 +215,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 046e2fce479cabc30800000000000000
-      internalID: 4376031491972589120
+      spriteID: 2cd0d38271c08a130800000000000000
+      internalID: 3578123197544730050
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_3
+      name: Mashroom_3
       rect:
         serializedVersion: 2
         x: 60
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,20 +236,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d34b3612bd8ba0c90800000000000000
-      internalID: -7202741402728156099
+      spriteID: 3a62c4f6444170b70800000000000000
+      internalID: 8865076675659703971
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_4
+      name: Mashroom_4
       rect:
         serializedVersion: 2
         x: 80
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,20 +257,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 716fd02c9f9f37ff0800000000000000
-      internalID: -39413120618334697
+      spriteID: c509ac236d3689a10800000000000000
+      internalID: 1916391413072433244
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_5
+      name: Mashroom_5
       rect:
         serializedVersion: 2
         x: 100
-        y: 54
+        y: 84
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -278,20 +278,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1321664b8d982efb0800000000000000
-      internalID: -4619978703896178127
+      spriteID: 0096069e6a0496700800000000000000
+      internalID: 534029116444272896
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_6
+      name: Mashroom_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -299,20 +299,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 82c28a9148d3662d0800000000000000
-      internalID: -3285871240544768984
+      spriteID: 26d03f1b83932ad90800000000000000
+      internalID: -7088039947861291678
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_7
+      name: Mashroom_7
       rect:
         serializedVersion: 2
         x: 20
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -320,20 +320,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0c98acc866cd02d20800000000000000
-      internalID: 3251841263968356800
+      spriteID: c22cd75a8de7b08c0800000000000000
+      internalID: -4031989572425629140
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_8
+      name: Mashroom_8
       rect:
         serializedVersion: 2
         x: 40
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -341,20 +341,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 946f60505003f87c0800000000000000
-      internalID: -4066979140374956471
+      spriteID: b1986e4cc8e4ac890800000000000000
+      internalID: -7437045468143122149
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_9
+      name: Mashroom_9
       rect:
         serializedVersion: 2
         x: 60
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -362,20 +362,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa3716c0823569520800000000000000
-      internalID: 2708443657381442474
+      spriteID: aa7ef85ad2c143a20800000000000000
+      internalID: 3041086630758705066
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_10
+      name: Mashroom_10
       rect:
         serializedVersion: 2
         x: 80
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -383,20 +383,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9eadbaa020202e9d0800000000000000
-      internalID: -2746630614950356247
+      spriteID: 7a7b67bcf9a336be0800000000000000
+      internalID: -1485278994114365529
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_11
+      name: Mashroom_11
       rect:
         serializedVersion: 2
         x: 100
-        y: 36
+        y: 56
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -404,20 +404,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e9d03da65eb1fdc90800000000000000
-      internalID: -7142959811832640098
+      spriteID: 34cdbc7347e136550800000000000000
+      internalID: 6152795000419376195
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_12
+      name: Mashroom_12
       rect:
         serializedVersion: 2
         x: 0
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -425,20 +425,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba7490ff67e7c19e0800000000000000
-      internalID: -1649304313974405205
+      spriteID: 905642154dd67fa20800000000000000
+      internalID: 3096064027502339337
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_13
+      name: Mashroom_13
       rect:
         serializedVersion: 2
         x: 20
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -446,20 +446,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16763dcecc84c01f0800000000000000
-      internalID: -1077406165864585375
+      spriteID: 3742afd2535c0f320800000000000000
+      internalID: 2589786617933341811
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_14
+      name: Mashroom_14
       rect:
         serializedVersion: 2
         x: 40
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -467,20 +467,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 721d601f64e4b32d0800000000000000
-      internalID: -3297956235520323289
+      spriteID: a32ab33a9142160b0800000000000000
+      internalID: -5737264757761924550
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_15
+      name: Mashroom_15
       rect:
         serializedVersion: 2
         x: 60
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -488,20 +488,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 228c490da04ec9160800000000000000
-      internalID: 7033747453146089506
+      spriteID: 2181e424fb1eafca0800000000000000
+      internalID: -5982220943440865262
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_16
+      name: Mashroom_16
       rect:
         serializedVersion: 2
         x: 80
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -509,20 +509,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 624318791e0a43c00800000000000000
-      internalID: 879504718014002214
+      spriteID: 8e00171d9027e1c00800000000000000
+      internalID: 873260764250570984
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_17
+      name: Mashroom_17
       rect:
         serializedVersion: 2
         x: 100
-        y: 18
+        y: 28
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -530,20 +530,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2b46a96d11313180800000000000000
-      internalID: -9137468166561707221
+      spriteID: 151598e72c95cfa80800000000000000
+      internalID: -8431765710462955183
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_18
+      name: Mashroom_18
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -551,20 +551,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2016d1d700c943eb0800000000000000
-      internalID: -4740992981801279230
+      spriteID: 5f2d6a39bd48b1390800000000000000
+      internalID: -7846531847153069323
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_19
+      name: Mashroom_19
       rect:
         serializedVersion: 2
         x: 20
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -572,20 +572,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 05beacfaa84325820800000000000000
-      internalID: 2905442479866833744
+      spriteID: 17d1abd50b92311e0800000000000000
+      internalID: -2228391553154802319
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_20
+      name: Mashroom_20
       rect:
         serializedVersion: 2
         x: 40
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -593,20 +593,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de863ab78a2695de0800000000000000
-      internalID: -1343934538025047827
+      spriteID: e016757dc539e5a10800000000000000
+      internalID: 1900118119756030222
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_21
+      name: Mashroom_21
       rect:
         serializedVersion: 2
         x: 60
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -614,20 +614,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3dde964f95e0ae250800000000000000
-      internalID: 5974603635175845331
+      spriteID: badfc89562f83a970800000000000000
+      internalID: 8765006694667058603
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_22
+      name: Mashroom_22
       rect:
         serializedVersion: 2
         x: 80
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -635,20 +635,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cac37a51e7494bcf0800000000000000
-      internalID: -237401611093721940
+      spriteID: 3195f93a08a397cb0800000000000000
+      internalID: -4865793598221756141
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_23
+      name: Mashroom_23
       rect:
         serializedVersion: 2
         x: 100
         y: 0
         width: 20
-        height: 18
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -656,8 +656,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2df8ff44f0deb2c20800000000000000
-      internalID: 3182898211505278930
+      spriteID: 4a7e642cf80e4f250800000000000000
+      internalID: 5977649513471862692
       vertices: []
       indices: 
       edges: []
@@ -665,7 +665,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: c8e8958f521243e4bb224c0bf6548c90
+    spriteID: 990ac474b4faedf4d95ebac91808dd9b
     internalID: 0
     vertices: []
     indices: 

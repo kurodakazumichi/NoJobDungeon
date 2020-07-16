@@ -5,8 +5,56 @@
       "name"         : "しょぼん", 
       "hp"           : 10, 
       "pow"          : 4, 
-      "def"          : 4, 
+      "def"          : 2, 
       "enemyChipType": "Shobon" 
+    },
+    {
+      "id"           :"2", 
+      "name"         : "スライム", 
+      "hp"           : 12, 
+      "pow"          : 3, 
+      "def"          : 6, 
+      "enemyChipType": "Slime" 
+    },
+    {
+      "id"           :"3", 
+      "name"         : "あおもち", 
+      "hp"           : 5, 
+      "pow"          : 3, 
+      "def"          : 1, 
+      "enemyChipType": "MochiBlue" 
+    },
+    {
+      "id"           :"4", 
+      "name"         : "ドラゴン", 
+      "hp"           : 50, 
+      "pow"          : 20, 
+      "def"          : 10, 
+      "enemyChipType": "DragonBlack"
+    },
+    {
+      "id"           :"5", 
+      "name"         : "こぶりん", 
+      "hp"           : 15, 
+      "pow"          : 8, 
+      "def"          : 5, 
+      "enemyChipType": "GoblinGreen"
+    },
+    {
+      "id"           :"6", 
+      "name"         : "マンドラゴラ", 
+      "hp"           : 14, 
+      "pow"          : 6, 
+      "def"          : 2, 
+      "enemyChipType": "MandrakeWhite"
+    },
+    {
+      "id"           :"7", 
+      "name"         : "お化けきのこ", 
+      "hp"           : 12, 
+      "pow"          : 5, 
+      "def"          : 2, 
+      "enemyChipType": "Mashroom"
     }
   ]
 }
