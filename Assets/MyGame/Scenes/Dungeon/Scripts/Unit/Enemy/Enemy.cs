@@ -64,6 +64,7 @@ namespace MyGame.Dungeon
       Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
       Coord = props.Coord;
       Chip.transform.position = Util.GetPositionBy(Coord);
+      Chip.Direction = Direction.Random();
 
       Status = new Status(props.StatusProps);
     }
@@ -83,6 +84,12 @@ namespace MyGame.Dungeon
         // かつ攻撃できる方向であれば攻撃
         this.behavior = BehaviorType.Attack;
         Chip.Direction = new Direction(v, false);
+
+        // 攻撃要求をセット
+        AttackRequest.Name = Status.Name;
+        AttackRequest.Pow = Status.Pow;
+        AttackRequest.Coord = Coord;
+        AttackRequest.Area.Add(player);
       }
 
       // プレイヤーがいないなら移動を考える
@@ -138,14 +145,14 @@ namespace MyGame.Dungeon
     public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
-      if (!Status.IsAcceptedAttack) return;
+      if (!AttackResponse.IsAccepted) return;
 
       // 攻撃を受けていたら痛がる
-      if (Status.IsHit && Status.HasDamage)
+      if (AttackResponse.IsHit && AttackResponse.HasDamage)
       {
         Chip.Ouch(Define.SEC_PER_TURN);
       }
-      Status.Reset();
+      AttackResponse.Reset();
     }
 
     /// <summary>

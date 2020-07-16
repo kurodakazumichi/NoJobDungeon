@@ -220,8 +220,8 @@ namespace MyGame.Dungeon {
     private void PlayerAttackStartEnter()
     {
       // 攻撃対象を取得
-      var aim     = PlayerManager.Instance.AimCoords;
-      var targets = EnemyManager.Instance.FindTarget(aim);
+      var area     = PlayerManager.Instance.AttackArea;
+      var targets = EnemyManager.Instance.FindTarget(area);
 
       PlayerManager.Instance.Attack(targets);
       
