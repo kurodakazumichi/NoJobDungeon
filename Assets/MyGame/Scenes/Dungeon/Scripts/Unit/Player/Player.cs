@@ -178,11 +178,23 @@ namespace MyGame.Dungeon
     {
       var area = new List<Vector2Int>();
 
+#if true
+      // 前方三方向攻撃
+      var dirs = Direction.Get3Way(Chip.Direction);
+
+      foreach(var dir in dirs)
+      {
+        if (CanAttackTo(dir) == false) continue;
+
+        area.Add(Coord + dir.ToVector(false));
+      }
+#else
+      // 前方攻撃
       if (CanAttackTo(Chip.Direction))
       {
         area.Add(Coord + Chip.Direction.ToVector(false));
       }
-
+#endif
       return area;
     }
 

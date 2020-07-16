@@ -162,7 +162,7 @@ namespace MyGame.Dungeon
 
     public void MakeEnemy()
     {
-      MyGame.Util.LoopByRange(0, 3, (int i) => {
+      MyGame.Util.LoopByRange(0, 50, (int i) => {
         var pos = GetPlaceableCoord();
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Enemy);
       });

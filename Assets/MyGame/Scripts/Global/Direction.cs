@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MyGame
 {
@@ -190,6 +191,53 @@ namespace MyGame
     static public Direction LookAt(Vector2Int from, Vector2Int to, bool yUP = false)
     {
       return new Direction(to - from, yUP);
+    }
+
+    /// <summary>
+    /// 前方３方向のディレクションを返す
+    /// </summary>
+    static public List<Direction> Get3Way(Direction direction)
+    {
+      List<Direction> list = new List<Direction>();
+      list.Add(direction);
+
+      switch(direction.value)
+      {
+        case Direction8.Left:
+          list.Add(Direction.leftDown);
+          list.Add(Direction.leftUp);
+          break;
+        case Direction8.LeftDown:
+          list.Add(Direction.left);
+          list.Add(Direction.down);
+          break;
+        case Direction8.LeftUp:
+          list.Add(Direction.left);
+          list.Add(Direction.up);
+          break;
+        case Direction8.Right:
+          list.Add(Direction.rightUp);
+          list.Add(Direction.rightDown);
+          break;
+        case Direction8.RightDown:
+          list.Add(Direction.right);
+          list.Add(Direction.down);
+          break;
+        case Direction8.RightUp:
+          list.Add(Direction.right);
+          list.Add(Direction.up);
+          break;
+        case Direction8.Up:
+          list.Add(Direction.leftUp);
+          list.Add(Direction.rightUp);
+          break;
+        default:
+          list.Add(Direction.leftDown);
+          list.Add(Direction.rightDown);
+          break;
+      }
+
+      return list;
     }
 
     // プリセット
