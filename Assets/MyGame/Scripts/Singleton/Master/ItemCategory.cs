@@ -26,7 +26,7 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemCategoryJson.Repository>("Master/ItemCategory");
+      var repo = Load<ItemCategoryJson.Entity>("Master/ItemCategory");
 
       foreach(var entity in repo.list)
       {
@@ -78,23 +78,19 @@ namespace MyGame.Master
       public ItemChipType ChipType { get; private set; }
     }
   }
-}
 
-//-----------------------------------------------------------------------------
-// JSONパース用の定義
-namespace MyGame.Master.ItemCategoryJson
-{
-  [System.Serializable]
-  public class Entity
+  //-----------------------------------------------------------------------------
+  // JSONパース用の定義
+  namespace ItemCategoryJson
   {
-    public string id = "";
-    public string name = "";
-    public string itemChipType = "";
+    [System.Serializable]
+    public class Entity
+    {
+      public string id = "";
+      public string name = "";
+      public string itemChipType = "";
+    }
   }
 
-  [System.Serializable]
-  public class Repository
-  {
-    public List<Entity> list = null;
-  }
 }
+

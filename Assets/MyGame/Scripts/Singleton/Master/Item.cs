@@ -26,7 +26,7 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemJson.Repository>("Master/Item");
+      var repo = Load<ItemJson.Entity>("Master/Item");
 
       foreach(var entity in repo.list)
       {
@@ -83,23 +83,18 @@ namespace MyGame.Master
       public string CategoryId { get; private set; }
     }
   }
-}
 
-//-----------------------------------------------------------------------------
-// JSONパース用の定義
-namespace MyGame.Master.ItemJson
-{
-  [System.Serializable]
-  public class Entity
+  //-----------------------------------------------------------------------------
+  // JSONパース用の定義
+  namespace ItemJson
   {
-    public string id = "";
-    public string name = "";
-    public string categoryId = "";
-  }
+    [System.Serializable]
+    public class Entity
+    {
+      public string id = "";
+      public string name = "";
+      public string categoryId = "";
+    }
 
-  [System.Serializable]
-  public class Repository
-  {
-    public List<Entity> list = null;
   }
 }
