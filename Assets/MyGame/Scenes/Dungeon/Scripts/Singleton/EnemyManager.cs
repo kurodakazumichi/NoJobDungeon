@@ -77,18 +77,36 @@ namespace MyGame.Dungeon
 
       DungeonManager.Instance.Map((int x, int y, IReadOnlyTile tile) =>
       {
+        var ids = Master.EnemyMaster.Instance.Ids();
+
         if (tile.IsEnemy)
         {
-          var enemy = new Enemy();
-          Enemy.Props props =  new Enemy.Props(
-            new Vector2Int(x, y),
-            EnemyChipType.Shobon,
-            new Status.Props("しょぼん", 10, 4, 2)
-          );
-          enemy.Setup(props);
+          var id = ids[Random.Range(0, ids.Count)];
+
+          var enemy = CreateEnemy(id, new Vector2Int(x, y));
+
           this.enemies.Add(enemy);
         }
       });
+    }
+
+    /// <summary>
+    /// 敵を生成する
+    /// </summary>
+    private Enemy CreateEnemy(string id, Vector2Int coord)
+    {
+      var data = Master.EnemyMaster.Instance.FindById(id);
+
+      var enemy = new Enemy();
+
+      var props = new Enemy.Props(
+        coord,
+        data.ChipType,
+        new Status.Props(data.Name, data.HP, data.Pow, data.Def)
+      );
+      enemy.Setup(props);
+
+      return enemy;
     }
 
     /// <summary>

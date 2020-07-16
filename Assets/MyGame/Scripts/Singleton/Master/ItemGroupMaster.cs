@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// ItemCategoryMaster
   /// </summary>
-  public class ItemCategory : MasterBase<ItemCategory, ItemCategory.Entity>
+  public class ItemGroupMaster : MasterBase<ItemGroupMaster, ItemCategory.Entity>
   {
     /// <summary>
     /// DebugMenuを登録
@@ -16,7 +16,7 @@ namespace MyGame.Master
     {
       base.Awake();
 #if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemCategoryMaster, DrawDebugMenu, nameof(ItemCategory));
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemGroupMaster, DrawDebugMenu, nameof(ItemGroupMaster));
 #endif
     }
 
@@ -26,11 +26,11 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemCategoryJson.Repository>("Master/ItemCategory");
+      var repo = Load<ItemCategory.Json>("Master/ItemCategory");
 
       foreach(var entity in repo.list)
       {
-        this.repository.Add(entity.id, new Entity(entity));
+        this.repository.Add(entity.id, new ItemCategory.Entity(entity));
       }
     }
 
@@ -46,7 +46,7 @@ namespace MyGame.Master
       {
         if (GUILayout.Button($"{entity.Value.Name}")) 
         {
-          DM.OpenWindow(DebugMenu.Page.ItemCategoryMaster, (win) => 
+          DM.OpenWindow(DebugMenu.Page.ItemGroupMaster, (win) => 
           {
             this.DrawDebugDetail(entity.Value);
           });
@@ -54,7 +54,7 @@ namespace MyGame.Master
       }
     }
 
-    public void DrawDebugDetail(Entity entity)
+    public void DrawDebugDetail(ItemCategory.Entity entity)
     {
       GUILayout.Label($"id:{entity.Id}");
       GUILayout.Label($"name:{entity.Name}");
@@ -62,11 +62,16 @@ namespace MyGame.Master
     }
 #endif
 
-    //-------------------------------------------------------------------------
-    // ItemCategory のエンティティ
+  }
+
+  namespace ItemCategory
+  {
+    /// <summary>
+    /// Jsonをプログラム内で利用しやすい形にしたもの
+    /// </summary>
     public class Entity
     {
-      public Entity(ItemCategoryJson.Entity entity)
+      public Entity(Json entity)
       {
         Id = entity.id;
         Name = entity.name;
@@ -77,24 +82,16 @@ namespace MyGame.Master
       public string Name { get; private set; }
       public ItemChipType ChipType { get; private set; }
     }
-  }
-}
 
-//-----------------------------------------------------------------------------
-// JSONパース用の定義
-namespace MyGame.Master.ItemCategoryJson
-{
-  [System.Serializable]
-  public class Entity
-  {
-    public string id = "";
-    public string name = "";
-    public string itemChipType = "";
-  }
-
-  [System.Serializable]
-  public class Repository
-  {
-    public List<Entity> list = null;
+    /// <summary>
+    /// Json読み込み用
+    /// </summary>
+    [System.Serializable]
+    public class Json
+    {
+      public string id = "";
+      public string name = "";
+      public string itemChipType = "";
+    }
   }
 }

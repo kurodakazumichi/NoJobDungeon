@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// Item Master
   /// </summary>
-  public class Item : MasterBase<Item, Item.Entity>
+  public class ItemMaster : MasterBase<ItemMaster, Item.Entity>
   {
     /// <summary>
     /// DebugMenuを登録
@@ -16,7 +16,7 @@ namespace MyGame.Master
     {
       base.Awake();
 #if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemMaster, DrawDebugMenu, nameof(Item));
+      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemMaster, DrawDebugMenu, nameof(ItemMaster));
 #endif
     }
 
@@ -26,11 +26,11 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemJson.Repository>("Master/Item");
+      var repo = Load<Item.Json>("Master/Item");
 
       foreach(var entity in repo.list)
       {
-        this.repository.Add(entity.id, new Entity(entity));
+        this.repository.Add(entity.id, new Item.Entity(entity));
       }
     }
 
@@ -53,53 +53,51 @@ namespace MyGame.Master
       }
     }
 
-    private void DrawDebugDetail(Entity entity)
+    private void DrawDebugDetail(Item.Entity entity)
     {
       GUILayout.Label($"id:{entity.Id}");
       GUILayout.Label($"name:{entity.Name}");
       
       using (var scope = new GUILayout.HorizontalScope())
       {
-        GUILayout.Label("Category:");
-        var category = ItemCategory.Instance.FindById(entity.CategoryId);
-        ItemCategory.Instance.DrawDebugDetail(category);
+        GUILayout.Label("Group:");
+        var group = ItemGroupMaster.Instance.FindById(entity.GroupId);
+        ItemGroupMaster.Instance.DrawDebugDetail(group);
       }
     }
 #endif
 
-    //-------------------------------------------------------------------------
-    // ItemCategory のエンティティ
+  }
+
+  namespace Item
+  {
+    /// <summary>
+    /// Jsonをプログラム内で利用しやすい形にしたもの
+    /// </summary>
     public class Entity
     {
-      public Entity(ItemJson.Entity entity)
+      public Entity(Json json)
       {
-        Id = entity.id;
-        Name = entity.name;
-        CategoryId = entity.categoryId;
+        Id = json.id;
+        Name = json.name;
+        GroupId = json.groupId;
       }
 
       public string Id { get; private set; }
       public string Name { get; private set; }
-      public string CategoryId { get; private set; }
+      public string GroupId { get; private set; }
+    }
+
+    /// <summary>
+    /// Json読み込み用
+    /// </summary>
+    [System.Serializable]
+    public class Json
+    {
+      public string id = "";
+      public string name = "";
+      public string groupId = "";
     }
   }
-}
 
-//-----------------------------------------------------------------------------
-// JSONパース用の定義
-namespace MyGame.Master.ItemJson
-{
-  [System.Serializable]
-  public class Entity
-  {
-    public string id = "";
-    public string name = "";
-    public string categoryId = "";
-  }
-
-  [System.Serializable]
-  public class Repository
-  {
-    public List<Entity> list = null;
-  }
 }

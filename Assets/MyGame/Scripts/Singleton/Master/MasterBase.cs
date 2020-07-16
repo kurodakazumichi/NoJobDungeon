@@ -53,10 +53,10 @@ namespace MyGame.Master
     /// <summary>
     /// ロード、JSONを読み込んでパースした結果を返す
     /// </summary>
-    protected R Load<R> (string path)
+    protected JsonRepository<EntityOfJson> Load<EntityOfJson> (string path)
     {
       var json = Resources.Load(path) as TextAsset;
-      var repo = JsonUtility.FromJson<R>(json.text);
+      var repo = JsonUtility.FromJson<JsonRepository<EntityOfJson>>(json.text);
       return repo;
     }
 
@@ -84,5 +84,14 @@ namespace MyGame.Master
 
       return ids;
     }
+  }
+
+  //---------------------------------------------------------------------------
+  // Jsonを読み込む際に使用するリポジトリクラス
+  // 全てのJsonファイル共通で利用する
+  [System.Serializable]
+  public class JsonRepository<Entity>
+  {
+    public List<Entity> list = null;
   }
 }

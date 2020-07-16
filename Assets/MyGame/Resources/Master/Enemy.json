@@ -1,0 +1,12 @@
+{
+  "list":[
+    {
+      "id"           :"1", 
+      "name"         : "しょぼん", 
+      "hp"           : 10, 
+      "pow"          : 4, 
+      "def"          : 4, 
+      "enemyChipType": "Shobon" 
+    }
+  ]
+}
