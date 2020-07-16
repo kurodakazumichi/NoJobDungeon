@@ -240,6 +240,12 @@ namespace MyGame
       return list;
     }
 
+    static public Direction Random()
+    {
+      var dir = new Vector2Int(UnityEngine.Random.Range(-1, 2), UnityEngine.Random.Range(-1, 2));
+      return new Direction(dir, false);
+    }
+
     // プリセット
     static public Direction newtral => (new Direction(Direction8.Neutral));
     static public Direction left => (new Direction(Direction8.Left));

@@ -64,6 +64,7 @@ namespace MyGame.Dungeon
       Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
       Coord = props.Coord;
       Chip.transform.position = Util.GetPositionBy(Coord);
+      Chip.Direction = Direction.Random();
 
       Status = new Status(props.StatusProps);
     }
