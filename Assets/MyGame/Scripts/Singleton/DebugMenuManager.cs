@@ -22,6 +22,7 @@ namespace MyGame
       Enemy,
       ItemMaster,
       ItemGroupMaster,
+      EnemyMaster,
       
       PageChild, // トップ画面に表示しないものはここより↓
       Algorithm,

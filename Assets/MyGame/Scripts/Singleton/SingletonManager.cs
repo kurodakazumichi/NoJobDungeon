@@ -23,6 +23,7 @@ namespace MyGame {
       switch(name) {
         case nameof(Master.ItemMaster)         : go.AddComponent<Master.ItemMaster>(); break;
         case nameof(Master.ItemGroupMaster)    : go.AddComponent<Master.ItemGroupMaster>(); break;
+        case nameof(Master.EnemyMaster)        : go.AddComponent<Master.EnemyMaster>(); break;
         case nameof(MapChipFactory)            : go.AddComponent<MapChipFactory>(); break;
         case nameof(CameraManager)             : go.AddComponent<CameraManager>(); break;
         case nameof(TimeManager)               : go.AddComponent<TimeManager>(); break;

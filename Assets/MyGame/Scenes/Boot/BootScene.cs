@@ -32,6 +32,7 @@ namespace MyGame
 #endif
       .Setup(nameof(Master.ItemMaster), system)
       .Setup(nameof(Master.ItemGroupMaster), system)
+      .Setup(nameof(Master.EnemyMaster), system)
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
       .Setup(nameof(InputManager), system);
