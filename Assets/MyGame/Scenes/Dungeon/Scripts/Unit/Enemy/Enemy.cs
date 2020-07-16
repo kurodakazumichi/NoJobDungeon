@@ -100,6 +100,9 @@ namespace MyGame.Dungeon
           Chip.Direction = moveDir;
           this.nextCoord = Coord + move;
           this.behavior = BehaviorType.Move;
+
+          // ダンジョンの情報を書き換え
+          DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
         }
       }
     }
@@ -111,8 +114,6 @@ namespace MyGame.Dungeon
     {
       if (this.behavior != BehaviorType.Move) return;
 
-      // ダンジョンの情報を書き換え
-      DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
       Coord = this.nextCoord;
       Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
       this.behavior = BehaviorType.None;
