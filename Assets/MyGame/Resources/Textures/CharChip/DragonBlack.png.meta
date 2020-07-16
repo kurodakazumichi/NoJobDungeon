@@ -1,79 +1,79 @@
 fileFormatVersion: 2
-guid: 618752b58884c9142a5abf1fc8f8aab8
+guid: 0d8ba18bc5f989d4abe224a5e639f06d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -645692447420315348
-    second: Nico_0
+      213: -5518970536709767992
+    second: DragonBlack_0
   - first:
-      213: -5621418015767585296
-    second: Nico_1
+      213: 151376597846577188
+    second: DragonBlack_1
   - first:
-      213: 4376031491972589120
-    second: Nico_2
+      213: -1734862177508554579
+    second: DragonBlack_2
   - first:
-      213: -7202741402728156099
-    second: Nico_3
+      213: 9212759544261278547
+    second: DragonBlack_3
   - first:
-      213: -39413120618334697
-    second: Nico_4
+      213: 359914320263233185
+    second: DragonBlack_4
   - first:
-      213: -4619978703896178127
-    second: Nico_5
+      213: 2491672235083299948
+    second: DragonBlack_5
   - first:
-      213: -3285871240544768984
-    second: Nico_6
+      213: 6086989633185022153
+    second: DragonBlack_6
   - first:
-      213: 3251841263968356800
-    second: Nico_7
+      213: 7554597533786082128
+    second: DragonBlack_7
   - first:
-      213: -4066979140374956471
-    second: Nico_8
+      213: 2748725456396344735
+    second: DragonBlack_8
   - first:
-      213: 2708443657381442474
-    second: Nico_9
+      213: 8127304258897513394
+    second: DragonBlack_9
   - first:
-      213: -2746630614950356247
-    second: Nico_10
+      213: 6351611190434206166
+    second: DragonBlack_10
   - first:
-      213: -7142959811832640098
-    second: Nico_11
+      213: 5371986592227718529
+    second: DragonBlack_11
   - first:
-      213: -1649304313974405205
-    second: Nico_12
+      213: -1309115469839489296
+    second: DragonBlack_12
   - first:
-      213: -1077406165864585375
-    second: Nico_13
+      213: -8612570993587623211
+    second: DragonBlack_13
   - first:
-      213: -3297956235520323289
-    second: Nico_14
+      213: -8482198168219869915
+    second: DragonBlack_14
   - first:
-      213: 7033747453146089506
-    second: Nico_15
+      213: 8167899028508834755
+    second: DragonBlack_15
   - first:
-      213: 879504718014002214
-    second: Nico_16
+      213: -5648753234410129623
+    second: DragonBlack_16
   - first:
-      213: -9137468166561707221
-    second: Nico_17
+      213: -8436822090835723830
+    second: DragonBlack_17
   - first:
-      213: -4740992981801279230
-    second: Nico_18
+      213: 8493214411400341092
+    second: DragonBlack_18
   - first:
-      213: 2905442479866833744
-    second: Nico_19
+      213: 6720022120813313027
+    second: DragonBlack_19
   - first:
-      213: -1343934538025047827
-    second: Nico_20
+      213: 6263460959770538292
+    second: DragonBlack_20
   - first:
-      213: 5974603635175845331
-    second: Nico_21
+      213: 7805007170414461601
+    second: DragonBlack_21
   - first:
-      213: -237401611093721940
-    second: Nico_22
+      213: 4412142142937388332
+    second: DragonBlack_22
   - first:
-      213: 3182898211505278930
-    second: Nico_23
+      213: 4972245571592540125
+    second: DragonBlack_23
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -117,7 +117,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 24
+  spritePixelsToUnits: 30
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -159,13 +159,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nico_0
+      name: DragonBlack_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 54
-        width: 20
-        height: 18
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,20 +173,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c290c5dd32a0a07f0800000000000000
-      internalID: -645692447420315348
+      spriteID: 8cc3191a98da863b0800000000000000
+      internalID: -5518970536709767992
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_1
+      name: DragonBlack_1
       rect:
         serializedVersion: 2
-        x: 20
-        y: 54
-        width: 20
-        height: 18
+        x: 38
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,20 +194,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0fd11342916bcf1b0800000000000000
-      internalID: -5621418015767585296
+      spriteID: 420d3f5b63cc91200800000000000000
+      internalID: 151376597846577188
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_2
+      name: DragonBlack_2
       rect:
         serializedVersion: 2
-        x: 40
-        y: 54
-        width: 20
-        height: 18
+        x: 76
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,20 +215,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 046e2fce479cabc30800000000000000
-      internalID: 4376031491972589120
+      spriteID: da8875f8a088ce7e0800000000000000
+      internalID: -1734862177508554579
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_3
+      name: DragonBlack_3
       rect:
         serializedVersion: 2
-        x: 60
-        y: 54
-        width: 20
-        height: 18
+        x: 114
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,20 +236,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d34b3612bd8ba0c90800000000000000
-      internalID: -7202741402728156099
+      spriteID: 35b78c48efb4adf70800000000000000
+      internalID: 9212759544261278547
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_4
+      name: DragonBlack_4
       rect:
         serializedVersion: 2
-        x: 80
-        y: 54
-        width: 20
-        height: 18
+        x: 152
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,20 +257,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 716fd02c9f9f37ff0800000000000000
-      internalID: -39413120618334697
+      spriteID: 1aebdd8da2caef400800000000000000
+      internalID: 359914320263233185
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_5
+      name: DragonBlack_5
       rect:
         serializedVersion: 2
-        x: 100
-        y: 54
-        width: 20
-        height: 18
+        x: 190
+        y: 90
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -278,146 +278,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1321664b8d982efb0800000000000000
-      internalID: -4619978703896178127
+      spriteID: c6cf7d442b2349220800000000000000
+      internalID: 2491672235083299948
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_6
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 82c28a9148d3662d0800000000000000
-      internalID: -3285871240544768984
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_7
-      rect:
-        serializedVersion: 2
-        x: 20
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0c98acc866cd02d20800000000000000
-      internalID: 3251841263968356800
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_8
-      rect:
-        serializedVersion: 2
-        x: 40
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 946f60505003f87c0800000000000000
-      internalID: -4066979140374956471
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_9
-      rect:
-        serializedVersion: 2
-        x: 60
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: aa3716c0823569520800000000000000
-      internalID: 2708443657381442474
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_10
-      rect:
-        serializedVersion: 2
-        x: 80
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9eadbaa020202e9d0800000000000000
-      internalID: -2746630614950356247
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_11
-      rect:
-        serializedVersion: 2
-        x: 100
-        y: 36
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e9d03da65eb1fdc90800000000000000
-      internalID: -7142959811832640098
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Nico_12
+      name: DragonBlack_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 18
-        width: 20
-        height: 18
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -425,20 +299,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba7490ff67e7c19e0800000000000000
-      internalID: -1649304313974405205
+      spriteID: 9c08a7532d4597450800000000000000
+      internalID: 6086989633185022153
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_13
+      name: DragonBlack_7
       rect:
         serializedVersion: 2
-        x: 20
-        y: 18
-        width: 20
-        height: 18
+        x: 38
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -446,20 +320,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16763dcecc84c01f0800000000000000
-      internalID: -1077406165864585375
+      spriteID: 05b8c565e6257d860800000000000000
+      internalID: 7554597533786082128
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_14
+      name: DragonBlack_8
       rect:
         serializedVersion: 2
-        x: 40
-        y: 18
-        width: 20
-        height: 18
+        x: 76
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -467,20 +341,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 721d601f64e4b32d0800000000000000
-      internalID: -3297956235520323289
+      spriteID: f9dd39d3d3f652620800000000000000
+      internalID: 2748725456396344735
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_15
+      name: DragonBlack_9
       rect:
         serializedVersion: 2
-        x: 60
-        y: 18
-        width: 20
-        height: 18
+        x: 114
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -488,20 +362,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 228c490da04ec9160800000000000000
-      internalID: 7033747453146089506
+      spriteID: 2bb0b15c92cf9c070800000000000000
+      internalID: 8127304258897513394
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_16
+      name: DragonBlack_10
       rect:
         serializedVersion: 2
-        x: 80
-        y: 18
-        width: 20
-        height: 18
+        x: 152
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -509,20 +383,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 624318791e0a43c00800000000000000
-      internalID: 879504718014002214
+      spriteID: 6d11a35b9b4752850800000000000000
+      internalID: 6351611190434206166
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_17
+      name: DragonBlack_11
       rect:
         serializedVersion: 2
-        x: 100
-        y: 18
-        width: 20
-        height: 18
+        x: 190
+        y: 60
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -530,20 +404,146 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2b46a96d11313180800000000000000
-      internalID: -9137468166561707221
+      spriteID: 185f4e7f7512d8a40800000000000000
+      internalID: 5371986592227718529
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_18
+      name: DragonBlack_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f6af3a8a6615dde0800000000000000
+      internalID: -1309115469839489296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_13
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5da606c00500a7880800000000000000
+      internalID: -8612570993587623211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_14
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52d19c4e4bd294a80800000000000000
+      internalID: -8482198168219869915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_15
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cbf68b14e43a5170800000000000000
+      internalID: 8167899028508834755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_16
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92735279cd89b91b0800000000000000
+      internalID: -5648753234410129623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_17
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 30
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac9719232036aea80800000000000000
+      internalID: -8436822090835723830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DragonBlack_18
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -551,20 +551,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2016d1d700c943eb0800000000000000
-      internalID: -4740992981801279230
+      spriteID: 466eeb81285fdd570800000000000000
+      internalID: 8493214411400341092
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_19
+      name: DragonBlack_19
       rect:
         serializedVersion: 2
-        x: 20
+        x: 38
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -572,20 +572,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 05beacfaa84325820800000000000000
-      internalID: 2905442479866833744
+      spriteID: 30c38d1c380524d50800000000000000
+      internalID: 6720022120813313027
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_20
+      name: DragonBlack_20
       rect:
         serializedVersion: 2
-        x: 40
+        x: 76
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -593,20 +593,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de863ab78a2695de0800000000000000
-      internalID: -1343934538025047827
+      spriteID: 43176a3ce884ce650800000000000000
+      internalID: 6263460959770538292
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_21
+      name: DragonBlack_21
       rect:
         serializedVersion: 2
-        x: 60
+        x: 114
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -614,20 +614,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3dde964f95e0ae250800000000000000
-      internalID: 5974603635175845331
+      spriteID: 1a24ee53ba4f05c60800000000000000
+      internalID: 7805007170414461601
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_22
+      name: DragonBlack_22
       rect:
         serializedVersion: 2
-        x: 80
+        x: 152
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -635,20 +635,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cac37a51e7494bcf0800000000000000
-      internalID: -237401611093721940
+      spriteID: c25505807e31b3d30800000000000000
+      internalID: 4412142142937388332
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_23
+      name: DragonBlack_23
       rect:
         serializedVersion: 2
-        x: 100
+        x: 190
         y: 0
-        width: 20
-        height: 18
+        width: 38
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -656,8 +656,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2df8ff44f0deb2c20800000000000000
-      internalID: 3182898211505278930
+      spriteID: ddf48c6d007f00540800000000000000
+      internalID: 4972245571592540125
       vertices: []
       indices: 
       edges: []
@@ -665,7 +665,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: c8e8958f521243e4bb224c0bf6548c90
+    spriteID: 6d9a990e0e3b90e4da2567acbe472dd4
     internalID: 0
     vertices: []
     indices: 

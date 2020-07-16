@@ -1,79 +1,79 @@
 fileFormatVersion: 2
-guid: 618752b58884c9142a5abf1fc8f8aab8
+guid: 18f45aee71589294e902e54bb8c7e696
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -645692447420315348
-    second: Nico_0
+      213: -1961796120106825067
+    second: GoblinGreen_0
   - first:
-      213: -5621418015767585296
-    second: Nico_1
+      213: 9174415884829375339
+    second: GoblinGreen_1
   - first:
-      213: 4376031491972589120
-    second: Nico_2
+      213: 7856370559282353559
+    second: GoblinGreen_2
   - first:
-      213: -7202741402728156099
-    second: Nico_3
+      213: 6910614317877542032
+    second: GoblinGreen_3
   - first:
-      213: -39413120618334697
-    second: Nico_4
+      213: -3190417501958202855
+    second: GoblinGreen_4
   - first:
-      213: -4619978703896178127
-    second: Nico_5
+      213: -3807141876723479344
+    second: GoblinGreen_5
   - first:
-      213: -3285871240544768984
-    second: Nico_6
+      213: 5930408897862762569
+    second: GoblinGreen_6
   - first:
-      213: 3251841263968356800
-    second: Nico_7
+      213: -6066175945501018613
+    second: GoblinGreen_7
   - first:
-      213: -4066979140374956471
-    second: Nico_8
+      213: 6950969477235979148
+    second: GoblinGreen_8
   - first:
-      213: 2708443657381442474
-    second: Nico_9
+      213: 1901080587968466035
+    second: GoblinGreen_9
   - first:
-      213: -2746630614950356247
-    second: Nico_10
+      213: 6181182761724188913
+    second: GoblinGreen_10
   - first:
-      213: -7142959811832640098
-    second: Nico_11
+      213: 7417523031047709849
+    second: GoblinGreen_11
   - first:
-      213: -1649304313974405205
-    second: Nico_12
+      213: 550789435563225249
+    second: GoblinGreen_12
   - first:
-      213: -1077406165864585375
-    second: Nico_13
+      213: -7741295403742595736
+    second: GoblinGreen_13
   - first:
-      213: -3297956235520323289
-    second: Nico_14
+      213: 7506829630920382109
+    second: GoblinGreen_14
   - first:
-      213: 7033747453146089506
-    second: Nico_15
+      213: -2351876952456797095
+    second: GoblinGreen_15
   - first:
-      213: 879504718014002214
-    second: Nico_16
+      213: -4095139878470361195
+    second: GoblinGreen_16
   - first:
-      213: -9137468166561707221
-    second: Nico_17
+      213: -6182706860401995960
+    second: GoblinGreen_17
   - first:
-      213: -4740992981801279230
-    second: Nico_18
+      213: -8043150288921697243
+    second: GoblinGreen_18
   - first:
-      213: 2905442479866833744
-    second: Nico_19
+      213: 3386036406911037226
+    second: GoblinGreen_19
   - first:
-      213: -1343934538025047827
-    second: Nico_20
+      213: -6171015169098473688
+    second: GoblinGreen_20
   - first:
-      213: 5974603635175845331
-    second: Nico_21
+      213: 9208085358902189223
+    second: GoblinGreen_21
   - first:
-      213: -237401611093721940
-    second: Nico_22
+      213: -60359452340210624
+    second: GoblinGreen_22
   - first:
-      213: 3182898211505278930
-    second: Nico_23
+      213: -5556586501488060227
+    second: GoblinGreen_23
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -117,7 +117,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 24
+  spritePixelsToUnits: 25
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -159,12 +159,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nico_0
+      name: GoblinGreen_0
       rect:
         serializedVersion: 2
         x: 0
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -173,19 +173,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c290c5dd32a0a07f0800000000000000
-      internalID: -645692447420315348
+      spriteID: 59a0b43a2dc46c4e0800000000000000
+      internalID: -1961796120106825067
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_1
+      name: GoblinGreen_1
       rect:
         serializedVersion: 2
-        x: 20
+        x: 18
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -194,19 +194,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0fd11342916bcf1b0800000000000000
-      internalID: -5621418015767585296
+      spriteID: b6bb4fc93a2125f70800000000000000
+      internalID: 9174415884829375339
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_2
+      name: GoblinGreen_2
       rect:
         serializedVersion: 2
-        x: 40
+        x: 36
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -215,19 +215,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 046e2fce479cabc30800000000000000
-      internalID: 4376031491972589120
+      spriteID: 7959cd9166f670d60800000000000000
+      internalID: 7856370559282353559
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_3
+      name: GoblinGreen_3
       rect:
         serializedVersion: 2
-        x: 60
+        x: 54
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -236,19 +236,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d34b3612bd8ba0c90800000000000000
-      internalID: -7202741402728156099
+      spriteID: 09cb1dcab1f67ef50800000000000000
+      internalID: 6910614317877542032
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_4
+      name: GoblinGreen_4
       rect:
         serializedVersion: 2
-        x: 80
+        x: 72
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -257,19 +257,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 716fd02c9f9f37ff0800000000000000
-      internalID: -39413120618334697
+      spriteID: 91a979e7f2c59b3d0800000000000000
+      internalID: -3190417501958202855
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_5
+      name: GoblinGreen_5
       rect:
         serializedVersion: 2
-        x: 100
+        x: 90
         y: 54
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -278,19 +278,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1321664b8d982efb0800000000000000
-      internalID: -4619978703896178127
+      spriteID: 0dc026c52a05a2bc0800000000000000
+      internalID: -3807141876723479344
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_6
+      name: GoblinGreen_6
       rect:
         serializedVersion: 2
         x: 0
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -299,19 +299,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 82c28a9148d3662d0800000000000000
-      internalID: -3285871240544768984
+      spriteID: 9400de1d87b0d4250800000000000000
+      internalID: 5930408897862762569
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_7
+      name: GoblinGreen_7
       rect:
         serializedVersion: 2
-        x: 20
+        x: 18
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -320,19 +320,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0c98acc866cd02d20800000000000000
-      internalID: 3251841263968356800
+      spriteID: b0674671e1d90dba0800000000000000
+      internalID: -6066175945501018613
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_8
+      name: GoblinGreen_8
       rect:
         serializedVersion: 2
-        x: 40
+        x: 36
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -341,19 +341,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 946f60505003f87c0800000000000000
-      internalID: -4066979140374956471
+      spriteID: c83bb3769edc67060800000000000000
+      internalID: 6950969477235979148
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_9
+      name: GoblinGreen_9
       rect:
         serializedVersion: 2
-        x: 60
+        x: 54
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -362,19 +362,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa3716c0823569520800000000000000
-      internalID: 2708443657381442474
+      spriteID: 37c404fe8bef16a10800000000000000
+      internalID: 1901080587968466035
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_10
+      name: GoblinGreen_10
       rect:
         serializedVersion: 2
-        x: 80
+        x: 72
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -383,19 +383,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9eadbaa020202e9d0800000000000000
-      internalID: -2746630614950356247
+      spriteID: 1f89654f8f8f7c550800000000000000
+      internalID: 6181182761724188913
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_11
+      name: GoblinGreen_11
       rect:
         serializedVersion: 2
-        x: 100
+        x: 90
         y: 36
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -404,19 +404,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e9d03da65eb1fdc90800000000000000
-      internalID: -7142959811832640098
+      spriteID: 994a0e2a5e550f660800000000000000
+      internalID: 7417523031047709849
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_12
+      name: GoblinGreen_12
       rect:
         serializedVersion: 2
         x: 0
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -425,19 +425,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba7490ff67e7c19e0800000000000000
-      internalID: -1649304313974405205
+      spriteID: 1a0b8ccc21cc4a700800000000000000
+      internalID: 550789435563225249
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_13
+      name: GoblinGreen_13
       rect:
         serializedVersion: 2
-        x: 20
+        x: 18
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -446,19 +446,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16763dcecc84c01f0800000000000000
-      internalID: -1077406165864585375
+      spriteID: 865fe8e68d4619490800000000000000
+      internalID: -7741295403742595736
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_14
+      name: GoblinGreen_14
       rect:
         serializedVersion: 2
-        x: 40
+        x: 36
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -467,19 +467,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 721d601f64e4b32d0800000000000000
-      internalID: -3297956235520323289
+      spriteID: d96d264c6cd9d2860800000000000000
+      internalID: 7506829630920382109
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_15
+      name: GoblinGreen_15
       rect:
         serializedVersion: 2
-        x: 60
+        x: 54
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -488,19 +488,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 228c490da04ec9160800000000000000
-      internalID: 7033747453146089506
+      spriteID: 954626d5f547c5fd0800000000000000
+      internalID: -2351876952456797095
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_16
+      name: GoblinGreen_16
       rect:
         serializedVersion: 2
-        x: 80
+        x: 72
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -509,19 +509,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 624318791e0a43c00800000000000000
-      internalID: 879504718014002214
+      spriteID: 59fdc3e3af32b27c0800000000000000
+      internalID: -4095139878470361195
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_17
+      name: GoblinGreen_17
       rect:
         serializedVersion: 2
-        x: 100
+        x: 90
         y: 18
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -530,19 +530,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2b46a96d11313180800000000000000
-      internalID: -9137468166561707221
+      spriteID: 84f4e5b2edc923aa0800000000000000
+      internalID: -6182706860401995960
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_18
+      name: GoblinGreen_18
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -551,19 +551,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2016d1d700c943eb0800000000000000
-      internalID: -4740992981801279230
+      spriteID: 524edb93d6df06090800000000000000
+      internalID: -8043150288921697243
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_19
+      name: GoblinGreen_19
       rect:
         serializedVersion: 2
-        x: 20
+        x: 18
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -572,19 +572,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 05beacfaa84325820800000000000000
-      internalID: 2905442479866833744
+      spriteID: a2fe87e0c2e9dfe20800000000000000
+      internalID: 3386036406911037226
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_20
+      name: GoblinGreen_20
       rect:
         serializedVersion: 2
-        x: 40
+        x: 36
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -593,19 +593,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de863ab78a2695de0800000000000000
-      internalID: -1343934538025047827
+      spriteID: 82f965e26662c5aa0800000000000000
+      internalID: -6171015169098473688
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_21
+      name: GoblinGreen_21
       rect:
         serializedVersion: 2
-        x: 60
+        x: 54
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -614,19 +614,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3dde964f95e0ae250800000000000000
-      internalID: 5974603635175845331
+      spriteID: 7ac17dee8d0b9cf70800000000000000
+      internalID: 9208085358902189223
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_22
+      name: GoblinGreen_22
       rect:
         serializedVersion: 2
-        x: 80
+        x: 72
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -635,19 +635,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cac37a51e7494bcf0800000000000000
-      internalID: -237401611093721940
+      spriteID: 044bc6cd56f892ff0800000000000000
+      internalID: -60359452340210624
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nico_23
+      name: GoblinGreen_23
       rect:
         serializedVersion: 2
-        x: 100
+        x: 90
         y: 0
-        width: 20
+        width: 18
         height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -656,8 +656,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2df8ff44f0deb2c20800000000000000
-      internalID: 3182898211505278930
+      spriteID: db8d217540a03e2b0800000000000000
+      internalID: -5556586501488060227
       vertices: []
       indices: 
       edges: []
@@ -665,7 +665,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: c8e8958f521243e4bb224c0bf6548c90
+    spriteID: d227b9b2f694ccd45b4427552daa139f
     internalID: 0
     vertices: []
     indices: 

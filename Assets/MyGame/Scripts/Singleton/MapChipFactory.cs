@@ -71,6 +71,12 @@ namespace MyGame
   public enum EnemyChipType
   {
     Shobon,
+    Slime,
+    MochiBlue,
+    DragonBlack,
+    GoblinGreen,
+    MandrakeWhite,
+    Mashroom,
   }
 
   /// <summary>
@@ -171,7 +177,13 @@ namespace MyGame
     /// </summary>
     private Dictionary<EnemyChipType, string> EnemyChipResouceMap = new Dictionary<EnemyChipType, string>()
     {
-      { EnemyChipType.Shobon, "Textures/CharChip/Shobon" }
+      { EnemyChipType.Shobon       , "Textures/CharChip/Shobon" },
+      { EnemyChipType.Slime        , "Textures/CharChip/Slime" },
+      { EnemyChipType.MochiBlue    , "Textures/CharChip/MochiBlue" },
+      { EnemyChipType.DragonBlack  , "Textures/CharChip/DragonBlack" },
+      { EnemyChipType.GoblinGreen  , "Textures/CharChip/GoblinGreen" },
+      { EnemyChipType.MandrakeWhite, "Textures/CharChip/MandrakeWhite" },
+      { EnemyChipType.Mashroom     , "Textures/CharChip/Mashroom" },
     };
 
     public CharChip CreateEnemyChip(EnemyChipType type)
