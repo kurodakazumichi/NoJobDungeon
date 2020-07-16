@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// Item Master
   /// </summary>
-  public class ItemMaster : MasterBase<ItemMaster, ItemMaster.Entity>
+  public class ItemMaster : MasterBase<ItemMaster, Item.Entity>
   {
     /// <summary>
     /// DebugMenuを登録
@@ -26,11 +26,11 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemJson.Entity>("Master/Item");
+      var repo = Load<Item.Json>("Master/Item");
 
       foreach(var entity in repo.list)
       {
-        this.repository.Add(entity.id, new Entity(entity));
+        this.repository.Add(entity.id, new Item.Entity(entity));
       }
     }
 
@@ -53,7 +53,7 @@ namespace MyGame.Master
       }
     }
 
-    private void DrawDebugDetail(Entity entity)
+    private void DrawDebugDetail(Item.Entity entity)
     {
       GUILayout.Label($"id:{entity.Id}");
       GUILayout.Label($"name:{entity.Name}");
@@ -67,34 +67,37 @@ namespace MyGame.Master
     }
 #endif
 
-    //-------------------------------------------------------------------------
-    // ItemCategory のエンティティ
+  }
+
+  namespace Item
+  {
+    /// <summary>
+    /// Jsonをプログラム内で利用しやすい形にしたもの
+    /// </summary>
     public class Entity
     {
-      public Entity(ItemJson.Entity entity)
+      public Entity(Json json)
       {
-        Id = entity.id;
-        Name = entity.name;
-        CategoryId = entity.categoryId;
+        Id = json.id;
+        Name = json.name;
+        CategoryId = json.categoryId;
       }
 
       public string Id { get; private set; }
       public string Name { get; private set; }
       public string CategoryId { get; private set; }
     }
-  }
 
-  //-----------------------------------------------------------------------------
-  // JSONパース用の定義
-  namespace ItemJson
-  {
+    /// <summary>
+    /// Json読み込み用
+    /// </summary>
     [System.Serializable]
-    public class Entity
+    public class Json
     {
       public string id = "";
       public string name = "";
       public string categoryId = "";
     }
-
   }
+
 }
