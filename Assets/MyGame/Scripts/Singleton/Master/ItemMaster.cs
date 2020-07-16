@@ -61,8 +61,8 @@ namespace MyGame.Master
       using (var scope = new GUILayout.HorizontalScope())
       {
         GUILayout.Label("Category:");
-        var category = ItemCategoryMaster.Instance.FindById(entity.CategoryId);
-        ItemCategoryMaster.Instance.DrawDebugDetail(category);
+        var group = ItemGroupMaster.Instance.FindById(entity.GroupId);
+        ItemGroupMaster.Instance.DrawDebugDetail(group);
       }
     }
 #endif
@@ -80,12 +80,12 @@ namespace MyGame.Master
       {
         Id = json.id;
         Name = json.name;
-        CategoryId = json.categoryId;
+        GroupId = json.categoryId;
       }
 
       public string Id { get; private set; }
       public string Name { get; private set; }
-      public string CategoryId { get; private set; }
+      public string GroupId { get; private set; }
     }
 
     /// <summary>

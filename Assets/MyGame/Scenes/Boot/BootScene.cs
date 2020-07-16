@@ -31,7 +31,7 @@ namespace MyGame
       .Setup(nameof(DebugMenuManager), system)
 #endif
       .Setup(nameof(Master.ItemMaster), system)
-      .Setup(nameof(Master.ItemCategoryMaster), system)
+      .Setup(nameof(Master.ItemGroupMaster), system)
       .Setup(nameof(CameraManager), system)
       .Setup(nameof(TimeManager), system)
       .Setup(nameof(InputManager), system);
