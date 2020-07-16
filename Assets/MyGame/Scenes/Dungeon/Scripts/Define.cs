@@ -18,7 +18,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 基本命中率
     /// </summary>
-    public const float HIT_RATE = 0.9f;
+    public const float HIT_RATE = 0.99f;
 
     public static Vector3 CHIP_SCALE
     {
