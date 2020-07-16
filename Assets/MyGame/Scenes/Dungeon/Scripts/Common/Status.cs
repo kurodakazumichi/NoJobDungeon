@@ -29,21 +29,6 @@ namespace MyGame.Dungeon
     /// </summary>
     private LimitedFloat def = new LimitedFloat();
 
-    /// <summary>
-    /// 攻撃を受けたフラグ
-    /// </summary>
-    private bool isAcceptedAttack = false;
-
-    /// <summary>
-    /// 攻撃が当たったフラグ
-    /// </summary>
-    private bool isHit = false;
-
-    /// <summary>
-    /// 実際に受けたダメージ
-    /// </summary>
-    private float acceptedDamage = 0;
-
     //-------------------------------------------------------------------------
     // コンストラクタ・セットアップ・リセット
 
@@ -83,18 +68,6 @@ namespace MyGame.Dungeon
       this.hp.Setup(props.HP, props.HP);
       this.pow.Setup(props.Pow, props.Pow);
       this.def.Setup(props.Def, props.Def);
-      this.isHit = false;
-      this.isAcceptedAttack = false;
-    }
-
-    /// <summary>
-    /// リセット
-    /// </summary>
-    public void Reset()
-    {
-      this.isHit          = false;
-      this.isAcceptedAttack = false;
-      this.acceptedDamage   = 0;
     }
 
     //-------------------------------------------------------------------------
@@ -103,11 +76,9 @@ namespace MyGame.Dungeon
     public int HP => ((int)this.hp.Now);
     public int MaxHP => ((int)this.hp.Max);
     public float RateHP => ((float)HP/MaxHP);
-    public bool IsAcceptedAttack => (this.isAcceptedAttack);
-    public bool IsHit => (this.isHit);
+    public int Pow => ((int)this.pow.Now);
+    public int Def => ((int)this.def.Now);
     public bool IsDead => (((int)this.hp.Now < 1));
-    public float AcceptedDamage => (this.acceptedDamage);
-    public bool HasDamage => (0 < this.acceptedDamage);
     public string Name => (this.name);
 
     //-------------------------------------------------------------------------
@@ -133,26 +104,26 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    public void AcceptAttack(Status attacker)
+    public AttackResponse AcceptAttack(AttackRequest req)
     {
-      this.isAcceptedAttack = true;
+      var res = new AttackResponse();
+      res.Name = Name;
+      res.IsAccepted = true;
 
-      // 攻撃は90パーの確立で当たる
-      this.isHit = Random.Range(0f, 1f) <= Define.HIT_RATE;
-      
-      // 攻撃があたった場合はダメージ計算
-      if (isHit)
+      res.IsHit = Random.Range(0, 1f) <= Define.HIT_RATE;
+
+      if (res.IsHit)
       {
-        this.acceptedDamage = (int)Mathf.Max(0, attacker.pow.Now - def.Now);
-        this.hp.Now -= acceptedDamage;
+        res.Damage = (int)(Mathf.Max(0, req.Pow - def.Now));
+        this.hp.Now -= res.Damage;
       }
 
       // TODO:何らかの形でこの情報を外へ出す
-      if (isHit)
+      if (res.IsHit)
       {
-        if (0 < this.acceptedDamage)
+        if (0 < res.Damage)
         {
-          Debug.Log($"{attacker.Name}は{Name}に{this.acceptedDamage}ダメージを与えた。");
+          Debug.Log($"{req.Name}は{Name}に{res.Damage}ダメージを与えた。");
         }
         else
         {
@@ -164,7 +135,8 @@ namespace MyGame.Dungeon
       {
         Debug.Log($"{Name}は攻撃をかわした。");
       }
-    }
 
+      return res;
+    }
   }
 }

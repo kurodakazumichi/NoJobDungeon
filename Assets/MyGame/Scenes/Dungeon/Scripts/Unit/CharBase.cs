@@ -38,6 +38,16 @@ namespace MyGame.Dungeon
     public Vector2Int Coord { get; set; } = Vector2Int.zero;
 
     /// <summary>
+    /// 攻撃の情報
+    /// </summary>
+    public AttackRequest AttackRequest { get; private set; } = new AttackRequest();
+
+    /// <summary>
+    /// 攻撃後の情報
+    /// </summary>
+    public AttackResponse AttackResponse { get; private set; } = new AttackResponse();
+
+    /// <summary>
     /// アイドル状態です
     /// </summary>
     virtual public bool IsIdle
@@ -61,19 +71,21 @@ namespace MyGame.Dungeon
     /// </summary>
     virtual public void Attack(IAttackable target)
     {
-      target.AcceptAttack(this);
+      target.AcceptAttack(this.AttackRequest);
     }
 
     /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    virtual public void AcceptAttack(IAttackable attacker)
+    virtual public void AcceptAttack(AttackRequest req)
     {
       // 攻撃を受ける
-      Status.AcceptAttack(attacker.Status);
+      var res = Status.AcceptAttack(req);
 
       // 攻撃してきた奴の方を向く
-      Chip.Direction = Direction.LookAt(Coord, attacker.Coord);
+      Chip.Direction = Direction.LookAt(Coord, req.Coord);
+
+      AttackResponse.Copy(res);
     }
 
     /// <summary>

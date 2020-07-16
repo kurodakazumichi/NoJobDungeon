@@ -35,7 +35,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// プレイヤーが攻撃しようと狙っている座標
     /// </summary>
-    public List<Vector2Int> AimCoords => (this.player.GetAttackCoords());
+    public List<Vector2Int> AttackArea => (this.player.AttackRequest.Area);
 
     /// <summary>
     /// プレイヤーのアタッカーとしての能力

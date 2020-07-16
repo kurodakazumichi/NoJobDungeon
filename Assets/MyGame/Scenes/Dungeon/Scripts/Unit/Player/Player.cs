@@ -153,6 +153,12 @@ namespace MyGame.Dungeon
       // 通常攻撃(RB2)
       if (InputManager.Instance.RB2.IsHold)
       {
+        // 攻撃要求を設定
+        this.AttackRequest.Name = Status.Name;
+        this.AttackRequest.Pow = Status.Pow;
+        this.AttackRequest.Coord = Coord;
+        this.AttackRequest.Area = GetAttackCoords();
+
         return Behavior.Attack;
       }
 
@@ -220,15 +226,15 @@ namespace MyGame.Dungeon
     public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
-      if (!Status.IsAcceptedAttack) return;
+      if (!AttackResponse.IsAccepted) return;
 
       // 攻撃を受けていたら痛がる
-      if (Status.IsHit && Status.HasDamage)
+      if (AttackResponse.IsHit && AttackResponse.HasDamage)
       {
         Chip.Ouch(Define.SEC_PER_TURN);
       }
 
-      Status.Reset();
+      AttackResponse.Reset();
     }
 
     //-------------------------------------------------------------------------
