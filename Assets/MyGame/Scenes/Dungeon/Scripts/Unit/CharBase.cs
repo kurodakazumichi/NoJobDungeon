@@ -148,7 +148,7 @@ namespace MyGame.Dungeon
       }
 
       // 上下左右の場合は進める
-      if (direction.IsStraight) {
+      if (direction.Unified.IsStraight) {
         return true;
       } 
 
