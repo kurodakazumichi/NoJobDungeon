@@ -328,6 +328,7 @@ namespace MyGame.Dungeon
         GetAttackCoords().ForEach((coord) => {
           GUILayout.Label($"Attack Targets:{coord}");
         });
+        Chip.DrawDebugMenu();
 
       }
       //GUILayout.EndArea();
