@@ -42,8 +42,16 @@ namespace MyGame.Dungeon
 
     /// <summary>
     /// 移動予定の座標
+    /// ThinkのタイミングでCoordを更新してしまうと攻撃判定が移動後の座標で行われるため
+    /// ThinkのタイミングではnextCoordを更新し実際に動く際にCoordを更新する。
     /// </summary>
     public Vector2Int nextCoord = Vector2Int.zero;
+
+    /// <summary>
+    /// ダンジョンマップ上と同期している座標
+    /// この座標には常にダンジョンマップ上の座標が入っている
+    /// </summary>
+    private Vector2Int syncCoord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -62,7 +70,8 @@ namespace MyGame.Dungeon
     virtual public void Setup(Props props)
     {
       Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
-      Coord = props.Coord;
+      Coord = this.syncCoord = props.Coord;
+      
       Chip.transform.position = Util.GetPositionBy(Coord);
       Chip.Direction = Direction.Random();
 
@@ -109,9 +118,15 @@ namespace MyGame.Dungeon
           this.behavior = BehaviorType.Move;
 
           // ダンジョンの情報を書き換え
-          DungeonManager.Instance.UpdateEnemyCoord(Coord, this.nextCoord);
+          MoveMapCoord(Coord, this.nextCoord);
         }
       }
+    }
+
+    private void MoveMapCoord(Vector2Int from, Vector2Int to)
+    {
+      DungeonManager.Instance.UpdateEnemyCoord(from, to);
+      syncCoord = to;
     }
 
     /// <summary>
@@ -164,7 +179,7 @@ namespace MyGame.Dungeon
       if (!Status.IsDead) return;
 
       // マップ上の敵の情報を除去する
-      DungeonManager.Instance.RemoveEnemyCoord(Coord);
+      DungeonManager.Instance.RemoveEnemyCoord(syncCoord);
 
       // 消滅モーション開始
       Chip.Vanish(Define.SEC_PER_TURN);
