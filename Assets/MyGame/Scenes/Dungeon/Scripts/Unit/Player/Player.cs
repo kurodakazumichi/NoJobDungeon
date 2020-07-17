@@ -39,6 +39,11 @@ namespace MyGame.Dungeon
     private List<Vector2Int> aroundEnemies = new List<Vector2Int>();
     private int aroundEnemiesIndex = 0;
 
+    /// <summary>
+    /// 手裏剣を投げた場合にセットされる
+    /// </summary>
+    private FieldItem shuriken = null;
+
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -61,12 +66,15 @@ namespace MyGame.Dungeon
 
       Status.Props props = new Status.Props("無職", 10, 10, 2);
       Status = new Status(props);
+
+      this.shuriken = null;
     }
 
     public void Reset(Vector2Int coord)
     {
       Coord = coord;
       Chip.transform.position = Util.GetPositionBy(coord);
+      Chip.Direction = Direction.down;
     }
 
     /// <summary>
@@ -163,9 +171,19 @@ namespace MyGame.Dungeon
       }
 
       // 遠距離攻撃(R)
-      if (InputManager.Instance.R.IsHold)
+      if (InputManager.Instance.R.IsDown)
       {
-        return Behavior.SubAttack;
+        var (isHit, pos) = SearchAttackTarget(Coord, Chip.Direction);
+
+        this.AttackRequest.Name = Status.Name;
+        this.AttackRequest.Pow  = 20;
+        this.AttackRequest.Coord = Coord;
+        this.AttackRequest.Area.Add(pos);
+
+        this.shuriken = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
+        this.shuriken.Setup(Coord);
+
+        return Behavior.Attack;
       }
 
       // メニュー(RB1)
@@ -217,7 +235,32 @@ namespace MyGame.Dungeon
     /// </summary>
     public void DoAttackMotion()
     {
-      Chip.Attack(Define.SEC_PER_TURN, 0.4f);
+      // 手裏剣があったら手裏剣攻撃
+      if (this.shuriken != null)
+      {
+        this.shuriken.DoMoveMotion(Define.SEC_PER_TURN, AttackRequest.Area[0]);
+        Debug.Log($"from:{Coord}, to{AttackRequest.Area[0]}");
+      }
+
+      // 通常攻撃
+      else
+      {
+        Chip.Attack(Define.SEC_PER_TURN, 0.4f);
+      }
+      
+    }
+
+    /// <summary>
+    /// 攻撃終了時に呼ばれる処理
+    /// </summary>
+    public void OnAttackEndEnter()
+    {
+      if (shuriken != null)
+      {
+        this.shuriken.Destory();
+        this.shuriken = null;
+      }
+      AttackRequest.Area.Clear();
     }
 
     /// <summary>

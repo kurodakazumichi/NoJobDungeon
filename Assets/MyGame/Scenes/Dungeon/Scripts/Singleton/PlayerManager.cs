@@ -124,6 +124,14 @@ namespace MyGame.Dungeon
       }
     }
 
+    public void AttackEndEnter()
+    {
+      if (this.player != null)
+      {
+        this.player.OnAttackEndEnter();
+      }
+    }
+
     //-------------------------------------------------------------------------
     // Protected Method
 
