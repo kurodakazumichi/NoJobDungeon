@@ -77,16 +77,34 @@ namespace MyGame.Dungeon
     /// </summary>
     private FieldItem CreateItem(string id)
     {
-      // Masterからデータを取得
       var item = Master.ItemMaster.Instance.FindById(id);
-      var cate = Master.ItemGroupMaster.Instance.FindById(item.GroupId);
+      return CreateItem(item);
+    }
 
-      if (item == null || cate == null) return null;
+    /// <summary>
+    /// Aliasを元にFieldItemを生成する
+    /// </summary>
+    public FieldItem CreateItemByAlias(string alias)
+    {
+      var item = Master.ItemMaster.Instance.FindByAlias(alias);
+      return CreateItem(item);
+    }
+
+    /// <summary>
+    /// アイテムを生成する
+    /// </summary>
+    private FieldItem CreateItem(Master.Item.Entity entity)
+    {
+      if (entity == null) return null;
+
+      var cate = Master.ItemGroupMaster.Instance.FindById(entity.GroupId);
+
+      if (cate == null) return null;
 
       // Propsを作成
       var props = new FieldItem.Props();
-      props.Id       = item.Id;
-      props.Name     = item.Name;
+      props.Id = entity.Id;
+      props.Name = entity.Name;
       props.ChipType = cate.ChipType;
 
       return new FieldItem(props);
