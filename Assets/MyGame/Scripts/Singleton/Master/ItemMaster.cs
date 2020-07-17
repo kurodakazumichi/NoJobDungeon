@@ -117,6 +117,11 @@ namespace MyGame.Master
       public string name = "";
       public string groupId = "";
     }
+
+    public static class Alias
+    {
+      public const string Shuriken = "Shuriken";
+    }
   }
 
 }
