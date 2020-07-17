@@ -56,6 +56,11 @@ namespace MyGame.Dungeon
     /// </summary>
     public string Name => ((this.props != null)? this.props.Name : "");
 
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public bool IsIdle => (this.chip.IsIdle);
+
     //-------------------------------------------------------------------------
     // Public Method
 
@@ -81,6 +86,14 @@ namespace MyGame.Dungeon
 
       this.chip = MapChipFactory.Instance.CreateItemChip(props.ChipType);
       chip.transform.position = Util.GetPositionBy(coord);
+    }
+
+    /// <summary>
+    /// 移動の動作を行う
+    /// </summary>
+    public void DoMoveMotion(float time, Vector2Int coord)
+    {
+      this.chip.Move(time, Util.GetPositionBy(coord));
     }
 
     /// <summary>
