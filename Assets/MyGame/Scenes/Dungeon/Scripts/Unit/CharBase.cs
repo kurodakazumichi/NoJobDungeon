@@ -183,5 +183,37 @@ namespace MyGame.Dungeon
       return true;
     }
 
+    /// <summary>
+    /// 指定された方向に攻撃対象(プレイヤーor敵)を探す。
+    /// </summary>
+    /// <param name="coord">探索を始める基点座標</param>
+    /// <param name="direction">探索方向</param>
+    /// <returns>
+    /// タプル型のboolは攻撃対象が見つかったかどうかを示す。
+    /// Vector2Intは最終的に到達した座標が壁だった場合、壁の１マス手前を返す
+    /// プレイヤー/敵が見つかった場合はその座標を返す
+    /// </returns>
+    protected (bool, Vector2Int) SearchAttackTarget(Vector2Int coord, Direction direction)
+    {
+      var vec = direction.ToVector(false);
+      var pos = coord + vec;
+
+      while (true)
+      {
+        var tile = DungeonManager.Instance.GetTile(pos);
+
+        if (tile.IsEnemy || tile.IsPlayer)
+        {
+          return (true, pos);
+        }
+
+        if (tile.IsWall)
+        {
+          return (false, pos - vec);
+        }
+        pos += vec;
+      }
+    }
+
   }
 }
