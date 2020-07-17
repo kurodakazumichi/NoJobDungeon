@@ -34,6 +34,21 @@ namespace MyGame.Master
       }
     }
 
+    /// <summary>
+    /// Aliasからアイテム情報を取得する
+    /// </summary>
+    public Item.Entity FindByAlias(string alias)
+    {
+      foreach(var entity in this.repository)
+      {
+        if (entity.Value.Alias.Equals(alias))
+        {
+          return entity.Value;
+        }
+      }
+      return null;
+    }
+
 
 #if _DEBUG
     //-------------------------------------------------------------------------
@@ -56,6 +71,7 @@ namespace MyGame.Master
     private void DrawDebugDetail(Item.Entity entity)
     {
       GUILayout.Label($"id:{entity.Id}");
+      GUILayout.Label($"alias:{entity.Alias}");
       GUILayout.Label($"name:{entity.Name}");
       
       using (var scope = new GUILayout.HorizontalScope())
@@ -79,11 +95,13 @@ namespace MyGame.Master
       public Entity(Json json)
       {
         Id = json.id;
+        Alias = json.alias;
         Name = json.name;
         GroupId = json.groupId;
       }
 
       public string Id { get; private set; }
+      public string Alias { get; private set; }
       public string Name { get; private set; }
       public string GroupId { get; private set; }
     }
@@ -95,6 +113,7 @@ namespace MyGame.Master
     public class Json
     {
       public string id = "";
+      public string alias = "";
       public string name = "";
       public string groupId = "";
     }
