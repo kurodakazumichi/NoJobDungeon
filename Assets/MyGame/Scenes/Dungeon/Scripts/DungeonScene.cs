@@ -252,6 +252,7 @@ namespace MyGame.Dungeon {
 
     private void PlayerAttackEndEnter()
     {
+      PlayerManager.Instance.AttackEndEnter();
       // 死んだ敵は消滅して下さい
       EnemyManager.Instance.DoVanishMotion();
     }

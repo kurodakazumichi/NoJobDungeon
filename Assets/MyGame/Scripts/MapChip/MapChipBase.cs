@@ -167,11 +167,6 @@ namespace MyGame {
     protected override void Awake()
     {
       this.spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
-    }
-
-    protected override void Start()
-    {
-      base.Start();
 
       Direction = new Direction(Direction8.Neutral);
 

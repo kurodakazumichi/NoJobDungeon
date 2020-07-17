@@ -1,13 +1,14 @@
 {
   "list":[
-    {"id":"1", "name":"回復薬", "groupId":"4"},
-    {"id":"2", "name":"大回復薬", "groupId":"4"},
-    {"id":"3", "name":"超回復薬", "groupId":"4"},
-    {"id":"4", "name":"命の薬", "groupId":"4"},
-    {"id":"5", "name":"めぐすり", "groupId":"4"},
-    {"id":"6", "name":"どく薬", "groupId":"4"},
-    {"id":"7", "name":"解毒薬", "groupId":"4"},
-    {"id":"8", "name":"不幸の元", "groupId":"4"},
-    {"id":"9", "name":"やばい薬", "groupId":"4"}
+    {"id":"1", "alias":"", "name":"回復薬", "groupId":"4"},
+    {"id":"2", "alias":"", "name":"大回復薬", "groupId":"4"},
+    {"id":"3", "alias":"", "name":"超回復薬", "groupId":"4"},
+    {"id":"4", "alias":"", "name":"命の薬", "groupId":"4"},
+    {"id":"5", "alias":"", "name":"めぐすり", "groupId":"4"},
+    {"id":"6", "alias":"", "name":"どく薬", "groupId":"4"},
+    {"id":"7", "alias":"", "name":"解毒薬", "groupId":"4"},
+    {"id":"8", "alias":"", "name":"不幸の元", "groupId":"4"},
+    {"id":"9", "alias":"", "name":"やばい薬", "groupId":"4"},
+    {"id":"10", "alias":"Shuriken", "name":"手裏剣", "groupId":"6"}
   ]
 }

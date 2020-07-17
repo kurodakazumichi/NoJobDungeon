@@ -4,6 +4,7 @@
     {"id":"2", "name":"盾", "itemChipType":"Shield"},
     {"id":"3", "name":"アクセサリー", "itemChipType":"Accessory"},
     {"id":"4", "name":"薬", "itemChipType":"Drug"},
-    {"id":"5", "name":"書籍", "itemChipType":"Book"}
+    {"id":"5", "name":"書籍", "itemChipType":"Book"},
+    {"id":"6", "name":"手裏剣", "itemChipType":"Shuriken"}
   ]
 }
