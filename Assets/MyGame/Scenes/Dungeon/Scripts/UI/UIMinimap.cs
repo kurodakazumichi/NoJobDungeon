@@ -12,50 +12,50 @@ namespace MyGame.Dungeon
     // Serialize
 
     [SerializeField]
-    private RectTransform root;
+    private RectTransform root = default;
 
     [SerializeField]
-    private RectTransform tileRoot;
+    private RectTransform tileRoot = default;
 
     [SerializeField]
-    private RectTransform wallRectTransform;
+    private RectTransform wallRectTransform = default;
 
     [SerializeField]
-    private GameObject tilePrefab;
+    private GameObject tilePrefab = default;
 
     [Serializable]
     private class TileStyle
     {
-      public Color Color;
+      public Color Color = default;
     }
 
 
     [SerializeField]
-    private TileStyle RoomTileStyle;
+    private TileStyle RoomTileStyle = default;
 
     [SerializeField]
-    private TileStyle AisleTileStyle;
+    private TileStyle AisleTileStyle = default;
 
     [SerializeField]
-    private TileStyle ItemTileStyle;
+    private TileStyle ItemTileStyle = default;
 
     [SerializeField]
-    private TileStyle TrapTileStyle;
+    private TileStyle TrapTileStyle = default;
 
     [SerializeField]
-    private TileStyle GoalTileStyle;
+    private TileStyle GoalTileStyle = default;
 
     [SerializeField]
-    private TileStyle EnemyTileStyle;
+    private TileStyle EnemyTileStyle = default;
 
     [SerializeField]
-    private TileStyle PlayerTileStyle;
+    private TileStyle PlayerTileStyle = default;
 
     [SerializeField]
-    private int tileSize;
+    private int tileSize = default;
 
     [SerializeField]
-    private Anchor anchor;
+    private Anchor anchor = default;
 
     //-------------------------------------------------------------------------
 
