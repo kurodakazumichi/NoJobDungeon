@@ -7,7 +7,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// 敵の管理クラス
   /// </summary>
-  public class EnemyManager : SingletonMonobehaviour<EnemyManager>
+  public class EnemyManager : SingletonMonobehaviour<EnemyManager>, IDebuggeable
   {
     //-------------------------------------------------------------------------
     // メンバ
@@ -246,20 +246,17 @@ namespace MyGame.Dungeon
     protected override void Awake()
     {
       base.Awake();
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Enemy, DrawDebugMenu, nameof(EnemyManager));
-#endif
     }
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       this.enemies.ForEach((e) =>
       {
         if (GUILayout.Button($"{e.Coord} 詳細"))
         {
-          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyDetail, 
-            ( window ) => 
+          DebugManager.Instance.OpenWindow("EnemyDetail", 
+            ( newWindow ) => 
             {
               e.DrawDebugMenu();
             });

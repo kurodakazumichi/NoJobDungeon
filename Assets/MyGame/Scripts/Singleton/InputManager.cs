@@ -15,7 +15,7 @@ namespace MyGame {
   ///    
   ///                           RS/R3
   /// </summary>
-  public class InputManager : SingletonMonobehaviour<InputManager>
+  public class InputManager : SingletonMonobehaviour<InputManager>, IDebuggeable
   {
     public interface IButton
     {
@@ -100,9 +100,6 @@ namespace MyGame {
     protected override void Awake()
     {
       base.Awake();
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Input, DrawDebugMenu, nameof(InputManager));
-#endif
     }
 
     /// <summary>
@@ -169,7 +166,7 @@ namespace MyGame {
 #endif
 
 #if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       GUILayout.Label($"DirectionKey:{DirectionKey.value}");
       ButtonLabel("RB1", this.rb1);
@@ -177,7 +174,6 @@ namespace MyGame {
       ButtonLabel("RB3", this.rb3);
       ButtonLabel("RB4", this.rb4);
       ButtonLabel("R", this.r);
-
     }
 #endif
 

@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// Item Master
   /// </summary>
-  public class EnemyMaster : MasterBase<EnemyMaster, Enemy.Entity>
+  public class EnemyMaster : MasterBase<EnemyMaster, Enemy.Entity>, IDebuggeable
   {
     /// <summary>
     /// DebugMenuを登録
@@ -15,9 +15,6 @@ namespace MyGame.Master
     protected override void Awake()
     {
       base.Awake();
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.EnemyMaster, DrawDebugMenu, nameof(EnemyMaster));
-#endif
     }
 
     /// <summary>
@@ -38,14 +35,14 @@ namespace MyGame.Master
 #if _DEBUG
     //-------------------------------------------------------------------------
     // Debug
-    private void DrawDebugMenu(DebugMenu.MenuWindow window)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       // データを列挙
       foreach (var entity in this.repository)
       {
         if (GUILayout.Button($"{entity.Value.Name}"))
         {
-          DebugMenuManager.Instance.OpenWindow(DebugMenu.Page.EnemyMaster, (win) =>
+          DebugManager.Instance.OpenWindow(nameof(EnemyMaster), (win) =>
           {
             this.DrawDebugDetail(entity.Value);
           });

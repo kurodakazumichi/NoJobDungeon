@@ -28,7 +28,7 @@ namespace MyGame
       // 常駐させたいシステムがあればここで生成
       SingletonManager.Instance
 #if _DEBUG
-      .Setup(nameof(DebugMenuManager), system)
+      .Setup(nameof(DebugManager), system)
 #endif
       .Setup(nameof(Master.ItemMaster), system)
       .Setup(nameof(Master.ItemGroupMaster), system)

@@ -8,7 +8,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// プレイヤーマネージャー
   /// </summary>
-  public class PlayerManager : SingletonMonobehaviour<PlayerManager>
+  public class PlayerManager : SingletonMonobehaviour<PlayerManager>, IDebuggeable
   {
     //-------------------------------------------------------------------------
     // メンバ変数
@@ -132,19 +132,8 @@ namespace MyGame.Dungeon
       }
     }
 
-    //-------------------------------------------------------------------------
-    // Protected Method
-
-    protected override void Awake()
-    {
-      base.Awake();
 #if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Player, DrawDebugMenu, nameof(PlayerManager));
-#endif
-    }
-
-#if _DEBUG
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       this.player.DrawDebugMenu();
     }

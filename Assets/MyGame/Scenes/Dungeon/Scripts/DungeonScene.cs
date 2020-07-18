@@ -7,7 +7,7 @@ namespace MyGame.Dungeon {
   /// <summary>
   /// ダンジョンシーン
   /// </summary>
-  public class DungeonScene : SceneBase
+  public class DungeonScene : SceneBase, IDebuggeable
   {
     /// <summary>
     /// シーンの流れを定義
@@ -53,10 +53,6 @@ namespace MyGame.Dungeon {
         .Setup(nameof(EnemyManager), system)
         .Setup(nameof(ItemManager), system)
         .Setup(nameof(HUD), system);
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
-#endif
     }
 
     /// <summary>
@@ -332,7 +328,7 @@ namespace MyGame.Dungeon {
     }
 
 #if _DEBUG
-    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       GUILayout.Label("Dungeon Scene Functions");
 
