@@ -82,7 +82,7 @@ namespace MyGame
   /// <summary>
   /// マップチップ生成クラス
   /// </summary>
-  public class MapChipFactory : SingletonMonobehaviour<MapChipFactory>
+  public class MapChipFactory : SingletonMonobehaviour<MapChipFactory>, IDebuggeable
   {
     //-------------------------------------------------------------------------
     // メンバ
@@ -242,11 +242,6 @@ namespace MyGame
         GameObject folder = CreateFolderObject(type.ToString());
         this.pools.Add((MapChipGroup)type, new ObjectPool(folder));
       }
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.MapChip, DrawDebugMenu, nameof(MapChipFactory));
-#endif
-
     }
 
     /// <summary>
@@ -299,7 +294,7 @@ namespace MyGame
       GUILayout.EndHorizontal();
     }
 
-    private void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.MenuWindow window)
     {
       this.OnDebugDecoChip();
       this.OnDebugPlayerChip();

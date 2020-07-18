@@ -7,7 +7,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// ダンジョンマネージャー
   /// </summary>
-  public class DungeonManager : SingletonMonobehaviour<DungeonManager>
+  public class DungeonManager : SingletonMonobehaviour<DungeonManager>, IDebuggeable
   {
     //-------------------------------------------------------------------------
     // メンバ変数
@@ -186,23 +186,19 @@ namespace MyGame.Dungeon
       this.algorithm = new Algorithm();
       this.stage = new Stage();
       this.floor = 1;
-
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.Dungeon, DrawDebugMenu, nameof(DungeonScene));
-#endif
     }
 
 #if _DEBUG
-    public void DrawDebugMenu(DebugMenu.MenuWindow menuWindow)
+    void IDebuggeable.Draw(MyDebug.MenuWindow window)
     {
       GUILayout.Label($"Floor:{this.floor}");
 
-      this.stage.DrawDebugMenu(menuWindow);
+      this.stage.DrawDebugMenu(window);
 
       if (GUILayout.Button("Algorithm"))
       {
-        DebugMenuManager.Instance.OpenWindow(
-          DebugMenu.Page.Algorithm,
+        DebugManager.Instance.OpenWindow(
+          "Algorithm",
           this.algorithm.DrawDebugMenu
         );
       }

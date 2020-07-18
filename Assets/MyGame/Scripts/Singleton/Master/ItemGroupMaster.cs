@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// ItemCategoryMaster
   /// </summary>
-  public class ItemGroupMaster : MasterBase<ItemGroupMaster, ItemCategory.Entity>
+  public class ItemGroupMaster : MasterBase<ItemGroupMaster, ItemCategory.Entity>, IDebuggeable
   {
     /// <summary>
     /// DebugMenuを登録
@@ -15,9 +15,6 @@ namespace MyGame.Master
     protected override void Awake()
     {
       base.Awake();
-#if _DEBUG
-      DebugMenuManager.Instance.RegisterMenu(DebugMenu.Page.ItemGroupMaster, DrawDebugMenu, nameof(ItemGroupMaster));
-#endif
     }
 
     /// <summary>
@@ -37,16 +34,16 @@ namespace MyGame.Master
 #if _DEBUG
     //-------------------------------------------------------------------------
     // Debug
-    private void DrawDebugMenu(DebugMenu.MenuWindow window)
+    void IDebuggeable.Draw(MyDebug.MenuWindow window)
     {
-      var DM = DebugMenuManager.Instance;
+      var DM = DebugManager.Instance;
 
       // データを列挙
       foreach(var entity in this.repository)
       {
         if (GUILayout.Button($"{entity.Value.Name}")) 
         {
-          DM.OpenWindow(DebugMenu.Page.ItemGroupMaster, (win) => 
+          DM.OpenWindow(nameof(ItemGroupMaster), (win) => 
           {
             this.DrawDebugDetail(entity.Value);
           });

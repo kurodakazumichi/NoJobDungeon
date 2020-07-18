@@ -33,6 +33,8 @@ namespace MyGame.Master
       }
     }
 
+    public static bool HasInstance => ( instance != null );
+
     virtual protected void Awake()
     {
       if (this != Instance)
