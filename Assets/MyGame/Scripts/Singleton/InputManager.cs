@@ -166,7 +166,7 @@ namespace MyGame {
 #endif
 
 #if _DEBUG
-    void IDebuggeable.Draw(MyDebug.MenuWindow window)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       GUILayout.Label($"DirectionKey:{DirectionKey.value}");
       ButtonLabel("RB1", this.rb1);

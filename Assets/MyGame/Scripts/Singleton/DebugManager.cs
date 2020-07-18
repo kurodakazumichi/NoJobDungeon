@@ -12,9 +12,9 @@ namespace MyGame
 
     public IEnumerable<string> Pages => (IDebuggeables.Keys);
 
-    private static MenuTop topMenu;
+    private static Top top;
 
-    private List<MenuWindow> menuWindows = new List<MenuWindow>();
+    private List<Window> windows = new List<Window>();
 
     private int windowNumber = 0;
 
@@ -24,8 +24,8 @@ namespace MyGame
 
     private Dictionary<string, System.Func<IDebuggeable>> IDebuggeables = new Dictionary<string, System.Func<IDebuggeable>>()
     {
-      { MenuWindow.PageTop,
-        () => { return topMenu; } },
+      { Window.PageTop,
+        () => { return top; } },
 
       { nameof(Dungeon.DungeonScene),
         () => { return FindObjectOfType<Dungeon.DungeonScene>(); }  },
@@ -63,7 +63,7 @@ namespace MyGame
       base.Awake();
 
       // トップ画面生成
-      topMenu = topMenu ?? new MenuTop();
+      top = top ?? new Top();
 
       // 初期化
       this.windowNumber = 0;
@@ -74,10 +74,10 @@ namespace MyGame
     {
       if (Input.GetMouseButtonDown(1))
       {
-        if (menuWindows.Count > 0)
+        if (windows.Count > 0)
         {
           // 全て閉じる
-          menuWindows.Clear();
+          windows.Clear();
           windowNumber = 0;
         }
         else
@@ -90,18 +90,18 @@ namespace MyGame
           float y = mousePosition.y - DefaultWindowSize.y * 0.1f;
 
           Vector2 pos = new Vector2(x, y);
-          OpenWindow(MenuWindow.PageTop, new Rect(pos, DefaultWindowSize));
+          OpenWindow(Window.PageTop, new Rect(pos, DefaultWindowSize));
         }
       }
 
       // ウィンドウ更新
-      for( int i = menuWindows.Count-1; i >=0;i-- )
+      for( int i = windows.Count-1; i >=0;i-- )
       {
-        var window = menuWindows[i];
+        var window = windows[i];
         window.Update();
         if (window.IsClosed)
         {
-          menuWindows.RemoveAt(i);
+          windows.RemoveAt(i);
         }
       }
     }
@@ -126,9 +126,9 @@ namespace MyGame
     /// </summary>
     public void OpenWindow(string page, Draw callback = null )
     {
-      var newWindow = new MenuWindow();
+      var newWindow = new Window();
       newWindow.Open(windowNumber++, page, callback);
-      menuWindows.Add(newWindow);
+      windows.Add(newWindow);
     }
 
     /// <summary>
@@ -136,9 +136,9 @@ namespace MyGame
     /// </summary>
     public void OpenWindow(string page, Rect rect, Draw callback = null )
     {
-      var newWindow = new MenuWindow();
+      var newWindow = new Window();
       newWindow.Open(windowNumber++, rect, page, callback);
-      menuWindows.Add(newWindow);
+      windows.Add(newWindow);
     }
 
     //=========================================================================
@@ -149,7 +149,7 @@ namespace MyGame
       // スタイルの初期化
       InitGUIStyle();
 
-      foreach (var window in menuWindows)
+      foreach (var window in windows)
       {
         window.Draw();
       }

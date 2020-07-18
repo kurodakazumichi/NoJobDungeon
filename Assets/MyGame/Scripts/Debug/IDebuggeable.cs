@@ -9,7 +9,7 @@ namespace MyGame
   public interface IDebuggeable
   {
 #if _DEBUG
-    void Draw(MyDebug.MenuWindow window);
+    void Draw(MyDebug.Window window);
 #endif
   }
 }

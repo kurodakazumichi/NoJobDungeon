@@ -828,7 +828,7 @@ namespace MyGame.Dungeon {
 #endif
 
 #if _DEBUG
-    public void DrawDebugMenu( MyDebug.MenuWindow menuWindow )
+    public void DrawDebugMenu( MyDebug.Window window )
     {
       GUIStyle sWall = new GUIStyle();
       GUIStyle sRoom = new GUIStyle();

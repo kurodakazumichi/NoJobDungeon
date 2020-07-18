@@ -8,22 +8,22 @@ namespace MyGame.MyDebug
   /// <summary>
   /// デバッグメニュートップページ
   /// </summary>
-  public class MenuTop : IDebuggeable
+  public class Top : IDebuggeable
   {
     /// <summary>
     /// コンストラクタ
     /// </summary>
-    public MenuTop()
+    public Top()
     {
     }
 
 #if _DEBUG
-    void IDebuggeable.Draw(MenuWindow window)
+    void IDebuggeable.Draw(Window window)
     {
       foreach (var page in DebugManager.Instance.Pages)
       {
         // トップが自分なので除外
-        if( page == MenuWindow.PageTop ) continue;
+        if( page == Window.PageTop ) continue;
         
         var draw = DebugManager.Instance.GetDrawer(page);
         using (var d = new DisabledScope(draw == null))

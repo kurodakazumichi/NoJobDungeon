@@ -50,7 +50,7 @@ namespace MyGame.Master
 #if _DEBUG
     //-------------------------------------------------------------------------
     // Debug
-    void IDebuggeable.Draw(MyDebug.MenuWindow window)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       // データを列挙
       foreach (var entity in this.repository)

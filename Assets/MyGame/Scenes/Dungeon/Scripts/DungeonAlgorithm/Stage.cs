@@ -315,7 +315,7 @@ namespace MyGame.Dungeon
       "Full", "Normal", "Clear"
     };
 
-    public void DrawDebugMenu( MyDebug.MenuWindow menuWindow )
+    public void DrawDebugMenu( MyDebug.Window window )
     {
       this._mode = GUILayout.SelectionGrid(this._mode, this._modes, this._modes.Length);
 

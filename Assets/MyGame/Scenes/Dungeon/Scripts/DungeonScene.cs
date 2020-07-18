@@ -328,7 +328,7 @@ namespace MyGame.Dungeon {
     }
 
 #if _DEBUG
-    void IDebuggeable.Draw(MyDebug.MenuWindow window)
+    void IDebuggeable.Draw(MyDebug.Window window)
     {
       GUILayout.Label("Dungeon Scene Functions");
 

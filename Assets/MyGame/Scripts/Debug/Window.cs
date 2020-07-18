@@ -6,12 +6,12 @@ using UnityEngine;
 namespace MyGame.MyDebug
 {
   /// <summary>デバッグメニューウィンドウ描画</summary>
-  public delegate void Draw(MenuWindow menuWindow);
+  public delegate void Draw(Window window);
 
   /// <summary>
   /// デバッグメニューウィンドウ
   /// </summary>
-  public class MenuWindow
+  public class Window
   {
     /// <summary>閉じたか</summary>
     public bool IsClosed { get; private set; } = false;
