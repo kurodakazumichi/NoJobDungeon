@@ -49,7 +49,7 @@ namespace MyGame.Dungeon
         var id = ids[Random.Range(0, ids.Count)];
         var item = CreateItem(id);
 
-        item.Setup(new Vector2Int(x, y));
+        item.SetCoord(new Vector2Int(x, y));
 
         // アイテムをリストに追加
         this.items.Add(item);
@@ -59,7 +59,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 指定した座標のアイテムを探す
     /// </summary>
-    public IReadOnlyFieldItem Find(Vector2Int coord)
+    public FieldItem Find(Vector2Int coord)
     {
       foreach(var item in this.items)
       {
@@ -67,6 +67,15 @@ namespace MyGame.Dungeon
       }
 
       return null;
+    }
+
+    /// <summary>
+    /// フィールドアイテムを追加する
+    /// </summary>
+    public void AddItem(FieldItem item)
+    {
+      this.items.Add(item);
+      DungeonManager.Instance.AddItemCoord(item.Coord);
     }
 
     //-------------------------------------------------------------------------
@@ -90,24 +99,29 @@ namespace MyGame.Dungeon
       return CreateItem(item);
     }
 
+    private static Dictionary<string, System.Type> factory = new Dictionary<string, System.Type>()
+    {
+      { nameof(FieldItem)        , typeof(FieldItem) },
+      { nameof(FieldItemShuriken), typeof(FieldItemShuriken) }
+    };
+
     /// <summary>
     /// アイテムを生成する
     /// </summary>
-    private FieldItem CreateItem(Master.Item.Entity entity)
+    private FieldItem CreateItem(Master.Item.Entity item)
     {
-      if (entity == null) return null;
+      if (item == null) return null;
 
-      var cate = Master.ItemGroupMaster.Instance.FindById(entity.GroupId);
+      var group = Master.ItemGroupMaster.Instance.FindById(item.GroupId);
 
-      if (cate == null) return null;
+      if (group == null) return null;
 
-      // Propsを作成
-      var props = new FieldItem.Props();
-      props.Id = entity.Id;
-      props.Name = entity.Name;
-      props.ChipType = cate.ChipType;
-
-      return new FieldItem(props);
+      // FieldItemを生成
+      FieldItem fieldItem = (FieldItem)System.Activator.CreateInstance(factory[item.ClassType]);
+      
+      // セットアップ
+      var props = new FieldItem.Props(item, group);
+      return fieldItem.Setup(props);
     }
   }
 }

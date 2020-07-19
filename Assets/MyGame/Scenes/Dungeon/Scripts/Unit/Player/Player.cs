@@ -210,9 +210,9 @@ namespace MyGame.Dungeon
         var (isHit, pos) = SearchAttackTarget(Coord, Chip.Direction);
 
         this.shuriken = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
-        this.shuriken.Setup(Coord);
+        this.shuriken.SetCoord(Coord);
 
-        this.ActionRequest.Name = this.shuriken.Name;
+        this.ActionRequest.Name = this.shuriken.Status.Name;
         this.ActionRequest.Pow  = 20;
         this.ActionRequest.Coord = Coord;
         this.ActionRequest.Area.Add(pos);
@@ -268,19 +268,20 @@ namespace MyGame.Dungeon
       this.state.SetState(ActionPhase.AttackStart);
     }
 
+    public override void OnActionStartExitWhenActor(IActionable target)
+    {
+      putAwayUsedShuriken(target != null);
+    }
+
     public override void OnActionWhenTarget(IActionable actor)
     {
       this.state.SetState(ActionPhase.Damage);
     }
 
-    public override void OnActionEndWhenTarget()
+    public override void OnActionWhenActor(IActionable target)
     {
-
-    }
-
-    public override void OnReactionStartWhenActor()
-    {
-      
+      var res = Action(target);
+      putAwayUsedShuriken(res.IsHit);
     }
 
     //-------------------------------------------------------------------------
@@ -305,7 +306,7 @@ namespace MyGame.Dungeon
       var item = ItemManager.Instance.Find(DungeonManager.Instance.PlayerCoord);
       if (item != null)
       {
-        Debug.Log($"{item.Name}の上に乗った。");
+        Debug.Log($"{item.Status.Name}の上に乗った。");
       }
     }
 
@@ -318,7 +319,10 @@ namespace MyGame.Dungeon
 
       if (this.shuriken != null)
       {
-        this.shuriken.DoMoveMotion(Define.SEC_PER_TURN * 2, ActionRequest.Area[0]);
+        var v = Coord - ActionRequest.Area[0];
+        
+        this.shuriken.DoMoveMotion(0.05f * v.magnitude, ActionRequest.Area[0]);
+        this.shuriken.Coord = ActionRequest.Area[0];
       }
       
       Chip.Attack(Define.SEC_PER_TURN, 0.4f);
@@ -501,6 +505,28 @@ namespace MyGame.Dungeon
       return area;
     }
 
+    /// <summary>
+    /// 使った手裏剣を片付ける
+    /// destoryがtrueなら破棄、falseならフィールドアイテムに追加
+    /// </summary>
+    private void putAwayUsedShuriken(bool destory)
+    {
+      if (this.shuriken == null) return;
+
+      if (destory)
+      {
+        this.shuriken.Destory();
+        this.shuriken = null;
+
+      }
+
+      else
+      {
+        ItemManager.Instance.AddItem(this.shuriken);
+        Debug.Log($"{this.shuriken.Status.Name}は床におちた。");
+        this.shuriken = null;
+      }
+    }
 
 #if _DEBUG
     //-------------------------------------------------------------------------

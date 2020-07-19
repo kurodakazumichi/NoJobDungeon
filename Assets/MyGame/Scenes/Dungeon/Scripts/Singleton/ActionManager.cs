@@ -47,11 +47,6 @@ namespace MyGame.Dungeon
     /// </summary>
     private IActionable target = null;
 
-    /// <summary>
-    /// リアクション中はtrueになる
-    /// </summary>
-    private bool IsReactionPhase = false;
-
     //-------------------------------------------------------------------------
     // Public Properity
 
@@ -125,7 +120,6 @@ namespace MyGame.Dungeon
       this.target = null;
       this.targetIndex = 0;
       this.targets.Clear();
-      this.IsReactionPhase = false;
     }
 
     //-------------------------------------------------------------------------
@@ -144,7 +138,8 @@ namespace MyGame.Dungeon
     private void ActionStartUpdate()
     {
       if (!actor.IsIdle) return; 
-      
+      if (target != null && !target.IsIdle) return;
+
       if (target != null)
       {
         this.state.SetState(Phase.Action);
@@ -158,7 +153,11 @@ namespace MyGame.Dungeon
 
     private void ActionStartExit()
     {
-      
+      actor.OnActionStartExitWhenActor(target);
+
+      if (target != null) {
+        target.OnActionStartExitWhenTarget(actor);
+      }
     }
 
     //-------------------------------------------------------------------------
@@ -200,13 +199,11 @@ namespace MyGame.Dungeon
 
       if (targets.Count <= this.targetIndex)
       {
-        if (IsReactionPhase)
-        {
+        if (!target.IsReaction) {
           this.state.SetState(Phase.Idle);
         } 
 
-        else 
-        { 
+        else { 
           this.state.SetState(Phase.ReactionStart);
         }
       }
@@ -235,7 +232,6 @@ namespace MyGame.Dungeon
 
       // Reactionモードにして、targetIndexも0に戻す
       this.targetIndex = 0;
-      this.IsReactionPhase = true;
 
       // 各種コールバックを呼ぶ
       actor.OnReactionStartWhenActor();
@@ -244,7 +240,7 @@ namespace MyGame.Dungeon
 
     private void ReactionStartUpdate()
     {
-      if (!actor.IsReaction || actor.Status.IsDead || target.Status.IsDead)
+      if (actor.Status.IsDead || target.Status.IsDead)
       {
         this.state.SetState(Phase.Idle);
       }

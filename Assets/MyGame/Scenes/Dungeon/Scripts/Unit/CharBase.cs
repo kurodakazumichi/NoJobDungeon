@@ -7,7 +7,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// キャラクターのベースクラス
   /// </summary>
-  public abstract class CharBase: IActionable
+  public abstract class CharBase: UnitBase
   {
     //-------------------------------------------------------------------------
     // コンストラクタ
@@ -23,42 +23,6 @@ namespace MyGame.Dungeon
     /// キャラクターチップ
     /// </summary>
     protected CharChip Chip { get; set; } = null;
-
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status { get; protected set; } = null;
-
-    /// <summary>
-    /// 座標
-    /// </summary>
-    public Vector2Int Coord { get; set; } = Vector2Int.zero;
-
-    /// <summary>
-    /// 攻撃の情報
-    /// </summary>
-    protected ActionRequest ActionRequest { get; private set; } = new ActionRequest();
-
-    /// <summary>
-    /// 攻撃後の情報
-    /// </summary>
-    protected ActionResponse ActionResponse { get; private set; } = new ActionResponse();
-
-    /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public virtual bool IsIdle
-    {
-      get
-      {
-        if (Chip == null)
-        {
-          return true;
-        }
-
-        return Chip.IsIdle;
-      }
-    }
 
     //-------------------------------------------------------------------------
     // Sceneから呼ばれるコールバッックメソッド
@@ -76,35 +40,30 @@ namespace MyGame.Dungeon
     //-------------------------------------------------------------------------
     // IActionableの実装
 
-    public virtual void OnActionStartWhenActor() { }
-    public virtual void OnActionStartWhenTarget() { }
-
-    public virtual void OnActionWhenActor(IActionable target) { Action(target); }
-    public virtual void OnActionWhenTarget(IActionable actor) { }
-
-    public virtual void OnActionEndWhenActor() { }
-    public virtual void OnActionEndWhenTarget() { }
-
-    public virtual void OnReactionStartWhenActor() { }
-    public virtual void OnReactionStartWhenTarget() { }
-
-    public virtual bool IsReaction => (false);
-
-    //-------------------------------------------------------------------------
-    // アクション
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public override bool IsIdle
+    {
+      get {
+        if (Chip == null) return true;
+        return Chip.IsIdle;
+      }
+    }
 
     /// <summary>
     /// アクションをする
     /// </summary>
-    public void Action(IActionable target)
+    public override ActionResponse Action(IActionable target)
     {
-      target.AcceptAction(ActionRequest);
+      if (target == null) return null;
+      return target.AcceptAction(ActionRequest);
     }
 
     /// <summary>
     /// アクションを受ける
     /// </summary>
-    public virtual ActionResponse AcceptAction(ActionRequest req)
+    public override ActionResponse AcceptAction(ActionRequest req)
     {
       // 攻撃を受ける
       var res = Status.AcceptAttack(req);
@@ -115,6 +74,8 @@ namespace MyGame.Dungeon
       ActionResponse.Copy(res);
       return res;
     }
+
+    public override void OnActionWhenActor(IActionable target) { Action(target); }
 
     //-------------------------------------------------------------------------
     // 便利系

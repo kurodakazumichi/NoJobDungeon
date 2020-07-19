@@ -249,7 +249,7 @@ namespace MyGame.Dungeon
       }
     }
 
-    public override bool IsReaction => (this.ActionResponse.IsAccepted && this.behavior == BehaviorType.Action);
+    public override bool IsReaction => (this.ActionResponse.IsAccepted);
 
     //-------------------------------------------------------------------------
     // 移動処理

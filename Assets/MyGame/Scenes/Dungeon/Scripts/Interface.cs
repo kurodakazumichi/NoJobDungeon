@@ -9,20 +9,23 @@ namespace MyGame.Dungeon
   /// </summary>
   public interface IActionable
   {
-    void Action(IActionable target);
+    Status Status { get; }
+
+    bool IsIdle { get; }
+    bool IsReaction { get; }
+
+    ActionResponse Action(IActionable target);
     ActionResponse AcceptAction(ActionRequest req);
 
     void OnActionStartWhenActor();
     void OnActionStartWhenTarget();
+    void OnActionStartExitWhenActor(IActionable target);
+    void OnActionStartExitWhenTarget(IActionable actor);
     void OnActionWhenActor(IActionable target);
     void OnActionWhenTarget(IActionable actor);
     void OnActionEndWhenActor();
     void OnActionEndWhenTarget();
     void OnReactionStartWhenActor();
     void OnReactionStartWhenTarget();
-
-    bool IsIdle { get; }
-    bool IsReaction { get; }
-    Status Status { get; }
   }
 }

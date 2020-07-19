@@ -4,31 +4,27 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public interface IReadOnlyFieldItem
-  {
-    string Name { get; }
-  }
-
-  public class FieldItem : IReadOnlyFieldItem
+  public class FieldItem : UnitBase
   {
     /// <summary>
-    /// FieldItemの生成に必要なパラメータ
+    /// FieldItemのセットアップに必要なパラメータ
     /// </summary>
     public class Props 
     { 
-      public string Id;
-      public string Name;
-      public ItemChipType ChipType;
+      public Props(Master.Item.Entity item, Master.ItemGroup.Entity group)
+      {
+        Item = item;
+        Group = group;
+      }
+      public Master.Item.Entity Item;
+      public Master.ItemGroup.Entity Group;
     }
 
     /// <summary>
     /// コンストラクタ
     /// </summary>
     /// <param name="props"></param>
-    public FieldItem(Props props)
-    {
-      this.props = props;
-    }
+    public FieldItem() {}
 
     //-------------------------------------------------------------------------
     // Member
@@ -39,61 +35,32 @@ namespace MyGame.Dungeon
     private Props props = null;
 
     /// <summary>
-    /// 座標
-    /// </summary>
-    public Vector2Int Coord { get; set; }
-
-    /// <summary>
     /// マップチップ
     /// </summary>
     private BasicChip chip = null;
 
     //-------------------------------------------------------------------------
-    // Public Properity
-
-    /// <summary>
-    /// アイテム名
-    /// </summary>
-    public string Name => ((this.props != null)? this.props.Name : "");
-
-    /// <summary>
-    /// アイドル状態です
-    /// </summary>
-    public bool IsIdle => (this.chip.IsIdle);
-
-    //-------------------------------------------------------------------------
-    // Public Method
-
-    /// <summary>
-    /// 引数に座標を渡すだけのセットアップ
-    /// </summary>
-    /// <param name="coord"></param>
-    public void Setup(Vector2Int coord)
-    {
-      if (this.props == null) return;
-
-      this.Setup(coord, this.props);
-    }
+    // 基本的なメソッド
 
     /// <summary>
     /// 座標とPropsを指定したセットアップ
     /// </summary>
-    public void Setup(Vector2Int coord, Props props)
+    public FieldItem Setup(Props props)
     {
       this.props = props;
+      this.chip = MapChipFactory.Instance.CreateItemChip(props.Group.ChipType);
 
-      Coord = coord;
-
-      this.chip = MapChipFactory.Instance.CreateItemChip(props.ChipType);
-      chip.transform.position = Util.GetPositionBy(coord);
+      Status = new Status(new Status.Props(props.Item.Name, 1, 0, 0));
+      return this;
     }
 
     /// <summary>
-    /// 移動の動作を行う
+    /// 座標を設定
     /// </summary>
-    public void DoMoveMotion(float time, Vector2Int coord)
+    public void SetCoord(Vector2Int coord)
     {
-      this.chip.Move(time, Util.GetPositionBy(coord));
+      Coord = coord;
+      chip.transform.position = Util.GetPositionBy(coord);
     }
 
     /// <summary>
@@ -107,6 +74,22 @@ namespace MyGame.Dungeon
       this.props = null;
       this.Coord = Vector2Int.zero;
     }
-  }
 
+    //-------------------------------------------------------------------------
+    // IActionableの実装
+
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public override bool IsIdle => (this.chip.IsIdle);
+
+    /// <summary>
+    /// 移動の動作を行う
+    /// </summary>
+    public void DoMoveMotion(float time, Vector2Int coord)
+    {
+      this.chip.Move(time, Util.GetPositionBy(coord));
+    }
+
+  }
 }
