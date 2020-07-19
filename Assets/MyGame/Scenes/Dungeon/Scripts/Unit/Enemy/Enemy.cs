@@ -218,13 +218,6 @@ namespace MyGame.Dungeon
       Status.UseEnergy();
     }
 
-    public override void OnSceneTurnEndEnter()
-    {
-      Status.FullEnergy();
-      ActionRequest.Reset();
-      ActionResponse.Reset();
-    }
-
     //-------------------------------------------------------------------------
     // IActionableの実装
 

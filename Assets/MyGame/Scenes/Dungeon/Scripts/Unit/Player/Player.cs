@@ -254,11 +254,10 @@ namespace MyGame.Dungeon
 
     public override void OnSceneTurnEndEnter()
     {
+      base.OnSceneTurnEndEnter();
+
       // 体力を微量回復
       Status.AddHP(Status.MaxHP * 0.015f);
-      Status.FullEnergy();
-      ActionRequest.Reset();
-      ActionResponse.Reset();
     }
 
     //-------------------------------------------------------------------------

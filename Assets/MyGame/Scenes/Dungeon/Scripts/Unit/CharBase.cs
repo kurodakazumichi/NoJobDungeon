@@ -67,7 +67,11 @@ namespace MyGame.Dungeon
     public virtual void OnSceneMoveExit() { }
     public virtual void OnSceneActionEnter() { }
     public virtual void OnSceneActionExit() { }
-    public virtual void OnSceneTurnEndEnter() { }
+    public virtual void OnSceneTurnEndEnter() {
+      Status.FullEnergy();
+      ActionRequest.Reset();
+      ActionResponse.Reset();
+    }
 
     //-------------------------------------------------------------------------
     // IActionableの実装
