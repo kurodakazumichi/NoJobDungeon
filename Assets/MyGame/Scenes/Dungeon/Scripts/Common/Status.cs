@@ -29,6 +29,11 @@ namespace MyGame.Dungeon
     /// </summary>
     private LimitedFloat def = new LimitedFloat();
 
+    /// <summary>
+    /// 行動力
+    /// </summary>
+    private LimitedFloat energy = new LimitedFloat();
+
     //-------------------------------------------------------------------------
     // コンストラクタ・セットアップ・リセット
 
@@ -68,6 +73,7 @@ namespace MyGame.Dungeon
       this.hp.Setup(props.HP, props.HP);
       this.pow.Setup(props.Pow, props.Pow);
       this.def.Setup(props.Def, props.Def);
+      this.energy.Setup(1f, 1f);
     }
 
     //-------------------------------------------------------------------------
@@ -80,6 +86,7 @@ namespace MyGame.Dungeon
     public int Def => ((int)this.def.Now);
     public bool IsDead => (((int)this.hp.Now < 1));
     public string Name => (this.name);
+    public bool HasEnergy => (this.energy.IsEmpty == false);
 
     //-------------------------------------------------------------------------
     // Public Method
@@ -102,12 +109,29 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// エネルギーを使う
+    /// </summary>
+    public void UseEnergy()
+    {
+      this.energy.Now -= 1f;
+    }
+
+    /// <summary>
+    /// エネルギーを満タンにする
+    /// </summary>
+    public void FullEnergy()
+    {
+      this.energy.BeToFull();
+    }
+
+    /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    public AttackResponse AcceptAttack(AttackRequest req)
+    public ActionResponse AcceptAttack(ActionRequest req)
     {
-      var res = new AttackResponse();
-      res.Name = Name;
+      var res = new ActionResponse();
+      res.ActorName = req.Name;
+      res.TargetName = Name;
       res.IsAccepted = true;
 
       res.IsHit = Random.Range(0, 1f) <= Define.HIT_RATE;
@@ -138,5 +162,22 @@ namespace MyGame.Dungeon
 
       return res;
     }
+
+#if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
+    public void DrawDebug()
+    {
+      GUILayout.Label("■ Status");
+      using (var scope = new GUILayout.HorizontalScope())
+      {
+        GUILayout.Label($"Name:{name}");
+        GUILayout.Label($"HP:{hp.Now}/{hp.Max}");
+        GUILayout.Label($"Pow:{pow.Now}/{pow.Max}");
+        GUILayout.Label($"Def:{def.Now}/{def.Max}");
+        GUILayout.Label($"Energy:{energy.Now}/{energy.Max}");
+      }
+    }
+#endif
   }
 }

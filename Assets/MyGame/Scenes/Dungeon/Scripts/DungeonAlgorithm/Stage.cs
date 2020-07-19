@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyExtension;
 
 namespace MyGame.Dungeon
 {
@@ -162,7 +161,7 @@ namespace MyGame.Dungeon
 
     public void MakeEnemy()
     {
-      MyGame.Util.LoopByRange(0, 50, (int i) => {
+      MyGame.Util.LoopByRange(0, 10, (int i) => {
         var pos = GetPlaceableCoord();
         AddTileState(pos.x, pos.y, Dungeon.Tiles.Enemy);
       });

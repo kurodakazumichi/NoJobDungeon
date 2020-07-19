@@ -7,7 +7,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// キャラクターのベースクラス
   /// </summary>
-  public abstract class CharBase: IAttackable
+  public abstract class CharBase: IActionable
   {
     //-------------------------------------------------------------------------
     // コンストラクタ
@@ -15,9 +15,6 @@ namespace MyGame.Dungeon
     {
 
     }
-
-    //-------------------------------------------------------------------------
-    // Member
 
     //-------------------------------------------------------------------------
     // Properity
@@ -40,17 +37,17 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃の情報
     /// </summary>
-    public AttackRequest AttackRequest { get; private set; } = new AttackRequest();
+    protected ActionRequest ActionRequest { get; private set; } = new ActionRequest();
 
     /// <summary>
     /// 攻撃後の情報
     /// </summary>
-    public AttackResponse AttackResponse { get; private set; } = new AttackResponse();
+    protected ActionResponse ActionResponse { get; private set; } = new ActionResponse();
 
     /// <summary>
     /// アイドル状態です
     /// </summary>
-    virtual public bool IsIdle
+    public virtual bool IsIdle
     {
       get
       {
@@ -64,20 +61,46 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // Method
+    // Sceneから呼ばれるコールバッックメソッド
+
+    public virtual void OnSceneMoveEnter() { }
+    public virtual void OnSceneMoveExit() { }
+    public virtual void OnSceneActionEnter() { }
+    public virtual void OnSceneActionExit() { }
+    public virtual void OnSceneTurnEndEnter() { }
+
+    //-------------------------------------------------------------------------
+    // IActionableの実装
+
+    public virtual void OnActionStartWhenActor() { }
+    public virtual void OnActionStartWhenTarget() { }
+
+    public virtual void OnActionWhenActor(IActionable target) { Action(target); }
+    public virtual void OnActionWhenTarget(IActionable actor) { }
+
+    public virtual void OnActionEndWhenActor() { }
+    public virtual void OnActionEndWhenTarget() { }
+
+    public virtual void OnReactionStartWhenActor() { }
+    public virtual void OnReactionStartWhenTarget() { }
+
+    public virtual bool IsReaction => (false);
+
+    //-------------------------------------------------------------------------
+    // アクション
 
     /// <summary>
-    /// 攻撃をする
+    /// アクションをする
     /// </summary>
-    virtual public void Attack(IAttackable target)
+    public void Action(IActionable target)
     {
-      target.AcceptAttack(this.AttackRequest);
+      target.AcceptAction(ActionRequest);
     }
 
     /// <summary>
-    /// 攻撃を受ける
+    /// アクションを受ける
     /// </summary>
-    virtual public void AcceptAttack(AttackRequest req)
+    public virtual ActionResponse AcceptAction(ActionRequest req)
     {
       // 攻撃を受ける
       var res = Status.AcceptAttack(req);
@@ -85,8 +108,12 @@ namespace MyGame.Dungeon
       // 攻撃してきた奴の方を向く
       Chip.Direction = Direction.LookAt(Coord, req.Coord);
 
-      AttackResponse.Copy(res);
+      ActionResponse.Copy(res);
+      return res;
     }
+
+    //-------------------------------------------------------------------------
+    // 便利系
 
     /// <summary>
     /// 指定方向が障害物かどうか
@@ -214,6 +241,5 @@ namespace MyGame.Dungeon
         pos += vec;
       }
     }
-
   }
 }

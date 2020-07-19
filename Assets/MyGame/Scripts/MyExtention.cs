@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyExtension
+namespace MyGame
 {
   /// <summary>
   /// 拡張メソッド
@@ -26,6 +26,12 @@ namespace MyExtension
     public static T Last<T>(this List<T> items)
     {
       return items[items.Count - 1];
+    }
+
+    public static T TryGet<T>(this List<T> items, int index) where T:class
+    {
+      if (items.Count <= index) return null;
+      return items[index];
     }
 
     public static T Rand<T>(this List<T> items)
