@@ -7,7 +7,7 @@ namespace MyGame.Master
   /// <summary>
   /// ItemCategoryMaster
   /// </summary>
-  public class ItemGroupMaster : MasterBase<ItemGroupMaster, ItemCategory.Entity>, IDebuggeable
+  public class ItemGroupMaster : MasterBase<ItemGroupMaster, ItemGroup.Entity>, IDebuggeable
   {
     /// <summary>
     /// DebugMenuを登録
@@ -23,11 +23,11 @@ namespace MyGame.Master
     void Start()
     {
       // JSONを読み込んで辞書に登録
-      var repo = Load<ItemCategory.Json>("Master/ItemCategory");
+      var repo = Load<ItemGroup.Json>("Master/ItemCategory");
 
       foreach(var entity in repo.list)
       {
-        this.repository.Add(entity.id, new ItemCategory.Entity(entity));
+        this.repository.Add(entity.id, new ItemGroup.Entity(entity));
       }
     }
 
@@ -51,7 +51,7 @@ namespace MyGame.Master
       }
     }
 
-    public void DrawDebugDetail(ItemCategory.Entity entity)
+    public void DrawDebugDetail(ItemGroup.Entity entity)
     {
       GUILayout.Label($"id:{entity.Id}");
       GUILayout.Label($"name:{entity.Name}");
@@ -61,7 +61,7 @@ namespace MyGame.Master
 
   }
 
-  namespace ItemCategory
+  namespace ItemGroup
   {
     /// <summary>
     /// Jsonをプログラム内で利用しやすい形にしたもの
