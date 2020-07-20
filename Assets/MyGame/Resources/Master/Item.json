@@ -9,6 +9,6 @@
     {"id":"7", "alias":"", "name":"解毒薬", "groupId":"4"},
     {"id":"8", "alias":"", "name":"不幸の元", "groupId":"4"},
     {"id":"9", "alias":"", "name":"やばい薬", "groupId":"4"},
-    {"id":"10", "alias":"Shuriken", "name":"手裏剣", "groupId":"6"}
+    {"id":"10", "alias":"Shuriken", "name":"手裏剣", "groupId":"6", "classType":"Shuriken"}
   ]
 }

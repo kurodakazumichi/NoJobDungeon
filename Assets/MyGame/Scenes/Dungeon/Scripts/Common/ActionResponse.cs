@@ -4,15 +4,25 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
+  public interface IReadOnlyActionResponse
+  {
+    bool IsHit { get; }
+  }
+
   /// <summary>
   /// 攻撃後の情報を持っているクラス
   /// </summary>
-  public class AttackResponse
+  public class ActionResponse: IReadOnlyActionResponse
   {
     /// <summary>
-    /// 攻撃された相手の名前
+    /// Actor側の名前
     /// </summary>
-    public string Name { get; set; } = "";
+    public string ActorName { get; set; } = "";
+
+    /// <summary>
+    /// Target側の名前
+    /// </summary>
+    public string TargetName { get; set; } = "";
 
     /// <summary>
     /// 攻撃を受けたフラグ
@@ -37,9 +47,10 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 値をコピーする
     /// </summary>
-    public void Copy(AttackResponse res)
+    public void Copy(ActionResponse res)
     {
-      Name       = res.Name;
+      ActorName  = res.ActorName;
+      TargetName = res.TargetName;
       IsAccepted = res.IsAccepted;
       IsHit      = res.IsHit;
       Damage     = res.Damage;
@@ -50,10 +61,29 @@ namespace MyGame.Dungeon
     /// </summary>
     public void Reset()
     {
-      Name       = "";
+      ActorName  = "";
+      TargetName = "";
       IsAccepted = false;
       IsHit      = false;
       Damage     = 0;
     }
+#if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
+   
+    public void DrawDebug()
+    {
+      GUILayout.Label("■ ActionResponse");
+
+      using (var scope = new GUILayout.HorizontalScope())
+      {
+        GUILayout.Label($"Name1:{ActorName}");
+        GUILayout.Label($"Name2:{TargetName}");
+        GUILayout.Label($"IsAccepted:{IsAccepted}");
+        GUILayout.Label($"IsHit:{IsHit}");
+        GUILayout.Label($"Damage:{Damage}");
+      }
+    }
+#endif
   }
 }

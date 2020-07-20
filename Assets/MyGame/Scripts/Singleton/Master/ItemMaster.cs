@@ -67,10 +67,10 @@ namespace MyGame.Master
 
     private void DrawDebugDetail(Item.Entity entity)
     {
-      GUILayout.Label($"id:{entity.Id}");
-      GUILayout.Label($"alias:{entity.Alias}");
-      GUILayout.Label($"name:{entity.Name}");
-      
+      GUILayout.Label($"Id:{entity.Id}");
+      GUILayout.Label($"Alias:{entity.Alias}");
+      GUILayout.Label($"Name:{entity.Name}");
+      GUILayout.Label($"ClassType:{entity.ClassType}");
       using (var scope = new GUILayout.HorizontalScope())
       {
         GUILayout.Label("Group:");
@@ -95,12 +95,14 @@ namespace MyGame.Master
         Alias = json.alias;
         Name = json.name;
         GroupId = json.groupId;
+        ClassType = "FieldItem" + json.classType;
       }
 
       public string Id { get; private set; }
       public string Alias { get; private set; }
       public string Name { get; private set; }
       public string GroupId { get; private set; }
+      public string ClassType { get; private set; }
     }
 
     /// <summary>
@@ -113,6 +115,7 @@ namespace MyGame.Master
       public string alias = "";
       public string name = "";
       public string groupId = "";
+      public string classType = "";
     }
 
     public static class Alias

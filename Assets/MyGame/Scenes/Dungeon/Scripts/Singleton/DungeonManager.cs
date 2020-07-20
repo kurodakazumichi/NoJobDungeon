@@ -109,14 +109,29 @@ namespace MyGame.Dungeon
       this.stage.AddTileState(to, Tiles.Enemy);
     }
 
-
-
     /// <summary>
     /// 指定した座標から敵の情報を除去する
     /// </summary>
     public void RemoveEnemyCoord(Vector2Int coord)
     {
       this.stage.RemoveTileState(coord, Tiles.Enemy);
+    }
+
+    /// <summary>
+    /// 指定した座標にアイテム情報を追加する
+    /// </summary>
+    public void AddItemCoord(Vector2Int coord)
+    {
+      this.stage.AddTileState(coord, Tiles.Item);
+    }
+
+    /// <summary>
+    /// 指定した座標のアイテム情報を削除する
+    /// </summary>
+    /// <param name="coord"></param>
+    public void RemoveItemCoord(Vector2Int coord)
+    {
+      this.stage.RemoveTileState(coord, Tiles.Item);
     }
 
     /// <summary>

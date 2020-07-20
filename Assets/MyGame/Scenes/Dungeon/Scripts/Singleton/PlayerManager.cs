@@ -4,14 +4,13 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-
   /// <summary>
   /// プレイヤーマネージャー
   /// </summary>
   public class PlayerManager : SingletonMonobehaviour<PlayerManager>, IDebuggeable
   {
     //-------------------------------------------------------------------------
-    // メンバ変数
+    // Member
 
     /// <summary>
     /// プレイヤー
@@ -33,14 +32,9 @@ namespace MyGame.Dungeon
     public bool HasnActivePlayer => ((this.player != null && !this.player.IsIdle));
 
     /// <summary>
-    /// プレイヤーが攻撃しようと狙っている座標
+    /// アクター
     /// </summary>
-    public List<Vector2Int> AttackArea => (this.player.AttackRequest.Area);
-
-    /// <summary>
-    /// プレイヤーのアタッカーとしての能力
-    /// </summary>
-    public IAttackable Attacker => (this.player);
+    public IActionable Actor => (this.player);
 
     /// <summary>
     /// プレイヤーは死んでいます
@@ -48,7 +42,7 @@ namespace MyGame.Dungeon
     public bool IsPlayerDead => (this.player.Status.IsDead);
 
     //-------------------------------------------------------------------------
-    // Public Method
+    // 基本的なメソッド
 
     /// <summary>
     /// プレイヤーを作成し、指定された座標に置く
@@ -56,32 +50,19 @@ namespace MyGame.Dungeon
     /// </summary>
     public void CreatePlayer(Vector2Int coord)
     {
-      if (this.player == null)
-      {
+      if (this.player == null) {
         this.player = new Player(coord);
-      }
-
-      else
-      {
+      } else {
         this.player.Reset(coord);
       }
     }
 
     /// <summary>
-    /// １ターンに１度だけ呼ぶ更新処理
+    /// プレイヤーの思考
     /// </summary>
-    public void UpdatePlayer()
+    public Player.Behavior Think()
     {
-      if (this.player != null) this.player.Update();
-    }
-
-    /// <summary>
-    /// プレイヤーの思考を監視する
-    /// </summary>
-    public Player.Behavior MonitorPlayerThoughs()
-    {
-      if (this.player == null)
-      {
+      if (this.player == null) {
         return Player.Behavior.Thinking;
       }
 
@@ -89,53 +70,62 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// 移動モーションを行う
+    /// プレイヤーの更新
     /// </summary>
-    public void DoMoveMotion()
+    public void UpdatePlayer()
     {
-      this.player.DoMoveMotion();
+      this.player.Update();
     }
 
-    /// <summary>
-    /// 攻撃モーションを行う
-    /// </summary>
-    public void DoAttackMotion()
+    //-------------------------------------------------------------------------
+    // シーンのフェーズ変化時にコールされるメソッド群
+
+    public void OnSceneMoveEnter()
     {
-      this.player.DoAttackMotion();
+      this.player.OnSceneMoveEnter();
     }
 
-
-    /// <summary>
-    /// 「いてぇっ！」ってモーションを行う
-    /// </summary>
-    public void DoOuchMotion()
+    public void OnSceneMoveExit()
     {
-      this.player.DoOuchMotion();
+      this.player.OnSceneMoveExit();
     }
 
-    /// <summary>
-    /// 攻撃する
-    /// </summary>
-    public void Attack(List<IAttackable> targets)
+    public void OnSceneActionEnter()
     {
-      foreach(var target in targets)
-      {
-        this.player.Attack(target);
+      this.player.OnSceneActionEnter();
+    }
+
+    public void OnSceneActionExit()
+    {
+      this.player.OnSceneActionExit();
+    }
+
+    public void OnSceneTurnEndEnter()
+    {
+      if (this.player != null) this.player.OnSceneTurnEndEnter();
+    }
+
+    //-------------------------------------------------------------------------
+    // 探す
+    public List<IActionable> Find(List<Vector2Int> coords)
+    {
+      List<IActionable> found = new List<IActionable>();
+
+      foreach(var coord in coords) {
+        if (this.player.Coord.Equals(coord)) {
+          found.Add(this.player);
+        }
       }
-    }
 
-    public void AttackEndEnter()
-    {
-      if (this.player != null)
-      {
-        this.player.OnAttackEndEnter();
-      }
+      return found;
     }
 
 #if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
     void IDebuggeable.Draw(MyDebug.Window window)
     {
-      this.player.DrawDebugMenu();
+      this.player.DrawDebug();
     }
 
     private void OnGUI()

@@ -18,14 +18,30 @@ namespace MyGame.Dungeon
     {
       Thinking,  // 考え中
       Move,      // 移動
-      Attack,    // 通常攻撃
+      Action,    // 行動
       SubAttack, // 遠距離攻撃
       Dash,      // ダッシュ
       Menu,      // メニューを開く
     }
 
+    /// <summary>
+    /// アクション
+    /// </summary>
+    public enum ActionPhase
+    {
+      Idle,
+      Move,
+      AttackStart,
+      Damage,
+    }
+
     //-------------------------------------------------------------------------
     // メンバー
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    private StateMachine<ActionPhase> state = new StateMachine<ActionPhase>();
 
     /// <summary>
     /// ダッシュの方向
@@ -40,9 +56,9 @@ namespace MyGame.Dungeon
     private int aroundEnemiesIndex = 0;
 
     /// <summary>
-    /// 手裏剣を投げた場合にセットされる
+    /// 投げるアイテム
     /// </summary>
-    private FieldItem shuriken = null;
+    private FieldItem item = null;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -52,8 +68,13 @@ namespace MyGame.Dungeon
     /// </summary>
     public GameObject PlayerObject => (Chip.gameObject);
 
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public override bool IsIdle => (state.StateKey == ActionPhase.Idle);
+
     //-------------------------------------------------------------------------
-    // Public
+    // 基本的なメソッド
 
     /// <summary>
     /// コンストラクタ
@@ -67,9 +88,17 @@ namespace MyGame.Dungeon
       Status.Props props = new Status.Props("無職", 10, 10, 2);
       Status = new Status(props);
 
-      this.shuriken = null;
+      this.item = null;
+
+      this.state.Add(ActionPhase.Idle);
+      this.state.Add(ActionPhase.Move, MoveEnter, MoveUpdate, MoveExit);
+      this.state.Add(ActionPhase.AttackStart, AttackStartEnter, AttackStartUpdate, AttackStartExit);
+      this.state.Add(ActionPhase.Damage, DamageEnter, DamageUpdate);
     }
 
+    /// <summary>
+    /// リセット
+    /// </summary>
     public void Reset(Vector2Int coord)
     {
       Coord = coord;
@@ -78,13 +107,15 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
-    /// １ターンに１度だけ呼ばれる更新処理
+    /// プレイヤーの更新処理
     /// </summary>
     public void Update()
     {
-      // 体力を微量回復
-      Status.AddHP(Status.MaxHP * 0.015f);
+      this.state.Update();
     }
+
+    //-------------------------------------------------------------------------
+    // 思考(入力検知)
 
     /// <summary>
     /// 入力内容からプレイヤーがどんな行動をするかを決める処理
@@ -162,12 +193,12 @@ namespace MyGame.Dungeon
       if (InputManager.Instance.RB2.IsHold)
       {
         // 攻撃要求を設定
-        this.AttackRequest.Name = Status.Name;
-        this.AttackRequest.Pow = Status.Pow;
-        this.AttackRequest.Coord = Coord;
-        this.AttackRequest.Area = GetAttackCoords();
+        this.actionRequest.Name = Status.Name;
+        this.actionRequest.Pow = Status.Pow;
+        this.actionRequest.Coord = Coord;
+        this.actionRequest.Area = GetAttackCoords();
 
-        return Behavior.Attack;
+        return Behavior.Action;
       }
 
       // 遠距離攻撃(R)
@@ -175,15 +206,11 @@ namespace MyGame.Dungeon
       {
         var (isHit, pos) = SearchAttackTarget(Coord, Chip.Direction);
 
-        this.AttackRequest.Name = Status.Name;
-        this.AttackRequest.Pow  = 20;
-        this.AttackRequest.Coord = Coord;
-        this.AttackRequest.Area.Add(pos);
+        this.item = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
+        this.item.SetCoord(Coord);
+        this.item.SetThrow(pos);
 
-        this.shuriken = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
-        this.shuriken.Setup(Coord);
-
-        return Behavior.Attack;
+        return Behavior.Action;
       }
 
       // メニュー(RB1)
@@ -195,89 +222,136 @@ namespace MyGame.Dungeon
       return Behavior.Thinking;
     }
 
-    /// <summary>
-    /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
-    /// </summary>
-    public List<Vector2Int> GetAttackCoords()
+    //-------------------------------------------------------------------------
+    // Sceneから呼ばれるコールバック
+
+    public override void OnSceneMoveEnter()
     {
-      var area = new List<Vector2Int>();
-
-#if true
-      // 前方三方向攻撃
-      var dirs = Direction.Get3Way(Chip.Direction);
-
-      foreach(var dir in dirs)
-      {
-        if (CanAttackTo(dir) == false) continue;
-
-        area.Add(Coord + dir.ToVector(false));
-      }
-#else
-      // 前方攻撃
-      if (CanAttackTo(Chip.Direction))
-      {
-        area.Add(Coord + Chip.Direction.ToVector(false));
-      }
-#endif
-      return area;
+      this.state.SetState(ActionPhase.Move);
+      Status.UseEnergy();
     }
 
+    public override void OnSceneActionEnter()
+    {
+      // アイテムを投げる
+      if (this.item != null) {
+        this.item.StartAction();
+        this.item = null;
+      } 
+      
+      else {
+        StartAction();
+      }
+
+      Status.UseEnergy();
+    }
+
+    public override void OnSceneTurnEndEnter()
+    {
+      base.OnSceneTurnEndEnter();
+
+      // 体力を微量回復
+      Status.AddHP(Status.MaxHP * 0.015f);
+    }
+
+    //-------------------------------------------------------------------------
+    // IActionableの実装
+
     /// <summary>
-    /// このメソッドを呼ぶとプレイヤーが移動する
+    /// ActionManagerにActorとTargetを登録して開始
     /// </summary>
-    public void DoMoveMotion()
+    public override void StartAction()
+    {
+      var targets = EnemyManager.Instance.FindTarget(ActionRequest.Area);
+
+      var AM = ActionManager.Instance;
+      AM.SetActor(this);
+      AM.AddTargets(targets);
+      AM.StartAction();
+    }
+
+    public override void OnActionStartWhenActor()
+    {
+      this.state.SetState(ActionPhase.AttackStart);
+    }
+
+    public override void OnActionWhenTarget(IActionable actor)
+    {
+      this.state.SetState(ActionPhase.Damage);
+    }
+
+    //-------------------------------------------------------------------------
+    // 移動処理
+
+    private void MoveEnter()
     {
       Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
     }
 
-    /// <summary>
-    /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
-    /// </summary>
-    public void DoAttackMotion()
+    private void MoveUpdate()
     {
-      // 手裏剣があったら手裏剣攻撃
-      if (this.shuriken != null)
+      if (Chip.IsIdle)
       {
-        this.shuriken.DoMoveMotion(Define.SEC_PER_TURN, AttackRequest.Area[0]);
-        Debug.Log($"from:{Coord}, to{AttackRequest.Area[0]}");
+        this.state.SetState(ActionPhase.Idle);
       }
-
-      // 通常攻撃
-      else
-      {
-        Chip.Attack(Define.SEC_PER_TURN, 0.4f);
-      }
-      
     }
 
-    /// <summary>
-    /// 攻撃終了時に呼ばれる処理
-    /// </summary>
-    public void OnAttackEndEnter()
+    private void MoveExit()
     {
-      if (shuriken != null)
+      // 足元にアイテムがあるかチェック
+      var item = ItemManager.Instance.Find(DungeonManager.Instance.PlayerCoord);
+      if (item != null)
       {
-        this.shuriken.Destory();
-        this.shuriken = null;
+        Debug.Log($"{item.Status.Name}の上に乗った。");
       }
-      AttackRequest.Area.Clear();
     }
 
-    /// <summary>
-    /// このメソッドを呼ぶと敵が痛がる
-    /// </summary>
-    public void DoOuchMotion()
+    //-------------------------------------------------------------------------
+    // 通常攻撃 開始
+
+    private void AttackStartEnter()
+    {
+      CameraManager.Instance.Lock();
+      Chip.Attack(Define.SEC_PER_TURN, 0.4f);
+    }
+
+    private void AttackStartUpdate()
+    {
+      if (!Chip.IsIdle) return;
+      this.state.SetState(ActionPhase.Idle);
+    }
+
+    private void AttackStartExit()
+    {
+      CameraManager.Instance.Unlock();
+    }
+
+    //-------------------------------------------------------------------------
+    // ダメージ
+    private void DamageEnter()
     {
       // 攻撃を受けていなければ痛がらない
-      if (!AttackResponse.IsAccepted) return;
+      if (!actionResponse.IsAccepted) return;
 
-      // 攻撃を受けていたら痛がる
-      if (AttackResponse.IsHit && AttackResponse.HasDamage)
+      // ダメージがある場合は痛がる
+      if (actionResponse.HasDamage)
       {
-        Chip.Ouch(Define.SEC_PER_TURN);
+        Chip.Ouch(Define.SEC_PER_TURN * 2);
       }
 
-      AttackResponse.Reset();
+      // ダメージがなければ待機
+      else
+      {
+        Chip.Wait(Define.SEC_PER_TURN * 2);
+      }
+    }
+
+    private void DamageUpdate()
+    {
+      if (Chip.IsIdle)
+      {
+        this.state.SetState(ActionPhase.Idle);
+      }
     }
 
     //-------------------------------------------------------------------------
@@ -334,9 +408,52 @@ namespace MyGame.Dungeon
       return true;
     }
 
-#if _DEBUG
+    //-------------------------------------------------------------------------
+    // その他
 
-    // デバッグ用体力ゲージ表示
+    /// <summary>
+    /// 通常攻撃をした場合、攻撃対象となる座標リストを返す。
+    /// </summary>
+    public List<Vector2Int> GetAttackCoords()
+    {
+      var area = new List<Vector2Int>();
+
+#if true
+      // 前方三方向攻撃
+      var dirs = Direction.Get3Way(Chip.Direction);
+
+      foreach (var dir in dirs)
+      {
+        if (CanAttackTo(dir) == false) continue;
+
+        area.Add(Coord + dir.ToVector(false));
+      }
+#else
+      // 前方攻撃
+      if (CanAttackTo(Chip.Direction))
+      {
+        area.Add(Coord + Chip.Direction.ToVector(false));
+      }
+#endif
+      return area;
+    }
+
+#if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
+
+    public void DrawDebug()
+    {
+      GUILayout.Label($"Current Coord: ({this.Coord})");
+      GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
+
+      Status.DrawDebug();
+      actionRequest.DrawDebug();
+      actionResponse.DrawDebug();
+    }
+
+    //-------------------------------------------------------------------------
+    // デバッグ用体力ゲージ表示(一時的なもの)
     private Texture2D tex1 = new Texture2D(1, 1);
     private Texture2D tex2 = new Texture2D(1, 1);
 
@@ -359,22 +476,6 @@ namespace MyGame.Dungeon
       GUIStyle text = new GUIStyle();
       text.normal.textColor = Color.black;
       GUI.Label(new Rect(10, 30, 100, 20), $"HP:{Status.HP}/{Status.MaxHP}", text);
-    }
-
-    public void DrawDebugMenu()
-    {
-      //GUILayout.BeginArea(new Rect(500, 0, 500, 500));
-      {
-        GUILayout.Label($"Current Coord: ({this.Coord})");
-        GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
-
-        GetAttackCoords().ForEach((coord) => {
-          GUILayout.Label($"Attack Targets:{coord}");
-        });
-        Chip.DrawDebugMenu();
-
-      }
-      //GUILayout.EndArea();
     }
 #endif
   }

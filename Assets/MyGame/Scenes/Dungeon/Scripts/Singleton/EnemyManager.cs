@@ -10,7 +10,7 @@ namespace MyGame.Dungeon
   public class EnemyManager : SingletonMonobehaviour<EnemyManager>, IDebuggeable
   {
     //-------------------------------------------------------------------------
-    // メンバ
+    // Member
     
     /// <summary>
     /// 敵リスト
@@ -25,27 +25,24 @@ namespace MyGame.Dungeon
     /// </summary>
     public bool HasActiveEnemy
     {
-      get
+      get 
       {
-        for(int i = 0; i < this.enemies.Count; ++i)
-        {
-          if (!this.enemies[i].IsIdle) return true;
+        foreach(var e in this.enemies) {
+          if (!e.IsIdle) return true;
         }
         return false;
       }
     }
 
     /// <summary>
-    /// アタッカーがいる
+    /// Actorがいる
     /// </summary>
-    public bool HasAttacker
+    public bool HasActor
     {
       get
       {
-        foreach(var enemy in this.enemies)
-        {
-          if (enemy.Behavior == Enemy.BehaviorType.Attack)
-          {
+        foreach(var enemy in this.enemies) {
+          if (enemy.Behavior == Enemy.BehaviorType.Action) {
             return true;
           }
         }
@@ -54,17 +51,14 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // Public Method
+    // 基本的なメソッド
 
     /// <summary>
     /// 全ての敵を破棄してリストを空にする。
     /// </summary>
     public void Reset()
     {
-      foreach(var enemy in this.enemies)
-      {
-        enemy.Destory();
-      }
+      Loop((e) => { e.Destory(); });
       this.enemies = new List<Enemy>();
     }
 
@@ -120,6 +114,85 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 敵の更新処理
+    /// </summary>
+    public void UpdateEnemies()
+    {
+      foreach(var e in this.enemies) {
+        e.Update();
+      }
+    }
+
+    /// <summary>
+    /// 死んだ敵は破棄する
+    /// </summary>
+    public void DestoryDeadEnemies()
+    {
+      // 新しく敵リストを用意する
+      List<Enemy> newList = new List<Enemy>(this.enemies.Count);
+
+      // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
+      foreach (var e in this.enemies)
+      {
+        if (e.Status.IsDead)
+        {
+          e.Destory();
+        }
+
+        else
+        {
+          newList.Add(e);
+        }
+      }
+
+      // 敵リストを更新
+      this.enemies.Clear();
+      this.enemies = newList;
+    }
+
+    //-------------------------------------------------------------------------
+    // シーンのフェーズ変化時にコールされるメソッド群
+
+    public void OnSceneMoveEnter()
+    {
+      foreach(var e in this.enemies) {
+        e.OnSceneMoveEnter();
+      }
+    }
+
+    public void OnSceneMoveExit()
+    {
+      foreach(var e in this.enemies) {
+        e.OnSceneMoveExit();
+      }
+    }
+
+    public void OnSceneActionEnter()
+    {
+      foreach(var e in this.enemies)
+      {
+        if (e.Behavior == Enemy.BehaviorType.Action)
+        {
+          e.OnSceneActionEnter();
+          break;
+        }
+      }
+    }
+
+    public void OnSceneActionExit()
+    {
+      Loop((e) => { e.OnSceneActionExit(); });
+    }
+
+    public void OnSceneTurnEndEnter()
+    {
+      Loop((e) => { e.OnSceneTurnEndEnter(); });
+    }
+
+    //-------------------------------------------------------------------------
+    // モーション系
+
+    /// <summary>
     /// 敵さん達に、移動しろと命じる
     /// </summary>
     public void DoMoveMotion()
@@ -151,39 +224,15 @@ namespace MyGame.Dungeon
       }
     }
 
-    /// <summary>
-    /// 死んだ敵は破棄する
-    /// </summary>
-    public void DestoryDeadEnemies()
-    {
-      // 新しく敵リストを用意する
-      List<Enemy> newList = new List<Enemy>(this.enemies.Count);
-
-      // 死んでる敵は破棄して、生きてる敵は新しいリストへ追加
-      foreach(var e in this.enemies)
-      {
-        if (e.Status.IsDead) 
-        {
-          e.Destory();
-        } 
-        
-        else 
-        {
-          newList.Add(e);
-        }
-      }
-
-      // 敵リストを更新
-      this.enemies.Clear();
-      this.enemies = newList;
-    }
+    //-------------------------------------------------------------------------
+    // 敵を探す
 
     /// <summary>
     /// 指定された座標に一致する攻撃
     /// </summary>
-    public List<IAttackable> FindTarget(List<Vector2Int> coords)
+    public List<IActionable> FindTarget(List<Vector2Int> coords)
     {
-      List<IAttackable> found = new List<IAttackable>();
+      List<IActionable> found = new List<IActionable>();
 
       foreach (var coord in coords)
       {
@@ -210,16 +259,19 @@ namespace MyGame.Dungeon
       return null;
     }
 
+    //-------------------------------------------------------------------------
+    // 攻撃関連
+
     /// <summary>
     /// 攻撃する
     /// </summary>
-    public void Attack(IAttackable target)
+    public void Attack(IActionable target)
     {
       var attacker = FindAttacker();
 
       if (attacker != null)
       {
-        attacker.Attack(target);
+        //attacker.Attack(target);
         attacker.DoAttackMotion();
       }
     }
@@ -232,7 +284,7 @@ namespace MyGame.Dungeon
     {
       foreach(var enemy in this.enemies)
       {
-        if (enemy.Behavior != Enemy.BehaviorType.Attack) continue;
+        if (enemy.Behavior != Enemy.BehaviorType.Action) continue;
 
         return enemy;
       }
@@ -241,14 +293,18 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // Protected Method
-
-    protected override void Awake()
+    // その他
+    
+    private void Loop(System.Action<Enemy> cb)
     {
-      base.Awake();
+      foreach(var e in this.enemies) { cb(e); }
     }
 
+
 #if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
+
     void IDebuggeable.Draw(MyDebug.Window window)
     {
       this.enemies.ForEach((e) =>

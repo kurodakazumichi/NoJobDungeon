@@ -14,15 +14,15 @@ namespace MyGame.Dungeon {
     /// </summary>
     public enum Phase
     {
+      Idle,
       Load,
       CreateStage,
       PlayerThink,
+      PlayerAction,
       Move,
-      PlayerAttackStart,
-      PlayerAttackEnd,
-      EnemyAttackStart,
-      EnemyAttackEnd,
+      EnemyAction,
       TurnEnd,
+      GameOver,
     }
 
     //-------------------------------------------------------------------------
@@ -52,6 +52,7 @@ namespace MyGame.Dungeon {
         .Setup(nameof(FieldManager), system)
         .Setup(nameof(EnemyManager), system)
         .Setup(nameof(ItemManager), system)
+        .Setup(nameof(ActionManager), system)
         .Setup(nameof(HUD), system);
     }
 
@@ -60,16 +61,15 @@ namespace MyGame.Dungeon {
     /// </summary>
     protected override void Start()
     {
+      this.state.Add(Phase.Idle);
       this.state.Add(Phase.Load, LoadEnter, LoadUpdate, LoadExit);
-      this.state.Add(Phase.CreateStage, CreateStageEnter);
+      this.state.Add(Phase.CreateStage, CreateStageEnter, CreateStageUpdate);
       this.state.Add(Phase.PlayerThink, null, PlayerThinkUpdate);
-      this.state.Add(Phase.Move, MoveEnter, MoveUpdate);
-      this.state.Add(Phase.PlayerAttackStart, PlayerAttackStartEnter, PlayerAttackStartUpdate, PlayerAttackStartExit);
-      this.state.Add(Phase.PlayerAttackEnd  , PlayerAttackEndEnter, PlayerAttackEndUpdate, PlayerAttackEndExit);
-      this.state.Add(Phase.EnemyAttackStart, EnemyAttackStartEnter, EnemyAttackStartUpdate);
-      this.state.Add(Phase.EnemyAttackEnd, EnemyAttackEndEnter, EnemyAttackEndUpdate);
+      this.state.Add(Phase.PlayerAction, PlayerActionEnter, PlayerActionUpdate, PlayerActionExit);
+      this.state.Add(Phase.Move, MoveEnter, MoveUpdate, MoveExit);
+      this.state.Add(Phase.EnemyAction, EnemyActionEnter, EnemyActionUpdate, EnemyActionExit);
       this.state.Add(Phase.TurnEnd, TurnEndEnter, TurnEndUpdate);
-
+      this.state.Add(Phase.GameOver, GameOverEnter, GameOverUpdate);
       this.state.SetState(Phase.Load);
     }
 
@@ -128,7 +128,10 @@ namespace MyGame.Dungeon {
 
       // HUD生成
       HUD.Instance.Setup();
+    }
 
+    private void CreateStageUpdate()
+    {
       // 入力待ちフェーズへ
       this.state.SetState(Phase.PlayerThink);
     }
@@ -140,7 +143,7 @@ namespace MyGame.Dungeon {
     private void PlayerThinkUpdate()
     {
       // プレイヤーの行動を監視
-      var behavior = PlayerManager.Instance.MonitorPlayerThoughs();
+      var behavior = PlayerManager.Instance.Think();
 
       switch(behavior)
       {
@@ -156,14 +159,11 @@ namespace MyGame.Dungeon {
           break;
         }
 
-        // 通常攻撃
-        case Player.Behavior.Attack:
+        // 行動
+        case Player.Behavior.Action:
         {
-          // 敵に行動を考えるように命じる
-          EnemyManager.Instance.Think();
-
-          // プレイヤー攻撃開始フェーズへ
-          this.state.SetState(Phase.PlayerAttackStart);
+          // プレイヤー行動フェーズへ
+          this.state.SetState(Phase.PlayerAction);
           break;
         }
       }
@@ -174,19 +174,15 @@ namespace MyGame.Dungeon {
 
     private void MoveEnter()
     {
-      // プレイヤーと敵に動けと命じる
-      PlayerManager.Instance.DoMoveMotion();
-      EnemyManager.Instance.DoMoveMotion();
-
-      // 踏破情報更新
-      DungeonManager.Instance.UpdateClearFlags();
-
-      // ミニマップ更新
-      HUD.Instance.UpdateMinimap();
+      PlayerManager.Instance.OnSceneMoveEnter();
+      EnemyManager.Instance.OnSceneMoveEnter();
     }
 
     private void MoveUpdate()
     {
+      PlayerManager.Instance.UpdatePlayer();
+      EnemyManager.Instance.UpdateEnemies();
+
       // 動いてるプレイヤーと敵がいる間は待機
       if (PlayerManager.Instance.HasnActivePlayer) return;
       if (EnemyManager.Instance.HasActiveEnemy) return;
@@ -199,127 +195,100 @@ namespace MyGame.Dungeon {
         return;
       }
 
-      // 足元にアイテムがあるかチェック
-      var item = ItemManager.Instance.Find(DungeonManager.Instance.PlayerCoord);
-      if (item != null)
+      // 動いてるやつらがいなくなったら次のフェーズへ
+      this.state.SetState(Phase.EnemyAction);
+    }
+
+    private void MoveExit()
+    {
+      PlayerManager.Instance.OnSceneMoveExit();
+      EnemyManager.Instance.OnSceneMoveExit();
+      
+      // 踏破情報更新
+      DungeonManager.Instance.UpdateClearFlags();
+
+      // ミニマップ更新
+      HUD.Instance.UpdateMinimap();
+    }
+
+    //-------------------------------------------------------------------------
+    // プレイヤーの行動フェーズ
+
+    private void PlayerActionEnter()
+    {
+      PlayerManager.Instance.OnSceneActionEnter();
+    }
+
+    private void PlayerActionUpdate()
+    {
+      UpdateSingletonsWhenAction();
+
+      if (!IsIdleSingletonsProc()) return;
+
+      // プレイヤーが死亡
+      if (PlayerManager.Instance.IsPlayerDead)
       {
-        Debug.Log($"{item.Name}の上に乗った。");
+        this.state.SetState(Phase.GameOver);
+        return;
       }
 
-      // 動いてるやつらがいなくなったら次のフェーズへ
-      this.state.SetState(Phase.EnemyAttackStart);
-    }
-
-    //-------------------------------------------------------------------------
-    // プレイヤーの攻撃開始フェーズ
-
-    private void PlayerAttackStartEnter()
-    {
-      // 攻撃対象を取得
-      var area     = PlayerManager.Instance.AttackArea;
-      var targets = EnemyManager.Instance.FindTarget(area);
-
-      PlayerManager.Instance.Attack(targets);
-      
-      // プレイヤーは攻撃を、敵は痛がる動きをしてください
-      PlayerManager.Instance.DoAttackMotion();
-      EnemyManager.Instance.DoOuchMotion();
-
-      // プレイヤーの動きに合わせてカメラが動くとガクガクするので
-      // プレイヤー攻撃中はカメラが動かないようにロック(Exitと解除するのを忘れずに)
-      CameraManager.Instance.Lock();
-    }
-
-    private void PlayerAttackStartUpdate()
-    {
-      if (PlayerManager.Instance.HasnActivePlayer) return;
-      if (EnemyManager.Instance.HasActiveEnemy) return;
-
-      this.state.SetState(Phase.PlayerAttackEnd);
-    }
-
-    private void PlayerAttackStartExit()
-    {
-      CameraManager.Instance.Unlock();
-    }
-
-    //-------------------------------------------------------------------------
-    // プレイヤーの攻撃終了フェーズ
-
-    private void PlayerAttackEndEnter()
-    {
-      PlayerManager.Instance.AttackEndEnter();
-      // 死んだ敵は消滅して下さい
-      EnemyManager.Instance.DoVanishMotion();
-    }
-
-    private void PlayerAttackEndUpdate()
-    {
-      if (EnemyManager.Instance.HasActiveEnemy) return;
       this.state.SetState(Phase.Move);
     }
 
-    private void PlayerAttackEndExit()
+    private void PlayerActionExit()
     {
-      // 死んだ敵を破棄します
       EnemyManager.Instance.DestoryDeadEnemies();
+
+      // 敵に行動を考えるように命じる
+      EnemyManager.Instance.Think();
+
+      PlayerManager.Instance.OnSceneActionExit();
     }
 
     //-------------------------------------------------------------------------
-    // 敵の攻撃開始フェーズ
-    // 敵の攻撃は一体ずつ処理していく。
+    // 敵の行動フェーズ
 
-    private void EnemyAttackStartEnter()
+    private void EnemyActionEnter()
     {
-      // 敵の攻撃
-      EnemyManager.Instance.Attack(PlayerManager.Instance.Attacker);
+      EnemyManager.Instance.OnSceneActionEnter();
     }
 
-    private void EnemyAttackStartUpdate()
+    private void EnemyActionUpdate()
     {
-      // 動いてる敵がいなくなったら攻撃終了フェーズへ
-      if (EnemyManager.Instance.HasActiveEnemy) return;
+      UpdateSingletonsWhenAction();
 
-      this.state.SetState(Phase.EnemyAttackEnd);
-    }
+      // Action実行中は待機
+      if (!ActionManager.Instance.IsIdle) return;
 
-    //-------------------------------------------------------------------------
-    // 敵の攻撃終了フェーズ
-
-    private void EnemyAttackEndEnter()
-    {
-      // プレイヤーに痛がるよう命じる
-      PlayerManager.Instance.DoOuchMotion();
-    }
-
-    private void EnemyAttackEndUpdate()
-    {
-      // プレイヤーが痛がっている間は待機
-      if (PlayerManager.Instance.HasnActivePlayer) return;
-
-      // プレイヤーが死んじゃったらタイトル画面へ
+      // プレイヤーが死亡
       if (PlayerManager.Instance.IsPlayerDead)
       {
-        Debug.Log("プレイヤー死んじゃった");
-        CameraManager.Instance.SetFreeMode();
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MyGame/Scenes/Title/TitleScene");
+        this.state.SetState(Phase.GameOver);
+        return;
       }
 
-      // まだ攻撃をする敵が残っている場合は敵の攻撃開始フェーズへ
-      if (EnemyManager.Instance.HasAttacker)
+      // Actorが残っている場合は再びEnemyActionへ
+      if (EnemyManager.Instance.HasActor)
       {
-        this.state.SetState(Phase.EnemyAttackStart);
+        this.state.SetState(Phase.EnemyAction);
         return;
       }
 
       this.state.SetState(Phase.TurnEnd);
     }
 
+    private void EnemyActionExit()
+    {
+      EnemyManager.Instance.DestoryDeadEnemies();
+      EnemyManager.Instance.OnSceneActionExit();
+    }
+
     //-------------------------------------------------------------------------
     // ターンエンド
     private void TurnEndEnter()
     {
-      PlayerManager.Instance.UpdatePlayer();
+      PlayerManager.Instance.OnSceneTurnEndEnter();
+      EnemyManager.Instance.OnSceneTurnEndEnter();
     }
 
     private void TurnEndUpdate()
@@ -327,9 +296,52 @@ namespace MyGame.Dungeon {
       this.state.SetState(Phase.PlayerThink);
     }
 
+    //-------------------------------------------------------------------------
+    // ゲームオーバー
+    
+    private void GameOverEnter()
+    {
+      Debug.Log("プレイヤー死んじゃった");
+      CameraManager.Instance.SetFreeMode();
+      UnityEngine.SceneManagement.SceneManager.LoadScene("MyGame/Scenes/Title/TitleScene");
+    }
+
+    private void GameOverUpdate()
+    {
+      this.state.SetState(Phase.Idle);
+    }
+
+    //-------------------------------------------------------------------------
+    // その他
+
+    /// <summary>
+    /// Player、EnemyのAction中にUpdateする必要のあるシングルトンのUpdateを呼ぶ
+    /// </summary>
+    private void UpdateSingletonsWhenAction()
+    {
+      PlayerManager.Instance.UpdatePlayer();
+      EnemyManager.Instance.UpdateEnemies();
+      ActionManager.Instance.UpdateAction();
+    }
+
+    /// <summary>
+    /// 各種シングルトンの処理が終わったかどうか
+    /// </summary>
+    private bool IsIdleSingletonsProc()
+    {
+      if (PlayerManager.Instance.HasnActivePlayer) return false;
+      if (EnemyManager.Instance.HasActiveEnemy) return false;
+      if (!ActionManager.Instance.IsIdle) return false;
+      return true;
+    }
+
+
 #if _DEBUG
     void IDebuggeable.Draw(MyDebug.Window window)
     {
+      GUILayout.Label("Dungeon Scene State");
+      GUILayout.Label($"State:{this.state.StateKey}");
+
       GUILayout.Label("Dungeon Scene Functions");
 
       if (GUILayout.Button("Remake"))

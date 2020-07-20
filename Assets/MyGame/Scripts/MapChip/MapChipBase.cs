@@ -22,7 +22,8 @@ namespace MyGame {
       Move,
       Attack,
       Ouch,
-      Vanish
+      Vanish,
+      Wait,
     }
 
     //-------------------------------------------------------------------------
@@ -157,6 +158,12 @@ namespace MyGame {
       this.state.SetState(State.Vanish);
     }
 
+    public void Wait(float time)
+    {
+      ResetForStateMachine();
+      this.specifiedTime = time;
+      this.state.SetState(State.Wait);
+    }
 
     //-------------------------------------------------------------------------
     // 主要なメソッド
@@ -177,6 +184,7 @@ namespace MyGame {
       this.state.Add(State.Attack, null, AttackUpdate);
       this.state.Add(State.Ouch, null, OuchUpdate);
       this.state.Add(State.Vanish, null, VanishUpdate);
+      this.state.Add(State.Wait, null, WaitUpdate);
 
       this.state.SetState(State.Idle);
     }
@@ -286,6 +294,22 @@ namespace MyGame {
       var color = this.spriteRenderer.material.color;
       color.a = Mathf.Max(0, 1f - rate);
       this.spriteRenderer.material.color = color;
+
+      if (IsTimeOver)
+      {
+        this.state.SetState(State.Idle);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    // State.Wait: 何もせず待機状態を続けるのみ
+
+    /// <summary>
+    /// 時間経過を待つのみ
+    /// </summary>
+    private void WaitUpdate()
+    {
+      UpdateTimer();
 
       if (IsTimeOver)
       {

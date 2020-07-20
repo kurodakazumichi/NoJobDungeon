@@ -26,14 +26,30 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 敵の行動一覧
     /// </summary>
-    public enum BehaviorType { 
+    public enum BehaviorType {
       None,
       Move,
-      Attack,
+      Action,
+    }
+
+    /// <summary>
+    /// アクション
+    /// </summary>
+    public enum ActionPhase
+    {
+      Idle,
+      Move,
+      Damage,
+      Vanish,
     }
 
     //-------------------------------------------------------------------------
     // メンバー
+
+    /// <summary>
+    /// ステートマシン
+    /// </summary>
+    private StateMachine<ActionPhase> state = new StateMachine<ActionPhase>();
 
     /// <summary>
     /// 行動
@@ -41,17 +57,11 @@ namespace MyGame.Dungeon
     private BehaviorType behavior = BehaviorType.None;
 
     /// <summary>
-    /// 移動予定の座標
+    /// DungeonManagerのステージ上の座標
     /// ThinkのタイミングでCoordを更新してしまうと攻撃判定が移動後の座標で行われるため
-    /// ThinkのタイミングではnextCoordを更新し実際に動く際にCoordを更新する。
+    /// ThinkのタイミングではstageCoordを更新し実際に動く際にCoordを更新する。
     /// </summary>
-    public Vector2Int nextCoord = Vector2Int.zero;
-
-    /// <summary>
-    /// ダンジョンマップ上と同期している座標
-    /// この座標には常にダンジョンマップ上の座標が入っている
-    /// </summary>
-    private Vector2Int syncCoord = Vector2Int.zero;
+    public Vector2Int stageCoord = Vector2Int.zero;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -61,8 +71,24 @@ namespace MyGame.Dungeon
     /// </summary>
     public BehaviorType Behavior => (this.behavior);
 
+    /// <summary>
+    /// アイドル状態です
+    /// </summary>
+    public override bool IsIdle => (state.StateKey == ActionPhase.Idle);
+
     //-------------------------------------------------------------------------
-    // Public Method
+    // 基本的なメソッド
+
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    public Enemy()
+    {
+      this.state.Add(ActionPhase.Idle);
+      this.state.Add(ActionPhase.Move, MoveEnter, MoveUpdate);
+      this.state.Add(ActionPhase.Damage, DamageEnter, DamageUpdate);
+      this.state.Add(ActionPhase.Vanish, VanishEnter, VanishUpdate, VanishExit);
+    }
 
     /// <summary>
     /// セットアップ
@@ -70,8 +96,8 @@ namespace MyGame.Dungeon
     virtual public void Setup(Props props)
     {
       Chip = MapChipFactory.Instance.CreateEnemyChip(props.ChipType);
-      Coord = this.syncCoord = props.Coord;
-      
+      Coord = this.stageCoord = props.Coord;
+
       Chip.transform.position = Util.GetPositionBy(Coord);
       Chip.Direction = Direction.Random();
 
@@ -79,55 +105,207 @@ namespace MyGame.Dungeon
     }
 
     /// <summary>
+    /// 敵の更新処理
+    /// </summary>
+    public void Update()
+    {
+      this.state.Update();
+    }
+
+    /// <summary>
+    /// 破棄
+    /// </summary>
+    public void Destory()
+    {
+      MapChipFactory.Instance.Release(Chip);
+      Chip = null;
+    }
+
+    //-------------------------------------------------------------------------
+    // 思考(AI)
+
+    /// <summary>
     /// AI: どんな行動をするか決定する処理
     /// </summary>
     public void Think()
     {
+      // エネルギーがなければ行動しない
+      if (!Status.HasEnergy) return;
+
+      // アクションを考え、アクションするならそこで終了
+      if (ThinkAction()) return;
+
+      // アクションしない場合は移動を考える
+      ThinkMove();
+    }
+
+    private bool ThinkAction()
+    {
       // 自分の周囲１マスにプレイヤーがいるかどうか
       var player = DungeonManager.Instance.PlayerCoord;
       var v = player - Coord;
-      
+
       // 周囲１マスにプレイヤーがいる、かつその方向に攻撃可能であれば
       if (Mathf.Abs(v.x) <= 1 && Mathf.Abs(v.y) <= 1 && CanAttackTo(new Direction(v, false)))
       {
         // かつ攻撃できる方向であれば攻撃
-        this.behavior = BehaviorType.Attack;
+        this.behavior = BehaviorType.Action;
         Chip.Direction = new Direction(v, false);
 
         // 攻撃要求をセット
-        AttackRequest.Name = Status.Name;
-        AttackRequest.Pow = Status.Pow;
-        AttackRequest.Coord = Coord;
-        AttackRequest.Area.Add(player);
+        actionRequest.Name = Status.Name;
+        actionRequest.Pow = Status.Pow;
+        actionRequest.Coord = Coord;
+        actionRequest.Area.Add(player);
+        return true;
       }
 
-      // プレイヤーがいないなら移動を考える
-      else
-      {
-        // ランダムで移動量を決める
-        var move = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
-
-        // 移動方向を生成
-        var moveDir = new Direction(move, false);
-
-        // 移動可能であれば移動する
-        if (CanMoveTo(moveDir))
-        {
-          Chip.Direction = moveDir;
-          this.nextCoord = Coord + move;
-          this.behavior = BehaviorType.Move;
-
-          // ダンジョンの情報を書き換え
-          MoveMapCoord(Coord, this.nextCoord);
-        }
-      }
+      return false;
     }
 
-    private void MoveMapCoord(Vector2Int from, Vector2Int to)
+    private bool ThinkMove()
     {
-      DungeonManager.Instance.UpdateEnemyCoord(from, to);
-      syncCoord = to;
+      // ランダムで移動量を決める
+      var move = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
+
+      // 移動方向を生成
+      var moveDir = new Direction(move, false);
+
+      // 移動可能であれば移動する
+      if (CanMoveTo(moveDir))
+      {
+        Chip.Direction = moveDir;
+        this.stageCoord = Coord + move;
+        this.behavior = BehaviorType.Move;
+
+        // ダンジョンの情報を書き換え
+        UpdateStageCoord(Coord, this.stageCoord);
+
+        return true;
+      }
+      return false;
     }
+
+    //-------------------------------------------------------------------------
+    // Sceneから呼ばれるコールバック
+
+    public override void OnSceneMoveEnter()
+    {
+      if (this.behavior != BehaviorType.Move) return;
+
+      Coord = this.stageCoord;
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
+      this.state.SetState(ActionPhase.Move);
+
+      this.behavior = BehaviorType.None;
+      Status.UseEnergy();
+    }
+
+    public override void OnSceneActionEnter()
+    {
+      if (this.behavior != BehaviorType.Action) return;
+
+      var AM = ActionManager.Instance;
+      var PM = PlayerManager.Instance;
+
+      AM.SetActor(this);
+
+      var targets = PM.Find(actionRequest.Area);
+      AM.AddTargets(targets);
+      AM.StartAction();
+
+      this.behavior = BehaviorType.None;
+      Status.UseEnergy();
+    }
+
+    //-------------------------------------------------------------------------
+    // IActionableの実装
+
+    public override void OnActionStartWhenActor()
+    {
+      DoAttackMotion();
+    }
+
+    public override void OnActionWhenTarget(IActionable actor)
+    {
+      this.state.SetState(ActionPhase.Damage);
+    }
+
+    public override void OnActionEndWhenTarget()
+    {
+      if (Status.IsDead)
+      {
+        this.state.SetState(ActionPhase.Vanish);
+      }
+    }
+
+    public override void OnReactionStartWhenActor()
+    {
+      if (Status.IsDead) return;
+      ThinkAction();
+      if (this.behavior == BehaviorType.Action)
+      {
+        Status.UseEnergy();
+      }
+    }
+
+    public override bool IsReaction => (this.actionResponse.IsAccepted);
+
+    //-------------------------------------------------------------------------
+    // 移動処理
+
+    private void MoveEnter()
+    {
+      Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
+    }
+
+    private void MoveUpdate()
+    {
+      if (Chip.IsIdle)
+      {
+        this.state.SetState(ActionPhase.Idle);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    // ダメージを受けた
+    
+    private void DamageEnter()
+    {
+      DoOuchMotion();
+    }
+
+    private void DamageUpdate()
+    {
+      if (Chip.IsIdle)
+      {
+        this.state.SetState(ActionPhase.Idle);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    // 消滅する
+
+    private void VanishEnter()
+    {
+      DoVanishMotion();
+    }
+
+    private void VanishUpdate()
+    {
+      if (Chip.IsIdle)
+      {
+        this.state.SetState(ActionPhase.Idle);
+      }
+    }
+
+    private void VanishExit()
+    {
+      HUD.Instance.UpdateMinimap();
+    }
+
+    //-------------------------------------------------------------------------
+    // モーション系
 
     /// <summary>
     /// このメソッドを呼ぶと敵が動き始める
@@ -136,7 +314,7 @@ namespace MyGame.Dungeon
     {
       if (this.behavior != BehaviorType.Move) return;
 
-      Coord = this.nextCoord;
+      Coord = this.stageCoord;
       Chip.Move(Define.SEC_PER_TURN, Util.GetPositionBy(Coord));
       this.behavior = BehaviorType.None;
     }
@@ -147,7 +325,7 @@ namespace MyGame.Dungeon
     public void DoAttackMotion()
     {
       // アタッカーじゃなければ何もしない
-      if (this.behavior != BehaviorType.Attack) return;
+      if (this.behavior != BehaviorType.Action) return;
 
       // 攻撃の動きを開始
       Chip.Attack(Define.SEC_PER_TURN, 1f);
@@ -160,14 +338,19 @@ namespace MyGame.Dungeon
     public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
-      if (!AttackResponse.IsAccepted) return;
+      if (!actionResponse.IsAccepted) return;
 
-      // 攻撃を受けていたら痛がる
-      if (AttackResponse.IsHit && AttackResponse.HasDamage)
+      // ダメージがある場合は痛がる
+      if (actionResponse.HasDamage)
       {
-        Chip.Ouch(Define.SEC_PER_TURN);
+        Chip.Ouch(Define.SEC_PER_TURN * 2);
       }
-      AttackResponse.Reset();
+      
+      // ダメージがなければ待機
+      else
+      {
+        Chip.Wait(Define.SEC_PER_TURN * 2);
+      }
     }
 
     /// <summary>
@@ -179,31 +362,36 @@ namespace MyGame.Dungeon
       if (!Status.IsDead) return;
 
       // マップ上の敵の情報を除去する
-      DungeonManager.Instance.RemoveEnemyCoord(syncCoord);
+      DungeonManager.Instance.RemoveEnemyCoord(stageCoord);
 
       // 消滅モーション開始
       Chip.Vanish(Define.SEC_PER_TURN);
     }
 
+
+
+    //-------------------------------------------------------------------------
+    // その他
+
     /// <summary>
-    /// 破棄
+    /// ステージ座標を更新
     /// </summary>
-    public void Destory()
+    private void UpdateStageCoord(Vector2Int from, Vector2Int to)
     {
-      MapChipFactory.Instance.Release(Chip);
-      Chip = null;
+      DungeonManager.Instance.UpdateEnemyCoord(from, to);
+      stageCoord = to;
     }
 
 #if _DEBUG
+    //-------------------------------------------------------------------------
+    // デバッグ
     public void DrawDebugMenu()
     {
       GUILayout.Label($"Current Coord: ({this.Coord})");
       GUILayout.Label($"Behavior:{this.behavior}" );;
-      if(GUILayout.Button("Think"))
-      {
-        Think();
-      }
-      GUILayout.Label("CharChip");
+      Status.DrawDebug();
+      actionRequest.DrawDebug();
+      actionResponse.DrawDebug();
       Chip.DrawDebugMenu();
     }
 #endif

@@ -53,6 +53,9 @@ namespace MyGame
 
       { nameof(Master.EnemyMaster),
         () => { return Master.EnemyMaster.HasInstance ? Master.EnemyMaster.Instance : null; } },
+
+      { nameof(Dungeon.ActionManager),
+        () => { return Dungeon.ActionManager.HasInstance ? Dungeon.ActionManager.Instance : null; }},
     };
 
     //=========================================================================

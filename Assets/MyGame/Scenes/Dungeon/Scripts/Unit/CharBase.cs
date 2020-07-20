@@ -7,7 +7,7 @@ namespace MyGame.Dungeon
   /// <summary>
   /// キャラクターのベースクラス
   /// </summary>
-  public abstract class CharBase: IAttackable
+  public abstract class CharBase: UnitBase
   {
     //-------------------------------------------------------------------------
     // コンストラクタ
@@ -17,9 +17,6 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // Member
-
-    //-------------------------------------------------------------------------
     // Properity
 
     /// <summary>
@@ -27,66 +24,60 @@ namespace MyGame.Dungeon
     /// </summary>
     protected CharChip Chip { get; set; } = null;
 
-    /// <summary>
-    /// ステータス
-    /// </summary>
-    public Status Status { get; protected set; } = null;
+    //-------------------------------------------------------------------------
+    // Sceneから呼ばれるコールバッックメソッド
 
-    /// <summary>
-    /// 座標
-    /// </summary>
-    public Vector2Int Coord { get; set; } = Vector2Int.zero;
+    public virtual void OnSceneMoveEnter() { }
+    public virtual void OnSceneMoveExit() { }
+    public virtual void OnSceneActionEnter() { }
+    public virtual void OnSceneActionExit() { }
+    public virtual void OnSceneTurnEndEnter() {
+      Status.FullEnergy();
+      actionRequest.Reset();
+      actionResponse.Reset();
+    }
 
-    /// <summary>
-    /// 攻撃の情報
-    /// </summary>
-    public AttackRequest AttackRequest { get; private set; } = new AttackRequest();
-
-    /// <summary>
-    /// 攻撃後の情報
-    /// </summary>
-    public AttackResponse AttackResponse { get; private set; } = new AttackResponse();
+    //-------------------------------------------------------------------------
+    // IActionableの実装
 
     /// <summary>
     /// アイドル状態です
     /// </summary>
-    virtual public bool IsIdle
+    public override bool IsIdle
     {
-      get
-      {
-        if (Chip == null)
-        {
-          return true;
-        }
-
+      get {
+        if (Chip == null) return true;
         return Chip.IsIdle;
       }
     }
 
-    //-------------------------------------------------------------------------
-    // Method
-
     /// <summary>
-    /// 攻撃をする
+    /// アクションをする
     /// </summary>
-    virtual public void Attack(IAttackable target)
+    public override void Action(IActionable target)
     {
-      target.AcceptAttack(this.AttackRequest);
+      if (target == null) return;
+      target.AcceptAction(actionRequest);
     }
 
     /// <summary>
-    /// 攻撃を受ける
+    /// アクションを受ける
     /// </summary>
-    virtual public void AcceptAttack(AttackRequest req)
+    public override void AcceptAction(ActionRequest req)
     {
-      // 攻撃を受ける
-      var res = Status.AcceptAttack(req);
+      base.AcceptAction(req);
 
       // 攻撃してきた奴の方を向く
       Chip.Direction = Direction.LookAt(Coord, req.Coord);
-
-      AttackResponse.Copy(res);
     }
+
+    public override void DoMoveMotion(float time, Vector2Int coord)
+    {
+      Chip.Move(time, Util.GetPositionBy(coord));
+    }
+
+    //-------------------------------------------------------------------------
+    // 便利系
 
     /// <summary>
     /// 指定方向が障害物かどうか
@@ -214,6 +205,5 @@ namespace MyGame.Dungeon
         pos += vec;
       }
     }
-
   }
 }
