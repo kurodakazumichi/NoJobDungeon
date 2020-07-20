@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
-  public class UnitBase : IActionable
+  public abstract class UnitBase : IActionable
   {
     /// <summary>
     /// 座標
@@ -14,12 +14,14 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アクションの要求情報
     /// </summary>
-    protected ActionRequest ActionRequest { get; private set; } = new ActionRequest();
+    protected ActionRequest actionRequest { get; private set; } = new ActionRequest();
+    public IReadOnlyActionRequest ActionRequest => this.actionRequest;
 
     /// <summary>
     /// アクションの結果情報
     /// </summary>
-    protected ActionResponse ActionResponse { get; private set; } = new ActionResponse();
+    protected ActionResponse actionResponse { get; private set; } = new ActionResponse();
+    public IReadOnlyActionResponse ActionResponse => this.actionResponse;
 
     //-------------------------------------------------------------------------
     // IActionableの実装
@@ -29,8 +31,20 @@ namespace MyGame.Dungeon
     public virtual bool IsReaction => (false);
     public virtual bool IsIdle => (true);
 
-    public virtual ActionResponse Action(IActionable target) { return null; }
-    public virtual ActionResponse AcceptAction(ActionRequest req) { return null; }
+    public virtual void StartAction() { }
+
+    public virtual void Action(IActionable target) 
+    {
+      if (target != null) {
+        target.AcceptAction(this.actionRequest);
+      }
+    }
+
+    public virtual void AcceptAction(ActionRequest req) 
+    {
+      var res = Status.AcceptAction(req);
+      this.actionResponse.Copy(res);
+    }
 
     public virtual void OnActionStartWhenActor() { }
     public virtual void OnActionStartWhenTarget() { }
@@ -41,11 +55,16 @@ namespace MyGame.Dungeon
     public virtual void OnActionWhenActor(IActionable target) { Action(target); }
     public virtual void OnActionWhenTarget(IActionable actor) { }
 
+    public virtual void OnActionExitWhenActor(IActionable target) { }
+    public virtual void OnActionExitWhenTarget(IActionable actor) { }
+
     public virtual void OnActionEndWhenActor() { }
     public virtual void OnActionEndWhenTarget() { }
 
     public virtual void OnReactionStartWhenActor() { }
     public virtual void OnReactionStartWhenTarget() { }
+
+    public abstract void DoMoveMotion(float time, Vector2Int coord);
 
 
   }

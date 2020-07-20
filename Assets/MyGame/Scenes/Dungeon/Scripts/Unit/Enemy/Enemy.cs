@@ -153,10 +153,10 @@ namespace MyGame.Dungeon
         Chip.Direction = new Direction(v, false);
 
         // 攻撃要求をセット
-        ActionRequest.Name = Status.Name;
-        ActionRequest.Pow = Status.Pow;
-        ActionRequest.Coord = Coord;
-        ActionRequest.Area.Add(player);
+        actionRequest.Name = Status.Name;
+        actionRequest.Pow = Status.Pow;
+        actionRequest.Coord = Coord;
+        actionRequest.Area.Add(player);
         return true;
       }
 
@@ -210,8 +210,8 @@ namespace MyGame.Dungeon
 
       AM.SetActor(this);
 
-      var target = PM.Find(ActionRequest.Area);
-      AM.AddTarget(target);
+      var targets = PM.Find(actionRequest.Area);
+      AM.AddTargets(targets);
       AM.StartAction();
 
       this.behavior = BehaviorType.None;
@@ -249,7 +249,7 @@ namespace MyGame.Dungeon
       }
     }
 
-    public override bool IsReaction => (this.ActionResponse.IsAccepted);
+    public override bool IsReaction => (this.actionResponse.IsAccepted);
 
     //-------------------------------------------------------------------------
     // 移動処理
@@ -338,10 +338,10 @@ namespace MyGame.Dungeon
     public void DoOuchMotion()
     {
       // 攻撃を受けていなければ痛がらない
-      if (!ActionResponse.IsAccepted) return;
+      if (!actionResponse.IsAccepted) return;
 
       // ダメージがある場合は痛がる
-      if (ActionResponse.HasDamage)
+      if (actionResponse.HasDamage)
       {
         Chip.Ouch(Define.SEC_PER_TURN * 2);
       }
@@ -390,8 +390,8 @@ namespace MyGame.Dungeon
       GUILayout.Label($"Current Coord: ({this.Coord})");
       GUILayout.Label($"Behavior:{this.behavior}" );;
       Status.DrawDebug();
-      ActionRequest.DrawDebug();
-      ActionResponse.DrawDebug();
+      actionRequest.DrawDebug();
+      actionResponse.DrawDebug();
       Chip.DrawDebugMenu();
     }
 #endif

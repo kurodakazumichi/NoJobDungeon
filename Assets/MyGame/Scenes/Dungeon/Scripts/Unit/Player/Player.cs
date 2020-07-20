@@ -32,7 +32,6 @@ namespace MyGame.Dungeon
       Idle,
       Move,
       AttackStart,
-      AttackHit,
       Damage,
     }
 
@@ -57,9 +56,9 @@ namespace MyGame.Dungeon
     private int aroundEnemiesIndex = 0;
 
     /// <summary>
-    /// 手裏剣を投げた場合にセットされる
+    /// 投げるアイテム
     /// </summary>
-    private FieldItem shuriken = null;
+    private FieldItem item = null;
 
     //-------------------------------------------------------------------------
     // Public Properity
@@ -89,14 +88,12 @@ namespace MyGame.Dungeon
       Status.Props props = new Status.Props("無職", 10, 10, 2);
       Status = new Status(props);
 
-      this.shuriken = null;
+      this.item = null;
 
       this.state.Add(ActionPhase.Idle);
       this.state.Add(ActionPhase.Move, MoveEnter, MoveUpdate, MoveExit);
       this.state.Add(ActionPhase.AttackStart, AttackStartEnter, AttackStartUpdate, AttackStartExit);
-      this.state.Add(ActionPhase.AttackHit, AttackHitEnter, AttackHitUpdate);
       this.state.Add(ActionPhase.Damage, DamageEnter, DamageUpdate);
-      var hoge = new List<int>(){1 ,2, 3, 4 ,5 };
     }
 
     /// <summary>
@@ -196,10 +193,10 @@ namespace MyGame.Dungeon
       if (InputManager.Instance.RB2.IsHold)
       {
         // 攻撃要求を設定
-        this.ActionRequest.Name = Status.Name;
-        this.ActionRequest.Pow = Status.Pow;
-        this.ActionRequest.Coord = Coord;
-        this.ActionRequest.Area = GetAttackCoords();
+        this.actionRequest.Name = Status.Name;
+        this.actionRequest.Pow = Status.Pow;
+        this.actionRequest.Coord = Coord;
+        this.actionRequest.Area = GetAttackCoords();
 
         return Behavior.Action;
       }
@@ -209,13 +206,9 @@ namespace MyGame.Dungeon
       {
         var (isHit, pos) = SearchAttackTarget(Coord, Chip.Direction);
 
-        this.shuriken = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
-        this.shuriken.SetCoord(Coord);
-
-        this.ActionRequest.Name = this.shuriken.Status.Name;
-        this.ActionRequest.Pow  = 20;
-        this.ActionRequest.Coord = Coord;
-        this.ActionRequest.Area.Add(pos);
+        this.item = ItemManager.Instance.CreateItemByAlias(Master.Item.Alias.Shuriken);
+        this.item.SetCoord(Coord);
+        this.item.SetThrow(pos);
 
         return Behavior.Action;
       }
@@ -240,15 +233,16 @@ namespace MyGame.Dungeon
 
     public override void OnSceneActionEnter()
     {
-      var AM = ActionManager.Instance;
-      var EM = EnemyManager.Instance;
+      // アイテムを投げる
+      if (this.item != null) {
+        this.item.StartAction();
+        this.item = null;
+      } 
+      
+      else {
+        StartAction();
+      }
 
-      AM.SetActor(this);
-
-      var targets = EM.FindTarget(ActionRequest.Area);
-      AM.AddTargets(targets);
-
-      AM.StartAction();      
       Status.UseEnergy();
     }
 
@@ -263,25 +257,27 @@ namespace MyGame.Dungeon
     //-------------------------------------------------------------------------
     // IActionableの実装
 
+    /// <summary>
+    /// ActionManagerにActorとTargetを登録して開始
+    /// </summary>
+    public override void StartAction()
+    {
+      var targets = EnemyManager.Instance.FindTarget(ActionRequest.Area);
+
+      var AM = ActionManager.Instance;
+      AM.SetActor(this);
+      AM.AddTargets(targets);
+      AM.StartAction();
+    }
+
     public override void OnActionStartWhenActor()
     {
       this.state.SetState(ActionPhase.AttackStart);
     }
 
-    public override void OnActionStartExitWhenActor(IActionable target)
-    {
-      putAwayUsedShuriken(target != null);
-    }
-
     public override void OnActionWhenTarget(IActionable actor)
     {
       this.state.SetState(ActionPhase.Damage);
-    }
-
-    public override void OnActionWhenActor(IActionable target)
-    {
-      var res = Action(target);
-      putAwayUsedShuriken(res.IsHit);
     }
 
     //-------------------------------------------------------------------------
@@ -316,23 +312,12 @@ namespace MyGame.Dungeon
     private void AttackStartEnter()
     {
       CameraManager.Instance.Lock();
-
-      if (this.shuriken != null)
-      {
-        var v = Coord - ActionRequest.Area[0];
-        
-        this.shuriken.DoMoveMotion(0.05f * v.magnitude, ActionRequest.Area[0]);
-        this.shuriken.Coord = ActionRequest.Area[0];
-      }
-      
       Chip.Attack(Define.SEC_PER_TURN, 0.4f);
     }
 
     private void AttackStartUpdate()
     {
       if (!Chip.IsIdle) return;
-      if (this.shuriken != null && !this.shuriken.IsIdle) return;
-
       this.state.SetState(ActionPhase.Idle);
     }
 
@@ -342,24 +327,23 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // 通常攻撃 ヒット
-
-    private void AttackHitEnter()
-    {
-      EnemyManager.Instance.AcceptAttack(ActionRequest);
-    }
-
-    private void AttackHitUpdate()
-    {
-      this.state.SetState(ActionPhase.Idle);
-    }
-
-
-    //-------------------------------------------------------------------------
     // ダメージ
     private void DamageEnter()
     {
-      DoOuchMotion();
+      // 攻撃を受けていなければ痛がらない
+      if (!actionResponse.IsAccepted) return;
+
+      // ダメージがある場合は痛がる
+      if (actionResponse.HasDamage)
+      {
+        Chip.Ouch(Define.SEC_PER_TURN * 2);
+      }
+
+      // ダメージがなければ待機
+      else
+      {
+        Chip.Wait(Define.SEC_PER_TURN * 2);
+      }
     }
 
     private void DamageUpdate()
@@ -368,57 +352,6 @@ namespace MyGame.Dungeon
       {
         this.state.SetState(ActionPhase.Idle);
       }
-    }
-
-
-    /// <summary>
-    /// このメソッドを呼ぶとプレイヤーが攻撃の動きをする
-    /// </summary>
-    public void DoAttackMotion()
-    {
-      // 手裏剣があったら手裏剣攻撃
-      if (this.shuriken != null)
-      {
-        this.shuriken.DoMoveMotion(Define.SEC_PER_TURN, ActionRequest.Area[0]);
-        Debug.Log($"from:{Coord}, to{ActionRequest.Area[0]}");
-      }
-
-      // 通常攻撃
-      else
-      {
-        Chip.Attack(Define.SEC_PER_TURN, 0.4f);
-      }
-      
-    }
-
-    /// <summary>
-    /// 攻撃終了時に呼ばれる処理
-    /// </summary>
-    public void OnAttackEndEnter()
-    {
-      if (shuriken != null)
-      {
-        this.shuriken.Destory();
-        this.shuriken = null;
-      }
-      ActionRequest.Area.Clear();
-    }
-
-    /// <summary>
-    /// このメソッドを呼ぶと敵が痛がる
-    /// </summary>
-    public void DoOuchMotion()
-    {
-      // 攻撃を受けていなければ痛がらない
-      if (!ActionResponse.IsAccepted) return;
-
-      // 攻撃を受けていたら痛がる
-      if (ActionResponse.IsHit && ActionResponse.HasDamage)
-      {
-        Chip.Ouch(Define.SEC_PER_TURN * 2);
-      }
-
-      ActionResponse.Reset();
     }
 
     //-------------------------------------------------------------------------
@@ -505,29 +438,6 @@ namespace MyGame.Dungeon
       return area;
     }
 
-    /// <summary>
-    /// 使った手裏剣を片付ける
-    /// destoryがtrueなら破棄、falseならフィールドアイテムに追加
-    /// </summary>
-    private void putAwayUsedShuriken(bool destory)
-    {
-      if (this.shuriken == null) return;
-
-      if (destory)
-      {
-        this.shuriken.Destory();
-        this.shuriken = null;
-
-      }
-
-      else
-      {
-        ItemManager.Instance.AddItem(this.shuriken);
-        Debug.Log($"{this.shuriken.Status.Name}は床におちた。");
-        this.shuriken = null;
-      }
-    }
-
 #if _DEBUG
     //-------------------------------------------------------------------------
     // デバッグ
@@ -538,9 +448,8 @@ namespace MyGame.Dungeon
       GUILayout.Label($"Dash Direction: ({this.dashDirection.value})");
 
       Status.DrawDebug();
-      ActionRequest.DrawDebug();
-      ActionResponse.DrawDebug();
-
+      actionRequest.DrawDebug();
+      actionResponse.DrawDebug();
     }
 
     //-------------------------------------------------------------------------

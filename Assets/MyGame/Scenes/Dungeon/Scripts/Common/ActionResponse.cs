@@ -4,10 +4,15 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
+  public interface IReadOnlyActionResponse
+  {
+    bool IsHit { get; }
+  }
+
   /// <summary>
   /// 攻撃後の情報を持っているクラス
   /// </summary>
-  public class ActionResponse
+  public class ActionResponse: IReadOnlyActionResponse
   {
     /// <summary>
     /// Actor側の名前

@@ -262,21 +262,6 @@ namespace MyGame.Dungeon
     //-------------------------------------------------------------------------
     // 攻撃関連
 
-    public List<ActionResponse> AcceptAttack(ActionRequest req)
-    {
-      var result = new List<ActionResponse>();
-
-      var targets = FindTarget(req.Area);
-
-      foreach(var target in targets)
-      {
-        var res = target.AcceptAction(req);
-        result.Add(res);
-      }
-
-      return result;
-    }
-
     /// <summary>
     /// 攻撃する
     /// </summary>

@@ -33,8 +33,8 @@ namespace MyGame.Dungeon
     public virtual void OnSceneActionExit() { }
     public virtual void OnSceneTurnEndEnter() {
       Status.FullEnergy();
-      ActionRequest.Reset();
-      ActionResponse.Reset();
+      actionRequest.Reset();
+      actionResponse.Reset();
     }
 
     //-------------------------------------------------------------------------
@@ -54,28 +54,27 @@ namespace MyGame.Dungeon
     /// <summary>
     /// アクションをする
     /// </summary>
-    public override ActionResponse Action(IActionable target)
+    public override void Action(IActionable target)
     {
-      if (target == null) return null;
-      return target.AcceptAction(ActionRequest);
+      if (target == null) return;
+      target.AcceptAction(actionRequest);
     }
 
     /// <summary>
     /// アクションを受ける
     /// </summary>
-    public override ActionResponse AcceptAction(ActionRequest req)
+    public override void AcceptAction(ActionRequest req)
     {
-      // 攻撃を受ける
-      var res = Status.AcceptAttack(req);
+      base.AcceptAction(req);
 
       // 攻撃してきた奴の方を向く
       Chip.Direction = Direction.LookAt(Coord, req.Coord);
-
-      ActionResponse.Copy(res);
-      return res;
     }
 
-    public override void OnActionWhenActor(IActionable target) { Action(target); }
+    public override void DoMoveMotion(float time, Vector2Int coord)
+    {
+      Chip.Move(time, Util.GetPositionBy(coord));
+    }
 
     //-------------------------------------------------------------------------
     // 便利系

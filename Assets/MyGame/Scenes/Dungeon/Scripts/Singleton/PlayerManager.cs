@@ -106,56 +106,18 @@ namespace MyGame.Dungeon
     }
 
     //-------------------------------------------------------------------------
-    // モーション系
-
-    /// <summary>
-    /// 攻撃モーションを行う
-    /// </summary>
-    public void DoAttackMotion()
-    {
-      this.player.DoAttackMotion();
-    }
-
-    /// <summary>
-    /// 「いてぇっ！」ってモーションを行う
-    /// </summary>
-    public void DoOuchMotion()
-    {
-      this.player.DoOuchMotion();
-    }
-
-    //-------------------------------------------------------------------------
     // 探す
-    public IActionable Find(List<Vector2Int> coords)
+    public List<IActionable> Find(List<Vector2Int> coords)
     {
-      foreach(var coord in coords)
-      {
-        if (this.player.Coord.Equals(coord)) return this.player;
+      List<IActionable> found = new List<IActionable>();
+
+      foreach(var coord in coords) {
+        if (this.player.Coord.Equals(coord)) {
+          found.Add(this.player);
+        }
       }
 
-      return null;
-    }
-
-    //-------------------------------------------------------------------------
-    // 攻撃関連
-
-    /// <summary>
-    /// 攻撃する
-    /// </summary>
-    public void Attack(List<IActionable> targets)
-    {
-      foreach(var target in targets)
-      {
-        //this.player.Attack(target);
-      }
-    }
-
-    public void AttackEndEnter()
-    {
-      if (this.player != null)
-      {
-        this.player.OnAttackEndEnter();
-      }
+      return found;
     }
 
 #if _DEBUG

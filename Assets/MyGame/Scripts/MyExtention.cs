@@ -28,6 +28,13 @@ namespace MyGame
       return items[items.Count - 1];
     }
 
+    public static void Add<T>(this List<T> items, List<T> adds)
+    {
+      foreach(var item in adds) {
+        items.Add(item);
+      }
+    }
+
     public static T TryGet<T>(this List<T> items, int index) where T:class
     {
       if (items.Count <= index) return null;

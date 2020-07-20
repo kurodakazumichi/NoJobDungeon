@@ -10,12 +10,16 @@ namespace MyGame.Dungeon
   public interface IActionable
   {
     Status Status { get; }
+    IReadOnlyActionRequest ActionRequest { get; }
+    IReadOnlyActionResponse ActionResponse { get; }
 
     bool IsIdle { get; }
     bool IsReaction { get; }
 
-    ActionResponse Action(IActionable target);
-    ActionResponse AcceptAction(ActionRequest req);
+    void StartAction();
+
+    void Action(IActionable target);
+    void AcceptAction(ActionRequest req);
 
     void OnActionStartWhenActor();
     void OnActionStartWhenTarget();
@@ -23,9 +27,14 @@ namespace MyGame.Dungeon
     void OnActionStartExitWhenTarget(IActionable actor);
     void OnActionWhenActor(IActionable target);
     void OnActionWhenTarget(IActionable actor);
+    void OnActionExitWhenActor(IActionable target);
+    void OnActionExitWhenTarget(IActionable actor);
     void OnActionEndWhenActor();
     void OnActionEndWhenTarget();
     void OnReactionStartWhenActor();
     void OnReactionStartWhenTarget();
+
+    // モーション系
+    void DoMoveMotion(float time, Vector2Int coord);
   }
 }

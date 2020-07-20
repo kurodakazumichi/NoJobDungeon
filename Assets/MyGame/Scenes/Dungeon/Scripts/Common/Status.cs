@@ -127,7 +127,7 @@ namespace MyGame.Dungeon
     /// <summary>
     /// 攻撃を受ける
     /// </summary>
-    public ActionResponse AcceptAttack(ActionRequest req)
+    public ActionResponse AcceptAction(ActionRequest req)
     {
       var res = new ActionResponse();
       res.ActorName = req.Name;

@@ -223,7 +223,7 @@ namespace MyGame.Dungeon {
     {
       UpdateSingletonsWhenAction();
 
-      if (!ActionManager.Instance.IsIdle) return;
+      if (!IsIdleSingletonsProc()) return;
 
       // プレイヤーが死亡
       if (PlayerManager.Instance.IsPlayerDead)
@@ -322,6 +322,17 @@ namespace MyGame.Dungeon {
       PlayerManager.Instance.UpdatePlayer();
       EnemyManager.Instance.UpdateEnemies();
       ActionManager.Instance.UpdateAction();
+    }
+
+    /// <summary>
+    /// 各種シングルトンの処理が終わったかどうか
+    /// </summary>
+    private bool IsIdleSingletonsProc()
+    {
+      if (PlayerManager.Instance.HasnActivePlayer) return false;
+      if (EnemyManager.Instance.HasActiveEnemy) return false;
+      if (!ActionManager.Instance.IsIdle) return false;
+      return true;
     }
 
 

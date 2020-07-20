@@ -140,15 +140,7 @@ namespace MyGame.Dungeon
       if (!actor.IsIdle) return; 
       if (target != null && !target.IsIdle) return;
 
-      if (target != null)
-      {
-        this.state.SetState(Phase.Action);
-      }
-
-      else
-      {
-        this.state.SetState(Phase.Idle);
-      }
+      this.state.SetState(Phase.Action);
     }
 
     private void ActionStartExit()
@@ -166,20 +158,31 @@ namespace MyGame.Dungeon
     private void ActionEnter()
     {
       actor.OnActionWhenActor(target);
-      target.OnActionWhenTarget(actor);
+
+      if (target != null) {
+        target.OnActionWhenTarget(actor);
+      } 
     }
 
     private void ActionUpdate()
     {
       if (!actor.IsIdle) return;
-      if (!target.IsIdle) return;
+      if (target != null && !target.IsIdle) return;
 
-      this.state.SetState(Phase.ActionEnd);
+      if (target != null) {
+        this.state.SetState(Phase.ActionEnd);
+      } else {
+        this.state.SetState(Phase.Idle);
+      }
     }
 
     private void ActionExit()
     {
+      actor.OnActionExitWhenActor(target);
 
+      if (target != null) {
+        target.OnActionExitWhenTarget(actor);
+      }
     }
 
     //-------------------------------------------------------------------------

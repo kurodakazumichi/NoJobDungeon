@@ -6,9 +6,5 @@ namespace MyGame.Dungeon
 {
   public class FieldItemShuriken : FieldItem
   {
-    public FieldItemShuriken()
-    {
-
-    }
   }
 }

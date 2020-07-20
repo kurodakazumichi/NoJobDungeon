@@ -4,10 +4,18 @@ using UnityEngine;
 
 namespace MyGame.Dungeon
 {
+  public interface IReadOnlyActionRequest
+  {
+    string Name { get; }
+    Vector2Int Coord { get; }
+    int Pow { get; }
+    List<Vector2Int> Area { get; }
+  }
+
   /// <summary>
   /// 攻撃に関する情報を持っているクラス
   /// </summary>
-  public class ActionRequest
+  public class ActionRequest: IReadOnlyActionRequest
   {
     /// <summary>
     /// Actorの名前

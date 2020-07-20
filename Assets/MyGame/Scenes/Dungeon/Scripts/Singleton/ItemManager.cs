@@ -50,6 +50,7 @@ namespace MyGame.Dungeon
         var item = CreateItem(id);
 
         item.SetCoord(new Vector2Int(x, y));
+        item.SetPickup();
 
         // アイテムをリストに追加
         this.items.Add(item);
@@ -99,6 +100,9 @@ namespace MyGame.Dungeon
       return CreateItem(item);
     }
 
+    /// <summary>
+    /// アイテムクラステーブル
+    /// </summary>
     private static Dictionary<string, System.Type> factory = new Dictionary<string, System.Type>()
     {
       { nameof(FieldItem)        , typeof(FieldItem) },
