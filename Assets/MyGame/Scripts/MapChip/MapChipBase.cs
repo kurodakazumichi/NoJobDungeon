@@ -89,6 +89,14 @@ namespace MyGame {
     /// </summary>
     public State StateKey => (this.state.StateKey);
 
+    /// <summary>
+    /// ポジション
+    /// </summary>
+    public Vector3 Position {
+      get { return this.transform.position; }
+      set { this.transform.position = value; }
+    }
+
     //-------------------------------------------------------------------------
     // Public Method 
 
