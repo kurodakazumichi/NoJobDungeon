@@ -23,6 +23,7 @@ namespace MyGame.Dungeon {
       EnemyAction,
       TurnEnd,
       GameOver,
+      Main,
     }
 
     //-------------------------------------------------------------------------
@@ -70,6 +71,9 @@ namespace MyGame.Dungeon {
       this.state.Add(Phase.EnemyAction, EnemyActionEnter, EnemyActionUpdate, EnemyActionExit);
       this.state.Add(Phase.TurnEnd, TurnEndEnter, TurnEndUpdate);
       this.state.Add(Phase.GameOver, GameOverEnter, GameOverUpdate);
+
+      this.state.Add(Phase.Main, MainEnter, MainUpdate, MainExit);
+
       this.state.SetState(Phase.Load);
     }
 
@@ -101,6 +105,9 @@ namespace MyGame.Dungeon {
 
     //-------------------------------------------------------------------------
     // ダンジョン生成フェーズ
+    private Actor enemy = null;
+    private Actor player = null;
+    private List<Animation> actions = new List<Animation>();
 
     private void CreateStageEnter()
     {
@@ -114,14 +121,21 @@ namespace MyGame.Dungeon {
       ItemManager.Instance.CreateItems();
 
       // 敵を生成
-      EnemyManager.Instance.CreateEnemies();
+      // EnemyManager.Instance.CreateEnemies();
 
       // プレイヤーを生成
-      PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
+      // PlayerManager.Instance.CreatePlayer(DungeonManager.Instance.PlayerCoord);
+      var chip = MapChipFactory.Instance.CreatePlayerChip();
+      this.player = new PlayerActor(chip);
+      this.player.SetCoord(DungeonManager.Instance.PlayerCoord);
+
+      chip = MapChipFactory.Instance.CreateEnemyChip(EnemyChipType.DragonBlack);
+      this.enemy = new EnemyActor(chip);
+      this.enemy.SetCoord(DungeonManager.Instance.PlayerCoord + Vector2Int.down);
 
       // カメラをダンジョン設定にする
       CameraManager.Instance.SetDungeonSettings();
-      CameraManager.Instance.SetTrackingMode(PlayerManager.Instance.PlayerObject);
+      CameraManager.Instance.SetTrackingMode(this.player.Chip.gameObject);
 
       // マップの踏破情報を更新
       DungeonManager.Instance.UpdateClearFlags();
@@ -136,12 +150,60 @@ namespace MyGame.Dungeon {
       this.state.SetState(Phase.PlayerThink);
     }
 
+    //-------------------------------------------------------------------------
+    // Main
+
+    private void MainEnter()
+    {
+      this.player.NormalAttack(this.enemy);
+#if false
+      actions.Add(new AttackAnim(this.player, Direction.up, 0.5f));
+
+      this.enemy.Status.AcceptAttack(this.player.Status);
+
+      if (this.enemy.Status.IsDead) {
+        actions.Add(new OuchAnim(this.enemy, 0.3f));
+        actions.Add(new VanishAnim(this.enemy, 0.5f)); 
+      } else {
+        actions.Add(new OuchAnim(this.enemy, 0.3f));
+        actions.Add(new AttackAnim(this.enemy, Direction.down, 0.5f));
+
+        this.player.Status.AcceptAttack(this.enemy.Status);
+        actions.Add(new OuchAnim(this.player, 0.3f));
+
+        if (this.player.Status.IsDead) {
+          actions.Add(new VanishAnim(this.player, 0.5f));
+        }
+      }
+#endif
+
+    }
+
+    private void MainUpdate()
+    {
+      Animator.Play();
+
+      if (!Animator.Done) return;
+
+      this.state.SetState(Phase.PlayerThink);
+
+    }
+
+    private void MainExit()
+    {
+
+    }
 
     //-------------------------------------------------------------------------
     // プレイヤー思考フェーズ
 
     private void PlayerThinkUpdate()
     {
+      if (!InputManager.Instance.DirectionKey.IsNeutral) {
+        this.state.SetState(Phase.Main);
+        return;
+      }
+
       // プレイヤーの行動を監視
       var behavior = PlayerManager.Instance.Think();
 

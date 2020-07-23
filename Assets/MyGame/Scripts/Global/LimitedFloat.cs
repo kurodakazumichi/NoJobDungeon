@@ -16,7 +16,7 @@ namespace MyGame
     bool IsEmpty { get; }
   }
 
-  class LimitedFloat : IReadOnlyLimitedFloat
+  public class LimitedFloat : IReadOnlyLimitedFloat
   {
     //-------------------------------------------------------------------------
     // Member
